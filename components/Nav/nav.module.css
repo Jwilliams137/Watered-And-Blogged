@@ -1,0 +1,11 @@
+.nav {
+    background-color: darkcyan;
+    padding: 50px 100px;
+    display: flex;
+    align-items: center;
+}
+
+.title {
+    font-weight: 800;
+    font-size: 50px;
+}
