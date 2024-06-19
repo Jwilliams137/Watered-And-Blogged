@@ -1,0 +1,10 @@
+.new_post {
+    text-align: center;
+    padding: 30px;
+}
+
+.fields {
+    display: flex;
+    justify-content: space-between;
+
+}

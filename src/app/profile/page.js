@@ -27,17 +27,16 @@ const ProfilePage = () => {
     }
     return (
         <div>
-            <h1>My Profile</h1>
-            {user ? (
+            <div className={styles.welcome}>{user ? (
                 <div>
                     <h1>Welcome, {user.displayName}</h1>
-                    <p>Email: {user.email}</p>
+
                 </div>
             ) : (
                 <div>
                     <div>Loading user data...</div>
                 </div>
-            )}
+            )}</div>
             <NewPost />
             <Wall />
         </div>

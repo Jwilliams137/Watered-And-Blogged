@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { collection, query, orderBy, limit, startAfter, getDocs } from 'firebase/firestore'
+import { collection, query, orderBy, limit, startAfter, getDocs, where } from 'firebase/firestore'
 import { db } from '../../firebase'
 import Post from '../Posts/Post'
 import styles from './Timeline.module.css'
@@ -15,19 +15,19 @@ const Timeline = () => {
 
   const fetchPosts = async () => {
     setLoading(true)
-
     try {
       let q = query(
         collection(db, 'posts'),
         orderBy('createdAt', 'desc'),
+        where('approved', '==', true),
         limit(10)
-      );
+      )
 
       if (lastVisible) {
-        q = query(q, startAfter(lastVisible))
+        q = query(q, startAfter(lastVisible));
       }
 
-      const snapshot = await getDocs(q)
+      const snapshot = await getDocs(q);
       const newPosts = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
@@ -42,7 +42,6 @@ const Timeline = () => {
       } else {
         setLastVisible(null)
       }
-
     } catch (error) {
       console.error('Error fetching posts: ', error)
     } finally {
@@ -69,6 +68,11 @@ const Timeline = () => {
 }
 
 export default Timeline
+
+
+
+
+
 
 
 

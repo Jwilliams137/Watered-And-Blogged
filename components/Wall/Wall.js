@@ -74,8 +74,7 @@ const Wall = () => {
   }
 
   return (
-    <div>
-      <h1>Your Wall</h1>
+    <div className={styles.wall}>
       {posts.map(post => (
         <Post
           key={post.id}

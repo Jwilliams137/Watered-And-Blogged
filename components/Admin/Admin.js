@@ -19,13 +19,14 @@ const AdminApprovePosts = () => {
         } catch (error) {
             console.error('Error fetching pending posts:', error)
         }
-    };
+    }
 
     const approvePost = async (postId) => {
         try {
             const postRef = doc(db, 'posts', postId)
             await updateDoc(postRef, { approved: true })
-            setPosts(posts.filter(post => post.id !== postId))
+
+            setPosts(prevPosts => prevPosts.filter(post => post.id !== postId))
         } catch (error) {
             console.error('Error approving post:', error)
         }
@@ -35,7 +36,7 @@ const AdminApprovePosts = () => {
         <div>
             <h1>Approve Posts</h1>
             {posts.map(post => (
-                <div key={post.id}>
+                <div key={post.id} className={styles.post}>
                     <h2>{post.title}</h2>
                     <p>{post.content}</p>
                     {post.imageUrl && <img src={post.imageUrl} alt="Post image" style={{ width: '100px', height: '100px' }} />}
@@ -47,5 +48,13 @@ const AdminApprovePosts = () => {
 }
 
 export default AdminApprovePosts
+
+
+
+
+
+
+
+
 
 

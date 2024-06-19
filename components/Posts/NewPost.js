@@ -47,8 +47,8 @@ const NewPost = () => {
                 author: auth.currentUser.displayName,
                 authorId: auth.currentUser.uid,
                 createdAt: new Date(),
-                visibility: 'private', 
-                approved: false 
+                visibility: 'private',
+                approved: false
             })
             setTitle('')
             setContent('')
@@ -59,21 +59,24 @@ const NewPost = () => {
     }
 
     return (
-        <form onSubmit={handleSubmit}>
-            <h2>Create a New Post</h2>
-            <input
-                type="text"
-                placeholder="Title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-            />
-            <textarea
-                placeholder="Content"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-            />
-            <ImageUpload setImageFile={setImageFile} imagePreview={imagePreview} setImagePreview={setImagePreview} />
-            {uploadProgress > 0 && <p>Upload Progress: {uploadProgress.toFixed(2)}%</p>}
+        <form className={styles.new_post} onSubmit={handleSubmit}>
+            <div className={styles.fields}>
+                <h2>Create a New Post</h2>
+                <input
+                    type="text"
+                    placeholder="Title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                />
+                <textarea
+                    placeholder="Content"
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                />
+                <ImageUpload setImageFile={setImageFile} imagePreview={imagePreview} setImagePreview={setImagePreview} />
+                {uploadProgress > 0 && <p>Upload Progress: {uploadProgress.toFixed(2)}%</p>}
+            </div>
+
             <button type="submit">Post</button>
         </form>
     )
