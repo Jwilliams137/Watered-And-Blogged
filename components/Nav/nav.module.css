@@ -1,12 +1,22 @@
 .nav {
     background-color: darkcyan;
     padding: 50px 100px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
 }
 
+.leftNav {
+    
+}
+
+.rightNav {
+    display: flex;
+    justify-content: right;
+}
 .title {
     font-weight: 800;
     font-size: 50px;
+}
+
+.link {
+    padding-left: 25px;
+    cursor: pointer;
 }
