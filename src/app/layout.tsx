@@ -8,7 +8,7 @@ import Nav from '../../components/Nav/Nav'
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Viriditas Ludus",
+  title: "Watered & blogged",
   description: "A blog for the love of plants",
 }
 

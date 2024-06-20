@@ -34,7 +34,7 @@ const AdminPage = () => {
     }
 
     return (
-        <div>
+        <div className={styles.admin_page}>
             <h1>Admin Page</h1>
             <ul>
                 {posts.map(post => (

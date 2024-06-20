@@ -54,7 +54,7 @@ const Timeline = () => {
   }
 
   return (
-    <div>
+    <div className={styles.timeline}>
       <h1>Timeline</h1>
       {posts.map(post => (
         <Post key={post.id} post={post} />

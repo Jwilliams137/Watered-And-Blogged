@@ -17,7 +17,6 @@ export default function Home() {
         {user ? (
           <div>
             <h1>Welcome, {user.displayName}</h1>
-            <p>Email: {user.email}</p>
           </div>
         ) : (
           <div>

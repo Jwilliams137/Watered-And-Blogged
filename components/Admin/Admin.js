@@ -33,7 +33,7 @@ const AdminApprovePosts = () => {
     }
 
     return (
-        <div>
+        <div className={styles.admin}>
             <h1>Approve Posts</h1>
             {posts.map(post => (
                 <div key={post.id} className={styles.post}>
