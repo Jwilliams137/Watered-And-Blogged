@@ -18,7 +18,7 @@ function Nav() {
     return (
         <div className={styles.nav}>
             <div className={styles.title}>Viriditas Ludus</div>
-            <div>For the love of plants</div>
+            <div>A blog for the love of plants</div>
             <Link href="/">Home</Link>
             <Link href="/profile">Profile</Link>
             {user && user.email === adminEmail && <Link href="/admin">Admin</Link>}
