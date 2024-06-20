@@ -7,6 +7,7 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
   const [editing, setEditing] = useState(false)
   const [newTitle, setNewTitle] = useState(post.title)
   const [newContent, setNewContent] = useState(post.content)
+  const [newImageUrl, setNewImageUrl] = useState(post.imageUrl)
 
   const currentUser = auth.currentUser
 
@@ -16,9 +17,10 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
       await updateDoc(postRef, {
         title: newTitle,
         content: newContent,
+        imageUrl: newImageUrl,
         updatedAt: new Date()
       })
-      onPostUpdated()
+      onPostUpdated(post.id, newTitle, newContent)
       setEditing(false)
     } catch (error) {
       console.error('Error updating post:', error)
@@ -35,7 +37,7 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
   }
 
   return (
-    <div className="post">
+    <div className={styles.post}>
       {editing ? (
         <div>
           <input
@@ -47,6 +49,7 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
             value={newContent}
             onChange={(e) => setNewContent(e.target.value)}
           ></textarea>
+          {newImageUrl && <img src={newImageUrl} alt="Posted" style={{ maxWidth: '100%' }} />}
           <button onClick={handleEdit}>Save</button>
           <button onClick={() => setEditing(false)}>Cancel</button>
         </div>
@@ -69,6 +72,8 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
 }
 
 export default Post
+
+
 
 
 

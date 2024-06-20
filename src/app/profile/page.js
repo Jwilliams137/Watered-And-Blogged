@@ -37,7 +37,6 @@ const ProfilePage = () => {
                     <div>Loading user data...</div>
                 </div>
             )}</div>
-            <NewPost />
             <Wall />
         </div>
     )

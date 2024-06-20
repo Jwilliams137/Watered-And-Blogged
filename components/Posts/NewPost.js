@@ -5,7 +5,7 @@ import { auth, db, storage } from '../../firebase'
 import ImageUpload from '../ImageUpload/ImageUpload'
 import styles from './NewPost.module.css'
 
-const NewPost = () => {
+const NewPost = ({ onPostCreated }) => {
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
     const [imageFile, setImageFile] = useState(null)
@@ -40,7 +40,7 @@ const NewPost = () => {
         }
 
         if (auth.currentUser) {
-            await addDoc(collection(db, 'posts'), {
+            const newPost = {
                 title,
                 content,
                 imageUrl,
@@ -49,7 +49,9 @@ const NewPost = () => {
                 createdAt: new Date(),
                 visibility: 'private',
                 approved: false
-            })
+            }
+            const docRef = await addDoc(collection(db, 'posts'), newPost)
+            onPostCreated({ id: docRef.id, ...newPost })  // Notify parent about the new post
             setTitle('')
             setContent('')
             setImageFile(null)
@@ -83,5 +85,6 @@ const NewPost = () => {
 }
 
 export default NewPost
+
 
 
