@@ -20,7 +20,7 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
         imageUrl: newImageUrl,
         updatedAt: new Date()
       })
-      onPostUpdated(post.id, newTitle, newContent)
+      onPostUpdated && onPostUpdated(post.id, newTitle, newContent, newImageUrl)
       setEditing(false)
     } catch (error) {
       console.error('Error updating post:', error)
@@ -30,7 +30,7 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
   const handleDelete = async () => {
     try {
       await deleteDoc(doc(db, 'posts', post.id))
-      onDeletePost(post.id)
+      onDeletePost && onDeletePost(post.id)
     } catch (error) {
       console.error('Error deleting post:', error)
     }
@@ -72,6 +72,8 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
 }
 
 export default Post
+
+
 
 
 

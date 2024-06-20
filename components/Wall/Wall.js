@@ -16,7 +16,11 @@ const Wall = () => {
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const newPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-      setPosts(newPosts)
+      setPosts(prevPosts => {
+        const postIds = new Set(prevPosts.map(post => post.id))
+        const filteredPosts = newPosts.filter(post => !postIds.has(post.id))
+        return [...filteredPosts, ...prevPosts]
+      })
       if (snapshot.docs.length > 0) {
         setLastVisible(snapshot.docs[snapshot.docs.length - 1])
       }
@@ -35,7 +39,11 @@ const Wall = () => {
         const newPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
         if (snapshot.docs.length > 0) {
           setLastVisible(snapshot.docs[snapshot.docs.length - 1])
-          setPosts(prevPosts => [...prevPosts, ...newPosts])
+          setPosts(prevPosts => {
+            const postIds = new Set(prevPosts.map(post => post.id))
+            const filteredPosts = newPosts.filter(post => !postIds.has(post.id))
+            return [...prevPosts, ...filteredPosts]
+          })
         }
         setLoading(false)
       })
@@ -43,7 +51,13 @@ const Wall = () => {
   }
 
   const handlePostCreated = (newPost) => {
-    setPosts(prevPosts => [newPost, ...prevPosts])
+    setPosts(prevPosts => {
+      const postIds = new Set(prevPosts.map(post => post.id))
+      if (!postIds.has(newPost.id)) {
+        return [newPost, ...prevPosts]
+      }
+      return prevPosts
+    })
   }
 
   const handlePostUpdated = (postId, newTitle, newContent) => {
@@ -55,6 +69,7 @@ const Wall = () => {
   const handleDeletePost = async (postId) => {
     try {
       await deleteDoc(doc(db, 'posts', postId))
+      setPosts(prevPosts => prevPosts.filter(post => post.id !== postId))
     } catch (error) {
       console.error('Error deleting post: ', error)
     }
@@ -80,6 +95,7 @@ const Wall = () => {
 }
 
 export default Wall
+
 
 
 
