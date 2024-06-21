@@ -1,6 +1,5 @@
 'use client'
 import React, { useEffect } from 'react'
-import NewPost from '../../../components/Posts/NewPost'
 import Wall from '../../../components/Wall/Wall'
 import useAuth from '../../../hooks/useAuth'
 import { useRouter } from 'next/navigation'

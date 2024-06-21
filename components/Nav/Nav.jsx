@@ -4,15 +4,21 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { logout } from '../../utils/auth'
 import useAuth from '../../hooks/useAuth'
+import { useState } from 'react'
 
 function Nav() {
     const { user } = useAuth()
     const router = useRouter()
     const adminEmail = process.env.NEXT_PUBLIC_EMAIL
+    const [isMenuOpen, setIsMenuOpen] = useState(false)
 
     const handleLogout = async () => {
         await logout()
         router.push('/')
+    }
+
+    const toggleMenu = () => {
+        setIsMenuOpen(!isMenuOpen)
     }
 
     return (
@@ -22,20 +28,27 @@ function Nav() {
                 <div>A blog for the love of plants</div>
             </div>
 
-            <div className={styles.rightNav}>
-                {user && (
-                    <>
+            {user && (
+                <>
+                    <div className={`${styles.rightNav} ${isMenuOpen ? styles.open : ''}`}>
                         <Link href="/" className={styles.link}>Home</Link>
                         <Link href="/profile" className={styles.link}>Profile</Link>
                         {user.email === adminEmail && <Link href="/admin" className={styles.link}>Admin</Link>}
                         <p onClick={handleLogout} className={styles.link}>Logout</p>
-                    </>
-                )}
-            </div>
+                    </div>
+
+                    <div className={`${styles.hamburger} ${isMenuOpen ? styles.open : ''}`} onClick={toggleMenu}>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </>
+            )}
         </div>
     )
 }
 
 export default Nav
+
 
 

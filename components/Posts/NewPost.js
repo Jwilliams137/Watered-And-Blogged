@@ -63,7 +63,7 @@ const NewPost = ({ onPostCreated }) => {
     return (
         <form className={styles.new_post} onSubmit={handleSubmit}>
             <div className={styles.fields}>
-                <h2>Create a New Post</h2>
+                <h2>What's happening in your garden?</h2>
                 <input
                     type="text"
                     placeholder="Title"
@@ -79,7 +79,7 @@ const NewPost = ({ onPostCreated }) => {
                 {uploadProgress > 0 && <p>Upload Progress: {uploadProgress.toFixed(2)}%</p>}
             </div>
 
-            <button type="submit">Post</button>
+            <button type="submit" className={styles.button}>Post</button>
         </form>
     )
 }

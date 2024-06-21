@@ -22,7 +22,7 @@ export default function Home() {
           <div>
             <Login />
           </div>
-        )}        
+        )}
       </div>
       <Timeline />
     </main>
