@@ -10,7 +10,7 @@
 
 .rightNav {
     display: flex;
-    justify-content: right;
+    justify-content: flex-end; /* Changed to flex-end for correct alignment */
     align-items: center;
 }
 
@@ -42,7 +42,7 @@
     cursor: pointer;
     width: 30px;
     height: 30px;
-    position: absolute;
+    position: fixed; /* Changed to fixed */
     top: 20px;
     right: 20px;
     z-index: 11;
@@ -110,7 +110,7 @@
         background-color: darkcyan;
         z-index: 10;
         padding: 0;
-        overflow-y: auto;
+        overflow-y: hidden; /* Prevent scrolling */
     }
 
     .link {
