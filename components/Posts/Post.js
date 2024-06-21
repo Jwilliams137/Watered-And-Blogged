@@ -54,7 +54,7 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
           <button onClick={() => setEditing(false)}>Cancel</button>
         </div>
       ) : (
-        <div>
+        <div className={styles.post}>
           <h2>{post.title}</h2>
           <p>{post.content}</p>
           {post.imageUrl && <img src={post.imageUrl} alt="Posted" style={{ maxWidth: '100%' }} />}
