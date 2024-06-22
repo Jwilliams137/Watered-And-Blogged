@@ -1,44 +1,42 @@
 'use client'
-import React, { useEffect } from 'react'
-import Wall from '../../../components/Wall/Wall'
-import useAuth from '../../../hooks/useAuth'
-import { useRouter } from 'next/navigation'
-import styles from './page.module.css'
+import React, { useEffect } from 'react';
+import Wall from '../../../components/Wall/Wall';
+import useAuth from '../../../hooks/useAuth';
+import { useRouter } from 'next/navigation';
+import styles from './page.module.css';
 
 const ProfilePage = () => {
-    const { user, loading } = useAuth()
-    const router = useRouter()
+    const { user, loading } = useAuth();
+    const router = useRouter();
 
     useEffect(() => {
         if (!loading && !user) {
-            router.push('/')
+            router.push('/');
         }
-    }, [user, loading, router])
+    }, [user, loading, router]);
 
     useEffect(() => {
         if (user) {
-            console.log("User in ProfilePage: ", user)
+            console.log("User in ProfilePage: ", user);
         }
-    }, [user])
+    }, [user]);
 
     if (loading) {
-        return <div>Loading...</div>
+        return <div className={styles.loading}>Loading...</div>;
     }
-    return (
-        <div>
-            <div className={styles.welcome}>{user ? (
-                <div>
-                    <h1>Welcome, {user.displayName}</h1>
 
+    return (
+        <div className={styles.profilePage}>
+            {user ? (
+                <div className={styles.welcome}>
+                    <h1>Welcome, {user.displayName}</h1>
+                    <Wall />
                 </div>
             ) : (
-                <div>
-                    <div>Loading user data...</div>
-                </div>
-            )}</div>
-            <Wall />
+                <div className={styles.loading}>Loading user data...</div>
+            )}
         </div>
-    )
-}
+    );
+};
 
-export default ProfilePage
+export default ProfilePage;
