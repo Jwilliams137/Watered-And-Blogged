@@ -33,4 +33,4 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 ## Deploy on Netlify
 
-This project has been modified for easy deployment on Netlify
+This project has been modified for easy deployment on Netlify.
