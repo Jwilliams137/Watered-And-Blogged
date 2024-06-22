@@ -29,7 +29,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <meta property="og:type" content="website" />
         <meta property="og:title" content="Watered & Blogged" />
         <meta property="og:description" content="A blog for the love of plants" />
-        <meta name="twitter:image" content="/twitter-image.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Watered & Blogged" />
+        <meta name="twitter:description" content="A blog for the love of plants" />
+        <meta name="twitter:image" content="https://watered-and-blogged.netlify.app/twitter-image.jpg" />
         <meta name="twitter:image:type" content="image/jpeg" />
         <meta name="twitter:image:width" content="1194" />
         <meta name="twitter:image:height" content="630" />
