@@ -73,7 +73,7 @@ const NewPost = ({ onPostCreated }) => {
     return (
         <form className={styles.new_post} onSubmit={handleSubmit}>
             <div className={styles.fields}>
-                <h2>What's happening in your garden?</h2>
+                <h2>What&apos;s happening in your garden?</h2>
                 <input
                     type="text"
                     placeholder="Title"
@@ -84,7 +84,7 @@ const NewPost = ({ onPostCreated }) => {
                     placeholder="Content"
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
-                />
+                ></textarea>
                 <ImageUpload setImageFile={setImageFile} imagePreview={imagePreview} setImagePreview={setImagePreview} />
                 {uploadProgress > 0 && <p>Upload Progress: {uploadProgress.toFixed(2)}%</p>}
             </div>
@@ -94,6 +94,7 @@ const NewPost = ({ onPostCreated }) => {
 };
 
 export default NewPost;
+
 
 
 
