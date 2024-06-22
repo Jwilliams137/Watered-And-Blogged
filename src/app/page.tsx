@@ -5,7 +5,7 @@ import useAuth from "../../hooks/useAuth"
 import Timeline from "../../components/Timeline/Timeline"
 
 export default function Home() {
-  const { user, loading } = useAuth();
+  const { user = { displayName: '' }, loading } = useAuth()
 
   if (loading) {
     return <div>Loading...</div>
@@ -16,7 +16,7 @@ export default function Home() {
       <div>
         {user ? (
           <div className={styles.welcome}>
-            <h1>Welcome, {user.displayName}</h1>
+            <h1>Welcome, {user?.displayName}</h1>
           </div>
         ) : (
           <div>
