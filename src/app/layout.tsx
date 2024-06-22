@@ -21,7 +21,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Open+Sans:wght@400;600&family=Pacifico&display=swap"
         />
         <style>{inter.className}</style>
-        <meta property="og:image" content="/opengraph-image.jpg" />
+        <meta property="og:url" content="https://watered-and-blogged.netlify.app/" />
         <meta property="og:image:type" content="image/jpeg" />
         <meta property="og:image:width" content="1194" />
         <meta property="og:image:height" content="630" />
