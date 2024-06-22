@@ -1,7 +1,7 @@
-'use client'
+'use client';
 import styles from './nav.module.css';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation'; // Ensure correct import path
+import { useRouter } from 'next/navigation';
 import { logout } from '../../utils/auth';
 import useAuth from '../../hooks/useAuth';
 import { useState, useEffect } from 'react';
@@ -13,14 +13,12 @@ function Nav() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     useEffect(() => {
-        // Toggle body class to control overflow
         if (isMenuOpen) {
             document.body.classList.add('open-menu');
         } else {
             document.body.classList.remove('open-menu');
         }
 
-        // Clean up effect
         return () => {
             document.body.classList.remove('open-menu');
         };
@@ -29,10 +27,15 @@ function Nav() {
     const handleLogout = async () => {
         await logout();
         router.push('/');
+        setIsMenuOpen(false); // Close menu after logout
     };
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
+    };
+
+    const closeMenu = () => {
+        setIsMenuOpen(false);
     };
 
     return (
@@ -45,7 +48,7 @@ function Nav() {
 
             <div className={styles.nav}>
                 <div className={styles.leftNav}>
-                    <Link href="/" className={styles.title}>
+                    <Link href="/" className={styles.title} onClick={closeMenu}>
                         Watered & Blogged
                     </Link>
                     <div>A blog for the love of plants</div>
@@ -53,14 +56,14 @@ function Nav() {
 
                 {user && (
                     <div className={`${styles.rightNav} ${isMenuOpen ? styles.open : ''}`}>
-                        <Link href="/" className={styles.link}>
+                        <Link href="/" className={styles.link} onClick={closeMenu}>
                             Home
                         </Link>
-                        <Link href="/profile" className={styles.link}>
+                        <Link href="/profile" className={styles.link} onClick={closeMenu}>
                             Profile
                         </Link>
                         {user.email === adminEmail && (
-                            <Link href="/admin" className={styles.link}>
+                            <Link href="/admin" className={styles.link} onClick={closeMenu}>
                                 Admin
                             </Link>
                         )}
