@@ -1,42 +1,42 @@
-'use client';
-import styles from './nav.module.css';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { logout } from '../../utils/auth';
-import useAuth from '../../hooks/useAuth';
-import { useState, useEffect } from 'react';
+'use client'
+import styles from './nav.module.css'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { logout } from '../../utils/auth'
+import useAuth from '../../hooks/useAuth'
+import { useState, useEffect } from 'react'
 
 function Nav() {
-    const { user } = useAuth();
-    const router = useRouter();
-    const adminEmail = process.env.NEXT_PUBLIC_EMAIL;
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const { user } = useAuth()
+    const router = useRouter()
+    const adminEmail = process.env.NEXT_PUBLIC_EMAIL
+    const [isMenuOpen, setIsMenuOpen] = useState(false)
 
     useEffect(() => {
         if (isMenuOpen) {
-            document.body.classList.add('open-menu');
+            document.body.classList.add('open-menu')
         } else {
-            document.body.classList.remove('open-menu');
+            document.body.classList.remove('open-menu')
         }
 
         return () => {
-            document.body.classList.remove('open-menu');
+            document.body.classList.remove('open-menu')
         };
-    }, [isMenuOpen]);
+    }, [isMenuOpen])
 
     const handleLogout = async () => {
-        await logout();
-        router.push('/');
-        setIsMenuOpen(false); // Close menu after logout
-    };
+        await logout()
+        router.push('/')
+        setIsMenuOpen(false)
+    }
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
-    };
+    }
 
     const closeMenu = () => {
         setIsMenuOpen(false);
-    };
+    }
 
     return (
         <>
@@ -74,10 +74,10 @@ function Nav() {
                 )}
             </div>
         </>
-    );
+    )
 }
 
-export default Nav;
+export default Nav
 
 
 
