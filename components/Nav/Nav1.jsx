@@ -1,12 +1,12 @@
 'use client'
-import styles from './nav.module.css'
+import styles from './nav1.module.css'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { logout } from '../../utils/auth'
 import useAuth from '../../hooks/useAuth'
 import { useState, useEffect } from 'react'
 
-function Nav() {
+function Nav1() {
     const { user } = useAuth()
     const router = useRouter()
     const adminEmail = process.env.NEXT_PUBLIC_EMAIL
@@ -77,7 +77,7 @@ function Nav() {
     )
 }
 
-export default Nav
+export default Nav1
 
 
 

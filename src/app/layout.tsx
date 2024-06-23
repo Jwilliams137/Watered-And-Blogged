@@ -4,6 +4,7 @@ import "./globals.css"
 import styles from './layout.module.css'
 import Footer from '../../components/Footer/Footer'
 import Nav from '../../components/Nav/Nav'
+import Nav1 from '../../components/Nav/Nav1'
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -38,7 +39,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <meta property="og:description" content="A blog for the love of plants" />        
       </head>
       <body className={styles.wrapper}>
-        <Nav />
+        <Nav1 />
         <div className={styles.children_container}>
           {children}
         </div>
