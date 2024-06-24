@@ -52,7 +52,11 @@ const ProfileImageUpload = ({ setImageFile, imagePreview, setImagePreview }) => 
                 </div>
             )}
             {loading && <p>Loading...</p>}
-            <button onClick={showCroppedImage}>Crop Image</button>
+            {imagePreview && (
+                <button onClick={showCroppedImage} className={styles.cropButton}>
+                    Crop Image
+                </button>
+            )}
         </div>
     );
 };

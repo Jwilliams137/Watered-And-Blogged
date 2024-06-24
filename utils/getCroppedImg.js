@@ -1,6 +1,5 @@
 import { Area } from 'react-easy-crop';
 
-
 export default async function getCroppedImg(imageSrc, pixelCrop) {
     const image = new Image();
     image.src = imageSrc;
