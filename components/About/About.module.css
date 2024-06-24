@@ -1,0 +1,12 @@
+.profilePictureContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+  }
+  
+  .profilePicture {
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
