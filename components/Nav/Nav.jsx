@@ -1,57 +1,57 @@
 'use client'
-import styles from './nav1.module.css'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { logout } from '../../utils/auth'
-import useAuth from '../../hooks/useAuth'
-import { useState, useEffect } from 'react'
+import styles from './nav.module.css';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { logout } from '../../utils/auth';
+import useAuth from '../../hooks/useAuth';
+import { useState, useEffect } from 'react';
 
-function Nav1() {
-    const { user } = useAuth()
-    const router = useRouter()
-    const adminEmail = process.env.NEXT_PUBLIC_EMAIL
-    const [isMenuOpen, setIsMenuOpen] = useState(false)
+function Nav() {
+    const { user } = useAuth();
+    const router = useRouter();
+    const adminEmail = process.env.NEXT_PUBLIC_EMAIL;
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     useEffect(() => {
         if (isMenuOpen) {
-            document.body.classList.add('open-menu')
+            document.body.classList.add('open-menu');
         } else {
-            document.body.classList.remove('open-menu')
+            document.body.classList.remove('open-menu');
         }
 
         return () => {
-            document.body.classList.remove('open-menu')
+            document.body.classList.remove('open-menu');
         };
-    }, [isMenuOpen])
+    }, [isMenuOpen]);
 
     const handleLogout = async () => {
-        await logout()
-        router.push('/')
-        setIsMenuOpen(false)
-    }
+        await logout();
+        router.push('/');
+        setIsMenuOpen(false);
+    };
 
     const toggleMenu = () => {
-        setIsMenuOpen(!isMenuOpen);
-    }
+        setIsMenuOpen(prevState => !prevState); // Toggle the previous state
+    };
 
     const closeMenu = () => {
         setIsMenuOpen(false);
-    }
+    };
 
     return (
         <>
-            <div className={styles.hamburger + (isMenuOpen ? ` ${styles.open}` : '')} onClick={toggleMenu}>
+            <div className={`${styles.hamburger} ${isMenuOpen ? styles.open : ''}`} onClick={toggleMenu}>
                 <span></span>
                 <span></span>
                 <span></span>
             </div>
 
-            <div className={styles.nav}>
+            <div className={`${styles.nav} ${isMenuOpen ? styles.navOpen : ''}`}>
                 <div className={styles.leftNav}>
                     <Link href="/" className={styles.title} onClick={closeMenu}>
                         Watered & Blogged
                     </Link>
-                    <div>A blog for the love of plants</div>
+                    <div className={styles.description}>A blog for the love of plants</div>
                 </div>
 
                 {user && (
@@ -74,10 +74,12 @@ function Nav1() {
                 )}
             </div>
         </>
-    )
+    );
 }
 
-export default Nav1
+export default Nav;
+
+
 
 
 
