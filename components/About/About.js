@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { auth, db, storage } from '../../firebase';
-import ImageUpload from '../ImageUpload/ImageUpload';
+import ProfileImageUpload from '../ImageUpload/ProfileImageUpload'; // Import the new ProfileImageUpload component
 import NextImage from 'next/image';
-import styles from './About.module.css'; // Import the CSS module
+import styles from './About.module.css';
 
 const About = () => {
   const [aboutMe, setAboutMe] = useState('');
@@ -87,7 +87,7 @@ const About = () => {
           onChange={(e) => setAboutMe(e.target.value)}
           placeholder="Tell us about yourself"
         />
-        <ImageUpload setImageFile={handleFileChange} imagePreview={imagePreview} setImagePreview={setImagePreview} />
+        <ProfileImageUpload setImageFile={handleFileChange} imagePreview={imagePreview} setImagePreview={setImagePreview} />
         {uploadProgress > 0 && <p>Upload Progress: {uploadProgress.toFixed(2)}%</p>}
         <button type="submit">Save</button>
       </form>
@@ -110,6 +110,7 @@ const About = () => {
 };
 
 export default About;
+
 
 
 
