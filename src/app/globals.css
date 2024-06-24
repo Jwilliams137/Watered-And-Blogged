@@ -22,6 +22,6 @@ a {
 
 @media (prefers-color-scheme: dark) {
   html {
-    color-scheme: dark;
+    background-color: rgb(2, 48, 48);
   }
 }
