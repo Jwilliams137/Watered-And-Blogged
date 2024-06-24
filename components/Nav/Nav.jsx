@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { logout } from '../../utils/auth';
 import useAuth from '../../hooks/useAuth';
 import { useState, useEffect } from 'react';
+import styles from './Nav.module.css'
 
 function Nav() {
     const { user } = useAuth();
