@@ -48,15 +48,17 @@
 
 .title {
     font-weight: 800;
-    font-size: 24px;
+    font-size: 40px;
     color: #fff;
     text-decoration: none;
+    letter-spacing: .5px;
 }
 
 .description {
     color: #fff;
-    font-size: 14px;
+    font-size: 25px;
     margin-top: 4px;
+    letter-spacing: 1.7px;
 }
 
 .link {
@@ -64,7 +66,12 @@
     cursor: pointer;
     color: #fff;
     text-decoration: none;
-    font-size: 18px;
+    font-size: 28px;
+}
+
+.link:hover {
+color: chartreuse;
+font-size: 29px;
 }
 
 .hamburger {
@@ -140,8 +147,11 @@
     }
 
     .link {
-        font-size: 24px;
+        font-size: 34px;
         margin: 20px 0;
+    }
+    .link:hover {
+        font-size: 35px;
     }
 
     .hamburger {
