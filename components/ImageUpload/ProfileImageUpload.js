@@ -54,22 +54,23 @@ const ProfileImageUpload = ({ setImageFile, imagePreview, setImagePreview }) => 
             )}
             {loading && <p>Loading...</p>}
             {imagePreview && (
-                <>
+                <div className={styles.controlsContainer}>
                     <button type="button" onClick={showCroppedImage} className={styles.cropButton}>
                         Crop Image
                     </button>
-                    {croppedImage && (
-                        <div className={styles.croppedPreview}>
-                            <h3>Cropped Image Preview</h3>
-                            <img src={URL.createObjectURL(croppedImage)} alt="Cropped Preview" />
-                        </div>
-                    )}
-                </>
+                </div>
+            )}
+            {croppedImage && (
+                <div className={styles.croppedPreview}>
+                    <h3>Cropped Image Preview</h3>
+                    <img src={URL.createObjectURL(croppedImage)} alt="Cropped Preview" />
+                </div>
             )}
         </div>
     );
 };
 
 export default ProfileImageUpload;
+
 
 

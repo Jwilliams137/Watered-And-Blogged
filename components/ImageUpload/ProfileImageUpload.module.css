@@ -8,9 +8,15 @@
 .cropContainer {
     position: relative;
     width: 100%;
-    height: 400px;
-    background: #333;
+    height: 300px; /* Adjusted height for crop container */
     margin-top: 20px;
+}
+
+.controlsContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
 }
 
 .cropButton {
@@ -25,4 +31,15 @@
 
 .cropButton:hover {
     background-color: #45a049;
+}
+
+.croppedPreview {
+    margin-top: 20px;
+    max-width: 100%; /* Adjust maximum width for the cropped image preview */
+    border: 1px solid #ccc; /* Optional: Add border for visual separation */
+}
+
+.croppedPreview img {
+    width: 100%; /* Ensure the image occupies its container width */
+    height: auto; /* Maintain aspect ratio */
 }
