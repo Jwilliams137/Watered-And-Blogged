@@ -1,5 +1,5 @@
-'use client'
-import styles from './nav.module.css';
+'use client';
+import styles from './Nav.module.css';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { logout } from '../../utils/auth';
@@ -54,31 +54,36 @@ function Nav() {
                     <div className={styles.description}>A blog for the love of plants</div>
                 </div>
 
-                {user && (
-                    <div className={`${styles.rightNav} ${isMenuOpen ? styles.open : ''}`}>
-                        <Link href="/" className={styles.link} onClick={closeMenu}>
-                            Home
-                        </Link>
-                        <Link href="/profile" className={styles.link} onClick={closeMenu}>
-                            Profile
-                        </Link>
-                        {user.email === adminEmail && (
-                            <Link href="/admin" className={styles.link} onClick={closeMenu}>
-                                Admin
+                <div className={`${styles.rightNav} ${isMenuOpen ? styles.open : ''}`}>
+                    {user ? (
+                        <>
+                            <Link href="/" className={styles.link} onClick={closeMenu}>
+                                Home
                             </Link>
-                        )}
-                        <p onClick={handleLogout} className={styles.link}>
-                            Logout
-                        </p>
-                    </div>
-                )}
+                            <Link href="/profile" className={styles.link} onClick={closeMenu}>
+                                Profile
+                            </Link>
+                            {user.email === adminEmail && (
+                                <Link href="/admin" className={styles.link} onClick={closeMenu}>
+                                    Admin
+                                </Link>
+                            )}
+                            <p onClick={handleLogout} className={styles.link}>
+                                Logout
+                            </p>
+                        </>
+                    ) : (
+                        <Link href="/signin" className={styles.link} onClick={closeMenu}>
+                            Sign In
+                        </Link>
+                    )}
+                </div>
             </div>
         </>
     );
 }
 
 export default Nav;
-
 
 
 
