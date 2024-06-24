@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { logout } from '../../utils/auth';
 import useAuth from '../../hooks/useAuth';
 import { useState, useEffect } from 'react';
+import Login from '../Login/Login';
 import styles from './Nav.module.css'
 
 function Nav() {
@@ -73,9 +74,9 @@ function Nav() {
                             </p>
                         </>
                     ) : (
-                        <Link href="/signin" className={styles.link} onClick={closeMenu}>
-                            Sign In
-                        </Link>
+                        <div className={styles.link} onClick={closeMenu}>
+                            <Login />
+                        </div>
                     )}
                 </div>
             </div>
