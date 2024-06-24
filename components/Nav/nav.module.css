@@ -30,8 +30,7 @@
 
 .rightNav {
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
+    align-items: center;
 }
 
 .rightNav.open {
@@ -161,5 +160,19 @@
 
     .description {
         display: none;
+    }
+}
+
+@media only screen and (min-width: 1001px) {
+    .rightNav {
+        display: flex;
+    }
+
+    .hamburger {
+        display: none;
+    }
+
+    .nav {
+        position: relative;
     }
 }

@@ -31,7 +31,7 @@ function Nav() {
     };
 
     const toggleMenu = () => {
-        setIsMenuOpen(prevState => !prevState); // Toggle the previous state
+        setIsMenuOpen(prevState => !prevState);
     };
 
     const closeMenu = () => {
