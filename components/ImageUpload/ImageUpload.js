@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import NextImage from 'next/image';
 import imageCompression from 'browser-image-compression';
 import styles from './ImageUpload.module.css';
 
 const ImageUpload = ({ setImageFile, imagePreview, setImagePreview }) => {
     const [loading, setLoading] = useState(false);
-    const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
@@ -15,12 +13,6 @@ const ImageUpload = ({ setImageFile, imagePreview, setImagePreview }) => {
 
             const imageUrl = URL.createObjectURL(file);
             setImagePreview(imageUrl);
-
-            const img = new window.Image();
-            img.src = imageUrl;
-            img.onload = () => {
-                setDimensions({ width: img.width, height: img.height });
-            };
 
             const options = {
                 maxSizeMB: 1,
@@ -42,16 +34,9 @@ const ImageUpload = ({ setImageFile, imagePreview, setImagePreview }) => {
     return (
         <div className={styles.imageUploadContainer}>
             <input type="file" accept="image/*" onChange={handleFileChange} />
-            {imagePreview && dimensions.width && dimensions.height && (
+            {imagePreview && (
                 <div className={styles.imagePreview}>
-                    <NextImage
-                        src={imagePreview}
-                        alt="Preview"
-                        layout="responsive"
-                        width={dimensions.width}
-                        height={dimensions.height}
-                        className={styles.image}
-                    />
+                    <img src={imagePreview} alt="Preview" />
                 </div>
             )}
             {loading && <p>Loading...</p>}
@@ -60,6 +45,9 @@ const ImageUpload = ({ setImageFile, imagePreview, setImagePreview }) => {
 };
 
 export default ImageUpload;
+
+
+
 
 
 
