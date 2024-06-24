@@ -7,6 +7,7 @@ const ProfileImageUpload = ({ setImageFile, imagePreview, setImagePreview }) => 
     const [loading, setLoading] = useState(false);
     const [crop, setCrop] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(1);
+    const [croppedImage, setCroppedImage] = useState(null); // State to hold the cropped image blob
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
 
     const handleFileChange = async (e) => {
@@ -18,6 +19,7 @@ const ProfileImageUpload = ({ setImageFile, imagePreview, setImagePreview }) => 
             setImagePreview(imageUrl);
             setImageFile(file);
             setLoading(false);
+            setCroppedImage(null); // Reset cropped image state when new image is selected
         }
     };
 
@@ -27,13 +29,12 @@ const ProfileImageUpload = ({ setImageFile, imagePreview, setImagePreview }) => 
 
     const showCroppedImage = useCallback(async () => {
         try {
-            const croppedImage = await getCroppedImg(imagePreview, croppedAreaPixels);
-            setImagePreview(URL.createObjectURL(croppedImage));
-            setImageFile(croppedImage);
-        } catch (e) {
-            console.error(e);
+            const croppedImageBlob = await getCroppedImg(imagePreview, croppedAreaPixels);
+            setCroppedImage(croppedImageBlob);
+        } catch (error) {
+            console.error('Error cropping image:', error);
         }
-    }, [croppedAreaPixels, imagePreview, setImageFile, setImagePreview]);
+    }, [croppedAreaPixels, imagePreview]);
 
     return (
         <div className={styles.imageUploadContainer}>
@@ -53,12 +54,22 @@ const ProfileImageUpload = ({ setImageFile, imagePreview, setImagePreview }) => 
             )}
             {loading && <p>Loading...</p>}
             {imagePreview && (
-                <button onClick={showCroppedImage} className={styles.cropButton}>
-                    Crop Image
-                </button>
+                <>
+                    <button type="button" onClick={showCroppedImage} className={styles.cropButton}>
+                        Crop Image
+                    </button>
+                    {croppedImage && (
+                        <div className={styles.croppedPreview}>
+                            <h3>Cropped Image Preview</h3>
+                            <img src={URL.createObjectURL(croppedImage)} alt="Cropped Preview" />
+                        </div>
+                    )}
+                </>
             )}
         </div>
     );
 };
 
 export default ProfileImageUpload;
+
+
