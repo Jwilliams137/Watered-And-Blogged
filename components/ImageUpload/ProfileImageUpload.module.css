@@ -37,9 +37,12 @@
     margin-top: 20px;
     max-width: 100%; /* Adjust maximum width for the cropped image preview */
     border: 1px solid #ccc; /* Optional: Add border for visual separation */
+    text-align: center; /* Center align the content */
 }
 
 .croppedPreview img {
-    width: 100%; /* Ensure the image occupies its container width */
+    max-width: 100%; /* Ensure the image occupies its container width */
     height: auto; /* Maintain aspect ratio */
+    display: block; /* Remove extra space below inline-block images */
+    margin: 0 auto; /* Center align the image */
 }

@@ -36,6 +36,15 @@ const ProfileImageUpload = ({ setImageFile, imagePreview, setImagePreview }) => 
         }
     }, [croppedAreaPixels, imagePreview]);
 
+    // Function to calculate a consistent preview size
+    const calculatePreviewSize = () => {
+        const previewSize = Math.min(200, Math.max(croppedAreaPixels.width, croppedAreaPixels.height));
+        return {
+            width: previewSize,
+            height: previewSize,
+        };
+    };
+
     return (
         <div className={styles.imageUploadContainer}>
             <input type="file" accept="image/*" onChange={handleFileChange} />
@@ -63,7 +72,14 @@ const ProfileImageUpload = ({ setImageFile, imagePreview, setImagePreview }) => 
             {croppedImage && (
                 <div className={styles.croppedPreview}>
                     <h3>Cropped Image Preview</h3>
-                    <img src={URL.createObjectURL(croppedImage)} alt="Cropped Preview" />
+                    <img
+                        src={URL.createObjectURL(croppedImage)}
+                        alt="Cropped Preview"
+                        style={{
+                            width: calculatePreviewSize().width,
+                            height: calculatePreviewSize().height,
+                        }}
+                    />
                 </div>
             )}
         </div>
