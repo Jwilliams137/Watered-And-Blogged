@@ -14,15 +14,11 @@ export default function Home() {
   return (
     <main className={styles.main}>
       <div>
-        {user ? (
+        {user && (
           <div className={styles.welcome}>
             <h1>Welcome, {user?.displayName}</h1>
           </div>
-        ) : (
-          <div>
-            <Login />
-          </div>
-        )}
+        ) }
       </div>
       <Timeline />
     </main>
