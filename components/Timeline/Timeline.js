@@ -1,7 +1,5 @@
-// Timeline.js
-
 import React, { useState, useEffect } from 'react';
-import { collection, query, orderBy, limit, startAfter, getDocs, doc, getDoc } from 'firebase/firestore'; // Ensure getDoc is imported
+import { collection, query, orderBy, limit, startAfter, getDocs, doc, getDoc, deleteDoc } from 'firebase/firestore'; // Ensure deleteDoc is imported
 import { db } from '../../firebase';
 import Post from '../Posts/Post';
 import styles from './Timeline.module.css';
