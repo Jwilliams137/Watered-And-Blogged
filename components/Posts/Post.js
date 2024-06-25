@@ -72,10 +72,23 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
         </div>
       ) : (
         <div>
+          <div className={styles.postHeader}>
+            {post.authorProfilePicture ? (
+              <img
+                src={post.authorProfilePicture}
+                alt={`${post.author}'s profile`}
+                className={styles.profilePicture}
+              />
+            ) : (
+              <div className={styles.defaultProfilePicture}></div>
+            )}
+            <div className={styles.authorInfo}>
+              <small>Posted by: {post.author}</small>
+            </div>
+          </div>
           <h2>{post.title}</h2>
           <p>{post.content}</p>
           {post.imageUrl && <img src={post.imageUrl} alt="Posted" style={{ maxWidth: '100%' }} />}
-          <small>Posted by: {post.author}</small>
           {currentUser && post.authorId === currentUser.uid && (
             <>
               <button onClick={() => setEditing(true)} disabled={loading}>
@@ -93,12 +106,3 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
 };
 
 export default Post;
-
-
-
-
-
-
-
-
-

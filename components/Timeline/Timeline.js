@@ -30,10 +30,13 @@ const Timeline = () => {
       }
 
       const snapshot = await getDocs(q);
-      const newPosts = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
+      const newPosts = snapshot.docs.map(docSnapshot => {
+        const postData = docSnapshot.data();
+        return {
+          id: docSnapshot.id,
+          ...postData
+        };
+      });
 
       if (snapshot.docs.length > 0) {
         setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
@@ -57,12 +60,14 @@ const Timeline = () => {
   };
 
   const handlePostUpdated = (postId, newTitle, newContent, newImageUrl) => {
-    setPosts(prevPosts => prevPosts.map(post =>
-      post.id === postId ? { ...post, title: newTitle, content: newContent, imageUrl: newImageUrl } : post
-    ));
+    setPosts(prevPosts =>
+      prevPosts.map(post =>
+        post.id === postId ? { ...post, title: newTitle, content: newContent, imageUrl: newImageUrl } : post
+      )
+    );
   };
 
-  const handleDeletePost = async (postId) => {
+  const handleDeletePost = async postId => {
     setLoading(true);
     try {
       await deleteDoc(doc(db, 'posts', postId));
@@ -78,18 +83,27 @@ const Timeline = () => {
   return (
     <div className={styles.timeline}>
       {posts.map(post => (
-        <Post key={post.id} post={post} onPostUpdated={handlePostUpdated} onDeletePost={handleDeletePost} />
+        <Post
+          key={post.id}
+          post={post}
+          onPostUpdated={handlePostUpdated}
+          onDeletePost={handleDeletePost}
+        />
       ))}
       {loading && <p>Loading...</p>}
       {error && <p className={styles.error}>{error}</p>}
       {!loading && lastVisible && (
-        <button onClick={loadMore} className={styles.loadMore}>Load More</button>
+        <button onClick={loadMore} className={styles.loadMore}>
+          Load More
+        </button>
       )}
     </div>
   );
 };
 
 export default Timeline;
+
+
 
 
 

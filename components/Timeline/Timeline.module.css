@@ -1,3 +1,12 @@
 .timeline {
     text-align: center;
-}
+  }
+  
+  .error {
+    color: red;
+  }
+  
+  .loadMore {
+    margin-top: 20px;
+  }
+  
