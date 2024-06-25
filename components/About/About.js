@@ -3,7 +3,7 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { auth, db, storage } from '../../firebase';
 import NextImage from 'next/image';
-import ProfileImageUpload from '../ImageUpload/ProfileImageUpload'; // Import ProfileImageUpload component
+import ProfileImageUpload from '../ImageUpload/ProfileImageUpload';
 import styles from './About.module.css';
 
 const About = () => {
@@ -12,6 +12,7 @@ const About = () => {
     const [profilePictureFile, setProfilePictureFile] = useState(null);
     const [imagePreview, setImagePreview] = useState('');
     const [uploadProgress, setUploadProgress] = useState(0);
+    const [croppedImageFile, setCroppedImageFile] = useState(null);
 
     useEffect(() => {
         const fetchAboutMe = async () => {
@@ -39,9 +40,11 @@ const About = () => {
         if (!auth.currentUser) return;
 
         let imageUrl = profilePictureUrl;
-        if (profilePictureFile) {
-            const storageRef = ref(storage, `profilePictures/${auth.currentUser.uid}/${profilePictureFile.name}`);
-            const uploadTask = uploadBytesResumable(storageRef, profilePictureFile);
+        const fileToUpload = croppedImageFile || profilePictureFile; // Use cropped image if available
+
+        if (fileToUpload) {
+            const storageRef = ref(storage, `profilePictures/${auth.currentUser.uid}/${fileToUpload.name}`);
+            const uploadTask = uploadBytesResumable(storageRef, fileToUpload);
 
             try {
                 await new Promise((resolve, reject) => {
@@ -70,9 +73,10 @@ const About = () => {
         try {
             const userRef = doc(db, 'users', auth.currentUser.uid);
             await setDoc(userRef, { aboutMe, profilePicture: imageUrl }, { merge: true });
-            setProfilePictureUrl(imageUrl); // Update profile picture URL state
-            setProfilePictureFile(null); // Clear the file input state
-            setImagePreview(''); // Clear the image preview
+            setProfilePictureUrl(imageUrl);
+            setProfilePictureFile(null);
+            setImagePreview('');
+            setCroppedImageFile(null); // Clear the cropped image file state
         } catch (error) {
             console.error('Error updating About Me:', error);
         }
@@ -91,6 +95,7 @@ const About = () => {
                     setImageFile={handleFileChange}
                     imagePreview={imagePreview}
                     setImagePreview={setImagePreview}
+                    setCroppedImageFile={setCroppedImageFile} // Pass down the setter for cropped image file
                 />
                 {uploadProgress > 0 && <p>Upload Progress: {uploadProgress.toFixed(2)}%</p>}
                 <button type="submit">Save</button>
@@ -114,12 +119,6 @@ const About = () => {
 };
 
 export default About;
-
-
-
-
-
-
 
 
 

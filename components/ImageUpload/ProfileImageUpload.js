@@ -1,13 +1,13 @@
 import React, { useState, useCallback } from 'react';
 import Cropper from 'react-easy-crop';
-import getCroppedImg from '../../utils/getCroppedImg'; // Utility function to get cropped image
+import getCroppedImg from '../../utils/getCroppedImg';
 import styles from './ProfileImageUpload.module.css';
 
-const ProfileImageUpload = ({ setImageFile, imagePreview, setImagePreview }) => {
+const ProfileImageUpload = ({ setImageFile, imagePreview, setImagePreview, setCroppedImageFile }) => {
     const [loading, setLoading] = useState(false);
     const [crop, setCrop] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(1);
-    const [croppedImage, setCroppedImage] = useState(null); // State to hold the cropped image blob
+    const [croppedImage, setCroppedImage] = useState(null);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
 
     const handleFileChange = async (e) => {
@@ -19,7 +19,8 @@ const ProfileImageUpload = ({ setImageFile, imagePreview, setImagePreview }) => 
             setImagePreview(imageUrl);
             setImageFile(file);
             setLoading(false);
-            setCroppedImage(null); // Reset cropped image state when new image is selected
+            setCroppedImage(null);
+            setCroppedImageFile(null); // Reset the cropped image file state
         }
     };
 
@@ -31,12 +32,12 @@ const ProfileImageUpload = ({ setImageFile, imagePreview, setImagePreview }) => 
         try {
             const croppedImageBlob = await getCroppedImg(imagePreview, croppedAreaPixels);
             setCroppedImage(croppedImageBlob);
+            setCroppedImageFile(croppedImageBlob); // Pass the cropped image blob to the parent component
         } catch (error) {
             console.error('Error cropping image:', error);
         }
-    }, [croppedAreaPixels, imagePreview]);
+    }, [croppedAreaPixels, imagePreview, setCroppedImageFile]);
 
-    // Function to calculate a consistent preview size
     const calculatePreviewSize = () => {
         const previewSize = Math.min(200, Math.max(croppedAreaPixels.width, croppedAreaPixels.height));
         return {
@@ -87,6 +88,7 @@ const ProfileImageUpload = ({ setImageFile, imagePreview, setImagePreview }) => 
 };
 
 export default ProfileImageUpload;
+
 
 
 
