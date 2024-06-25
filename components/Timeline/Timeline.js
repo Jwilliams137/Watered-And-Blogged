@@ -1,5 +1,7 @@
+// Timeline.js
+
 import React, { useState, useEffect } from 'react';
-import { collection, query, orderBy, limit, startAfter, getDocs, where, deleteDoc, doc } from 'firebase/firestore';
+import { collection, query, orderBy, limit, startAfter, getDocs, doc, getDoc } from 'firebase/firestore'; // Ensure getDoc is imported
 import { db } from '../../firebase';
 import Post from '../Posts/Post';
 import styles from './Timeline.module.css';
@@ -21,7 +23,6 @@ const Timeline = () => {
       let q = query(
         collection(db, 'posts'),
         orderBy('createdAt', 'desc'),
-        where('approved', '==', true),
         limit(10)
       );
 
@@ -30,13 +31,16 @@ const Timeline = () => {
       }
 
       const snapshot = await getDocs(q);
-      const newPosts = snapshot.docs.map(docSnapshot => {
+      const newPosts = await Promise.all(snapshot.docs.map(async docSnapshot => {
         const postData = docSnapshot.data();
+        const userDoc = await getDoc(doc(db, 'users', postData.authorId));
+        const userProfile = userDoc.data();
         return {
           id: docSnapshot.id,
-          ...postData
+          ...postData,
+          authorProfilePicture: userProfile?.profilePicture
         };
-      });
+      }));
 
       if (snapshot.docs.length > 0) {
         setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
@@ -68,15 +72,12 @@ const Timeline = () => {
   };
 
   const handleDeletePost = async postId => {
-    setLoading(true);
     try {
       await deleteDoc(doc(db, 'posts', postId));
       setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
     } catch (error) {
       console.error('Error deleting post: ', error);
-      setError('Failed to delete post. Please try again later.');
-    } finally {
-      setLoading(false);
+      // Handle error state
     }
   };
 
@@ -102,6 +103,10 @@ const Timeline = () => {
 };
 
 export default Timeline;
+
+
+
+
 
 
 
