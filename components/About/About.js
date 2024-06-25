@@ -9,13 +9,15 @@ import styles from './About.module.css';
 const About = () => {
     const [aboutMe, setAboutMe] = useState('');
     const [profilePictureUrl, setProfilePictureUrl] = useState('');
+    const [username, setUsername] = useState('');
     const [profilePictureFile, setProfilePictureFile] = useState(null);
     const [imagePreview, setImagePreview] = useState('');
     const [uploadProgress, setUploadProgress] = useState(0);
     const [croppedImageFile, setCroppedImageFile] = useState(null);
+    const [editMode, setEditMode] = useState(false);
 
     useEffect(() => {
-        const fetchAboutMe = async () => {
+        const fetchUserData = async () => {
             if (auth.currentUser) {
                 const docRef = doc(db, 'users', auth.currentUser.uid);
                 const docSnap = await getDoc(docRef);
@@ -23,11 +25,12 @@ const About = () => {
                     const data = docSnap.data();
                     setAboutMe(data.aboutMe || '');
                     setProfilePictureUrl(data.profilePicture || '');
+                    setUsername(data.username || '');
                 }
             }
         };
 
-        fetchAboutMe();
+        fetchUserData();
     }, []);
 
     const handleFileChange = (file) => {
@@ -40,7 +43,7 @@ const About = () => {
         if (!auth.currentUser) return;
 
         let imageUrl = profilePictureUrl;
-        const fileToUpload = croppedImageFile || profilePictureFile; // Use cropped image if available
+        const fileToUpload = croppedImageFile || profilePictureFile;
 
         if (fileToUpload) {
             const storageRef = ref(storage, `profilePictures/${auth.currentUser.uid}/${fileToUpload.name}`);
@@ -76,7 +79,8 @@ const About = () => {
             setProfilePictureUrl(imageUrl);
             setProfilePictureFile(null);
             setImagePreview('');
-            setCroppedImageFile(null); // Clear the cropped image file state
+            setCroppedImageFile(null);
+            setEditMode(false);
         } catch (error) {
             console.error('Error updating About Me:', error);
         }
@@ -84,35 +88,44 @@ const About = () => {
 
     return (
         <div>
-            <h1>About Me</h1>
-            <form onSubmit={handleSubmit}>
-                <textarea
-                    value={aboutMe}
-                    onChange={(e) => setAboutMe(e.target.value)}
-                    placeholder="Tell us about yourself"
-                />
-                <ProfileImageUpload
-                    setImageFile={handleFileChange}
-                    imagePreview={imagePreview}
-                    setImagePreview={setImagePreview}
-                    setCroppedImageFile={setCroppedImageFile} // Pass down the setter for cropped image file
-                />
-                {uploadProgress > 0 && <p>Upload Progress: {uploadProgress.toFixed(2)}%</p>}
-                <button type="submit">Save</button>
-            </form>
-            {profilePictureUrl && (
+            {!editMode ? (
                 <div>
-                    <h2>Profile Picture</h2>
-                    <div className={styles.profilePictureContainer}>
-                        <NextImage
-                            src={profilePictureUrl}
-                            alt="Profile Picture"
-                            width={100}
-                            height={100}
-                            className={styles.profilePicture}
-                        />
-                    </div>
+                    <h1>Welcome, {username}</h1>
+                    {profilePictureUrl ? (
+                        <div className={styles.profilePictureContainer}>
+                            <NextImage
+                                src={profilePictureUrl}
+                                alt="Profile Picture"
+                                width={100}
+                                height={100}
+                                className={styles.profilePicture}
+                            />
+                        </div>
+                    ) : (
+                        <div
+                            className={`${styles.profilePictureContainer} ${styles.defaultProfilePicture}`}
+                        ></div>
+                    )}
+                    <p>{aboutMe || 'Tell us about yourself'}</p>
+                    <button onClick={() => setEditMode(true)}>Edit</button>
                 </div>
+            ) : (
+                <form onSubmit={handleSubmit}>
+                    <textarea
+                        value={aboutMe}
+                        onChange={(e) => setAboutMe(e.target.value)}
+                        placeholder="Tell us about yourself"
+                    />
+                    <ProfileImageUpload
+                        setImageFile={handleFileChange}
+                        imagePreview={imagePreview}
+                        setImagePreview={setImagePreview}
+                        setCroppedImageFile={setCroppedImageFile}
+                    />
+                    {uploadProgress > 0 && <p>Upload Progress: {uploadProgress.toFixed(2)}%</p>}
+                    <button type="submit">Save</button>
+                    <button type="button" onClick={() => setEditMode(false)}>Cancel</button>
+                </form>
             )}
         </div>
     );
