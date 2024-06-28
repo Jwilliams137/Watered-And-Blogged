@@ -35,5 +35,12 @@
 
   .edit {
     text-align: right;
+    margin-right: 10px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .post {
+        background-color: rgb(40, 40, 41);
+    }
   }
   
