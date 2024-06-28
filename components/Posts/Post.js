@@ -83,22 +83,24 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
               <div className={styles.defaultProfilePicture}></div>
             )}
             <div className={styles.authorInfo}>
-              <small>Posted by: {post.author}</small>
+              <small>{post.author}</small>
             </div>
           </div>
           <h2>{post.title}</h2>
-          <p>{post.content}</p>
+          
           {post.imageUrl && <img src={post.imageUrl} alt="Posted" style={{ maxWidth: '100%' }} />}
+          
           {currentUser && post.authorId === currentUser.uid && (
-            <>
+            <div className={styles.edit}>
               <button onClick={() => setEditing(true)} disabled={loading}>
                 Edit
               </button>
               <button onClick={handleDelete} disabled={loading}>
                 Delete
               </button>
-            </>
+            </div>
           )}
+          <p>{post.content}</p>
         </div>
       )}
     </div>

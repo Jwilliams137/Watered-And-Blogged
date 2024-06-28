@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "browser-image-compression": "^2.0.2",
+    "dotenv": "^16.4.5",
     "firebase": "^10.12.2",
+    "firebase-admin": "^12.2.0",
     "image-compressor": "^2.0.3",
     "next": "14.2.4",
     "next-auth": "^4.24.7",

@@ -90,7 +90,6 @@ const About = () => {
         <div>
             {!editMode ? (
                 <div>
-                    <h1>Welcome, {username}</h1>
                     {profilePictureUrl ? (
                         <div className={styles.profilePictureContainer}>
                             <NextImage

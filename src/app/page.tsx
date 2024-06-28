@@ -13,13 +13,6 @@ export default function Home() {
 
   return (
     <main className={styles.main}>
-      <div>
-        {user && (
-          <div className={styles.welcome}>
-            <h1>Welcome, {user?.displayName}</h1>
-          </div>
-        ) }
-      </div>
       <Timeline />
     </main>
   )

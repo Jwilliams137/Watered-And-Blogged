@@ -23,14 +23,22 @@ const Timeline = () => {
         orderBy('createdAt', 'desc'),
         limit(10)
       );
-
+  
       if (lastVisible) {
         q = query(q, startAfter(lastVisible));
       }
-
+  
       const snapshot = await getDocs(q);
       const newPosts = await Promise.all(snapshot.docs.map(async docSnapshot => {
         const postData = docSnapshot.data();
+        console.log('Fetched post data:', postData);
+  
+        // Check if the post is approved
+        if (!postData.approved) {
+          console.log('Post is not approved:', docSnapshot.id);
+          return null;
+        }
+  
         const userDoc = await getDoc(doc(db, 'users', postData.authorId));
         const userProfile = userDoc.data();
         return {
@@ -39,12 +47,14 @@ const Timeline = () => {
           authorProfilePicture: userProfile?.profilePicture
         };
       }));
-
-      if (snapshot.docs.length > 0) {
+  
+      const filteredPosts = newPosts.filter(post => post !== null);
+  
+      if (filteredPosts.length > 0) {
         setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
         setPosts(prevPosts => {
-          const filteredPosts = newPosts.filter(newPost => !prevPosts.some(prevPost => prevPost.id === newPost.id));
-          return [...prevPosts, ...filteredPosts];
+          const filteredPostsUnique = filteredPosts.filter(newPost => !prevPosts.some(prevPost => prevPost.id === newPost.id));
+          return [...prevPosts, ...filteredPostsUnique];
         });
       } else {
         setLastVisible(null);
@@ -56,6 +66,9 @@ const Timeline = () => {
       setLoading(false);
     }
   };
+  
+  
+  
 
   const loadMore = () => {
     fetchPosts();

@@ -1,5 +1,8 @@
 .post {
-    padding: 30px 0px;
+    padding: 15px 0px;
+    background-color: rgb(233, 231, 229);
+    margin: 30px 0px;
+    border-radius: .7%;
   }
   
   .postHeader {
@@ -13,7 +16,7 @@
     height: 40px;
     border-radius: 50%;
     object-fit: cover;
-    margin-right: 10px;
+    margin-left: 10px;
   }
   
   .defaultProfilePicture {
@@ -21,11 +24,16 @@
     height: 40px;
     border-radius: 50%;
     background-color: gray;
-    margin-right: 10px;
+    margin-left: 10px;
   }
   
   .authorInfo {
     display: flex;
     flex-direction: column;
+    margin-left: 10px;
+  }
+
+  .edit {
+    text-align: right;
   }
   

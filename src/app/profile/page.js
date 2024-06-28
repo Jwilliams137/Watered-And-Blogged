@@ -29,8 +29,8 @@ const ProfilePage = () => {
     return (
         <div className={styles.profilePage}>
             {user ? (
-                <div className={styles.welcome}>
-                    <h1>Welcome, {user.displayName}</h1>
+                <div>
+                    <h1 className={styles.welcome}>{user.displayName}</h1>
                     <About />
                     <Wall />
                 </div>
