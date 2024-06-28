@@ -41,6 +41,7 @@
   @media (prefers-color-scheme: dark) {
     .post {
         background-color: rgb(40, 40, 41);
+        color: white;
     }
   }
   
