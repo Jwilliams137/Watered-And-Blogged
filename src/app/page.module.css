@@ -2,6 +2,12 @@
     padding: 60px 30px;
 }
 
+.constructionwelcome {
+    font-size: 50px;
+    text-align: center;
+    margin: 50px 0px;
+}
+
 @media screen and (max-width: 800px) {
     .main {
         padding: 30px 10px;
