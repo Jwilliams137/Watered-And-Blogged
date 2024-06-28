@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, query, orderBy, limit, startAfter, getDocs, doc, getDoc, deleteDoc } from 'firebase/firestore'; // Ensure deleteDoc is imported
+import { collection, query, orderBy, limit, startAfter, getDocs, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import Post from '../Posts/Post';
 import styles from './Timeline.module.css';
@@ -33,9 +33,9 @@ const Timeline = () => {
         const postData = docSnapshot.data();
         console.log('Fetched post data:', postData);
   
-        // Check if the post is approved
-        if (!postData.approved) {
-          console.log('Post is not approved:', docSnapshot.id);
+        // Check if the post is approved and public
+        if (!postData.approved || postData.visibility !== 'public') {
+          console.log('Post is not approved or not public:', docSnapshot.id);
           return null;
         }
   
@@ -67,29 +67,16 @@ const Timeline = () => {
     }
   };
   
-  
-  
-
   const loadMore = () => {
     fetchPosts();
   };
 
-  const handlePostUpdated = (postId, newTitle, newContent, newImageUrl) => {
+  const handlePostUpdated = (postId, newTitle, newContent, newImageUrl, newVisibility) => {
     setPosts(prevPosts =>
       prevPosts.map(post =>
-        post.id === postId ? { ...post, title: newTitle, content: newContent, imageUrl: newImageUrl } : post
+        post.id === postId ? { ...post, title: newTitle, content: newContent, imageUrl: newImageUrl, visibility: newVisibility } : post
       )
     );
-  };
-
-  const handleDeletePost = async postId => {
-    try {
-      await deleteDoc(doc(db, 'posts', postId));
-      setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
-    } catch (error) {
-      console.error('Error deleting post: ', error);
-      // Handle error state
-    }
   };
 
   return (
@@ -99,7 +86,6 @@ const Timeline = () => {
           key={post.id}
           post={post}
           onPostUpdated={handlePostUpdated}
-          onDeletePost={handleDeletePost}
         />
       ))}
       {loading && <p>Loading...</p>}
@@ -114,6 +100,7 @@ const Timeline = () => {
 };
 
 export default Timeline;
+
 
 
 

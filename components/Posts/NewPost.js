@@ -11,6 +11,7 @@ const NewPost = ({ onPostCreated }) => {
     const [imageFile, setImageFile] = useState(null);
     const [uploadProgress, setUploadProgress] = useState(0);
     const [imagePreview, setImagePreview] = useState('');
+    const [visibility, setVisibility] = useState('private'); // Added state for visibility
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -52,7 +53,7 @@ const NewPost = ({ onPostCreated }) => {
                 author: auth.currentUser.displayName,
                 authorId: auth.currentUser.uid,
                 createdAt: new Date(),
-                visibility: 'private',
+                visibility,
                 approved: false,
             };
 
@@ -64,6 +65,7 @@ const NewPost = ({ onPostCreated }) => {
                 setImageFile(null);
                 setUploadProgress(0);
                 setImagePreview('');
+                setVisibility('private'); // Reset visibility to default
             } catch (error) {
                 console.error('Error creating post: ', error);
             }
@@ -87,6 +89,26 @@ const NewPost = ({ onPostCreated }) => {
                 ></textarea>
                 <ImageUpload setImageFile={setImageFile} imagePreview={imagePreview} setImagePreview={setImagePreview} />
                 {uploadProgress > 0 && <p>Upload Progress: {uploadProgress.toFixed(2)}%</p>}
+                <div className={styles.visibility}>
+                    <label>
+                        <input
+                            type="radio"
+                            value="public"
+                            checked={visibility === 'public'}
+                            onChange={() => setVisibility('public')}
+                        />
+                        Public
+                    </label>
+                    <label>
+                        <input
+                            type="radio"
+                            value="private"
+                            checked={visibility === 'private'}
+                            onChange={() => setVisibility('private')}
+                        />
+                        Private
+                    </label>
+                </div>
             </div>
             <button type="submit" className={styles.button}>Post</button>
         </form>
@@ -94,6 +116,8 @@ const NewPost = ({ onPostCreated }) => {
 };
 
 export default NewPost;
+
+
 
 
 

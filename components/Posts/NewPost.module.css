@@ -5,7 +5,8 @@
 
 .fields {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
 }
 
 .button {
@@ -21,4 +22,16 @@
 .button:hover {
     background-color: chartreuse;
     box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
+.visibility {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.visibility label {
+    font-weight: bold;
+    color: rgb(2, 48, 48);
 }

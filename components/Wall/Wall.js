@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, query, where, orderBy, limit, startAfter, onSnapshot, deleteDoc, updateDoc, doc, getDoc } from 'firebase/firestore';
+import { collection, query, where, orderBy, limit, startAfter, onSnapshot, deleteDoc, doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../../firebase';
 import Post from '../Posts/Post';
 import NewPost from '../Posts/NewPost';
@@ -70,9 +70,9 @@ const Wall = () => {
     });
   };
 
-  const handlePostUpdated = (postId, newTitle, newContent) => {
+  const handlePostUpdated = (postId, newTitle, newContent, newImageUrl, newVisibility) => {
     setPosts((prevPosts) => prevPosts.map(post =>
-      post.id === postId ? { ...post, title: newTitle, content: newContent } : post
+      post.id === postId ? { ...post, title: newTitle, content: newContent, imageUrl: newImageUrl, visibility: newVisibility } : post
     ));
   };
 
@@ -105,6 +105,7 @@ const Wall = () => {
 };
 
 export default Wall;
+
 
 
 

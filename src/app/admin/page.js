@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react';
-import { collection, query, orderBy, limit, startAfter, getDocs, updateDoc, doc, getDoc } from 'firebase/firestore';
+import { collection, query, orderBy, limit, startAfter, getDocs, updateDoc, doc } from 'firebase/firestore';
 import { db } from '../../../firebase';
 import styles from './page.module.css';
 
@@ -27,29 +27,37 @@ const AdminPage = () => {
             const newPosts = await Promise.all(snapshot.docs.map(async (docSnapshot) => {
                 const postData = docSnapshot.data();
 
-                // Fetch user profile data
-                const userDocRef = doc(db, 'users', postData.authorId);
-                const userDoc = await getDoc(userDocRef);
+                // Only include posts that are public and approved
+                if (postData.visibility === 'public' && postData.approved) {
+                    // Fetch user profile data
+                    const userDocRef = doc(db, 'users', postData.authorId);
+                    const userDoc = await getDoc(userDocRef);
 
-                if (userDoc.exists()) {
-                    const userProfile = userDoc.data();
-                    return {
-                        id: docSnapshot.id,
-                        ...postData,
-                        authorProfilePicture: userProfile?.profilePicture || null
-                    };
+                    if (userDoc.exists()) {
+                        const userProfile = userDoc.data();
+                        return {
+                            id: docSnapshot.id,
+                            ...postData,
+                            authorProfilePicture: userProfile?.profilePicture || null
+                        };
+                    } else {
+                        console.warn(`User document not found for authorId: ${postData.authorId}`);
+                        return {
+                            id: docSnapshot.id,
+                            ...postData,
+                            authorProfilePicture: null
+                        };
+                    }
                 } else {
-                    console.warn(`User document not found for authorId: ${postData.authorId}`);
-                    return {
-                        id: docSnapshot.id,
-                        ...postData,
-                        authorProfilePicture: null
-                    };
+                    return null; // Skip posts that are not public or not approved
                 }
             }));
 
+            // Filter out null entries (posts that are not public or not approved)
+            const filteredPosts = newPosts.filter(post => post !== null);
+
             setPosts(prevPosts => {
-                return lastVisible ? [...prevPosts, ...newPosts] : newPosts;
+                return lastVisible ? [...prevPosts, ...filteredPosts] : filteredPosts;
             });
 
             if (snapshot.docs.length > 0) {
@@ -116,6 +124,8 @@ const AdminPage = () => {
 };
 
 export default AdminPage;
+
+
 
 
 
