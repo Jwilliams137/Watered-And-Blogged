@@ -9,20 +9,29 @@
 }
 
 .login {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 50px;
+    display: none;
+}
+
+@media screen and (max-width: 1000px) {
+    .main {
+        padding: 30px 10px;
+    }
+
+    .login {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 50px;
+    }
 }
 
 @media screen and (max-width: 800px) {
     .main {
         padding: 30px 10px;
     }
-  }
+}
 
-  @media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: dark) {
     .main {
         color: white;
     }
-  }
-  
+}
