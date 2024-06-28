@@ -5,7 +5,7 @@ import styles from './Login.module.css'
 
 const Login = () => {
     return (
-        <div className={styles.loginContainer}>
+        <div>
             <button className={styles.googleButton} onClick={signInWithGoogle}>
                 Sign in with Google
             </button>
