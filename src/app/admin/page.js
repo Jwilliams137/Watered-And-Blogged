@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react';
-import { collection, query, where, orderBy, limit, startAfter, getDocs, updateDoc, doc, getDoc } from 'firebase/firestore';
+import { collection, query, orderBy, limit, startAfter, getDocs, updateDoc, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../firebase';
 import styles from './page.module.css';
 
@@ -17,7 +17,7 @@ const AdminPage = () => {
         try {
             setLoading(true);
 
-            let q = query(collection(db, 'posts'), where('approved', '==', false), orderBy('createdAt', 'desc'), limit(10));
+            let q = query(collection(db, 'posts'), orderBy('createdAt', 'desc'), limit(10));
 
             if (lastVisible) {
                 q = query(q, startAfter(lastVisible));
@@ -116,6 +116,7 @@ const AdminPage = () => {
 };
 
 export default AdminPage;
+
 
 
 
