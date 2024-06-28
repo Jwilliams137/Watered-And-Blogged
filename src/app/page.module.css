@@ -16,7 +16,6 @@
 
   @media (prefers-color-scheme: dark) {
     .main {
-        background-color: rgb(40, 40, 41);
         color: white;
     }
   }
