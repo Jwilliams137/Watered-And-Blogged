@@ -14,7 +14,7 @@ export default function Home() {
   return (
     <main className={styles.main}>
       {!user && (
-        <div className={styles.constructionwelcome}>Public posts coming soon for non-signed in users to see!  For now please sign in to see and share!</div>
+        <div className={styles.constructionwelcome}>Public posts coming soon!  For now please sign in to see and share!</div>
       )}
       <Timeline />
     </main>
