@@ -56,6 +56,7 @@ function Nav() {
                 </div>
 
                 <div className={`${styles.rightNav} ${isMenuOpen ? styles.open : ''}`}>
+
                     {user ? (
                         <>
                             <Link href="/" className={styles.link} onClick={closeMenu}>
@@ -74,7 +75,7 @@ function Nav() {
                             </p>
                         </>
                     ) : (
-                        <div className={styles.link} onClick={closeMenu}>
+                        <div className={styles.link} onClick={closeMenu}>                            
                             <Login />
                         </div>
                     )}
