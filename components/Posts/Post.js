@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { updateDoc, doc } from 'firebase/firestore';
+import React, { useState, useEffect } from 'react';
+import { updateDoc, deleteDoc, doc, getDoc } from 'firebase/firestore';
 import { db, auth } from '../../firebase';
 import styles from './Post.module.css';
 
@@ -10,6 +10,28 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
     const [newImageUrl, setNewImageUrl] = useState(post.imageUrl);
     const [newVisibility, setNewVisibility] = useState(post.visibility); // Added state for visibility
     const [loading, setLoading] = useState(false);
+    const [authorProfilePicture, setAuthorProfilePicture] = useState(null); // State to hold author's profile picture URL
+
+    useEffect(() => {
+        // Fetch author's profile picture URL when component mounts
+        fetchAuthorProfilePicture(post.authorId);
+    }, [post.authorId]);
+
+    const fetchAuthorProfilePicture = async (authorId) => {
+        try {
+            const userDoc = await getDoc(doc(db, 'users', authorId));
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+                setAuthorProfilePicture(userData.profilePicture);
+            } else {
+                console.error(`User with ID ${authorId} not found.`);
+                setAuthorProfilePicture(null); // Set to null if user not found (handle accordingly in UI)
+            }
+        } catch (error) {
+            console.error('Error fetching author profile picture:', error);
+            setAuthorProfilePicture(null); // Set to null on error (handle accordingly in UI)
+        }
+    };
 
     const currentUser = auth.currentUser;
 
@@ -96,6 +118,20 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
                 </div>
             ) : (
                 <div>
+                    <div className={styles.postHeader}>
+                        {authorProfilePicture ? (
+                            <img
+                                src={authorProfilePicture}
+                                alt={`${post.author}'s profile`}
+                                className={styles.profilePicture}
+                            />
+                        ) : (
+                            <div className={styles.defaultProfilePicture}></div>
+                        )}
+                        <div className={styles.authorInfo}>
+                            <small>{post.author}</small>
+                        </div>
+                    </div>
                     <h2>{post.title}</h2>
                     {post.imageUrl && <img src={post.imageUrl} alt="Posted" style={{ maxWidth: '100%' }} />}
                     {currentUser && post.authorId === currentUser.uid && (
@@ -116,3 +152,4 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
 };
 
 export default Post;
+

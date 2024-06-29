@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react';
-import { collection, query, where, orderBy, limit, startAfter, getDocs, updateDoc, doc } from 'firebase/firestore';
+import { collection, query, where, orderBy, limit, startAfter, getDocs, updateDoc, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../firebase';
 import styles from './page.module.css';
 
@@ -28,14 +28,21 @@ const AdminPage = () => {
             }
 
             const snapshot = await getDocs(q);
-            const newPosts = snapshot.docs.map(docSnapshot => {
+            const newPosts = await Promise.all(snapshot.docs.map(async (docSnapshot) => {
                 const postData = docSnapshot.data();
+                const authorId = postData.authorId;
+
+                // Fetch user data to get profilePicture
+                const authorDoc = await getDoc(doc(db, 'users', authorId));
+                const authorData = authorDoc.data();
 
                 return {
                     id: docSnapshot.id,
                     ...postData,
+                    author: postData.author, // Assuming 'author' field in posts collection contains author name
+                    profilePicture: authorData.profilePicture, // Assuming 'profilePicture' field in users collection
                 };
-            });
+            }));
 
             setPosts(prevPosts => {
                 return lastVisible ? [...prevPosts, ...newPosts] : newPosts;
@@ -75,7 +82,13 @@ const AdminPage = () => {
             <ul>
                 {posts.map(post => (
                     <li key={post.id}>
-                        <h2>{post.title}</h2>
+                        <div className={styles.postHeader}>
+                            <h2>{post.title}</h2>
+                            {post.profilePicture && (
+                                <img src={post.profilePicture} alt="Author's profile" className={styles.profilePicture} />
+                            )}
+                            <p>{post.author}</p> {/* Displaying author from posts collection */}
+                        </div>
                         <p>{post.content}</p>
                         {post.imageUrl && <img src={post.imageUrl} alt="Post image" className={styles.image} />}
                         {!post.approved && (
@@ -93,6 +106,11 @@ const AdminPage = () => {
 };
 
 export default AdminPage;
+
+
+
+
+
 
 
 
