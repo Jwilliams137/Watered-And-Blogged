@@ -77,13 +77,14 @@ function PrivacyPolicyPage() {
       </p>
       
       <h2>Terms of Service (TOS)</h2>
-      <ul>
-        <li>User Responsibilities: Define user responsibilities, such as accurate account information and compliance with community guidelines.</li>
-        <li>Intellectual Property: Outline ownership rights of content posted on your platform.</li>
-        <li>Prohibited Activities: List prohibited activities, such as spamming, unauthorized access, or content that violates intellectual property rights.</li>
-        <li>Limitation of Liability: Limit your liability in cases of service interruptions, data loss, or damages arising from the use of your platform.</li>
-        <li>Governing Law: Specify the governing law and jurisdiction for any disputes related to the use of your platform.</li>
-      </ul>
+<ul>
+  <li><strong>User Responsibilities:</strong> Users are responsible for maintaining accurate account information and complying with community guidelines.</li>
+  <li><strong>Intellectual Property:</strong> Users retain ownership rights to the content they post on our platform. By posting content, users grant us a non-exclusive, royalty-free license to use, modify, and distribute the content solely for the purpose of operating and promoting the platform.</li>
+  <li><strong>Prohibited Activities:</strong> Users must not engage in spamming, unauthorized access to accounts or systems, or post content that infringes intellectual property rights, violates privacy, or promotes illegal activities.</li>
+  <li><strong>Limitation of Liability:</strong> We are not liable for any interruptions of service, data loss, or damages arising from the use of our platform, except where prohibited by law.</li>
+</ul>
+
+
     </div>
   );
 }
