@@ -3,6 +3,7 @@ import styles from "./page.module.css"
 import Login from "../../components/Login/Login"
 import useAuth from "../../hooks/useAuth"
 import Timeline from "../../components/Timeline/Timeline"
+import NewPost from "../../components/Posts/NewPost"
 
 export default function Home() {
   const { user = { displayName: '' }, loading } = useAuth()
@@ -16,6 +17,11 @@ export default function Home() {
       {!user && (
         <div className={styles.login}>
           <Login />
+        </div>
+      )}
+      {user && (
+        <div>
+          <NewPost onPostCreated={undefined} />
         </div>
       )}
       <Timeline />
