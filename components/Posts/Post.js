@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 import { updateDoc, deleteDoc, doc, getDoc } from 'firebase/firestore';
 import { db, auth } from '../../firebase';
@@ -8,12 +9,11 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
     const [newTitle, setNewTitle] = useState(post.title);
     const [newContent, setNewContent] = useState(post.content);
     const [newImageUrl, setNewImageUrl] = useState(post.imageUrl);
-    const [newVisibility, setNewVisibility] = useState(post.visibility); // Added state for visibility
+    const [newVisibility, setNewVisibility] = useState(post.visibility);
     const [loading, setLoading] = useState(false);
-    const [authorProfilePicture, setAuthorProfilePicture] = useState(null); // State to hold author's profile picture URL
+    const [authorProfilePicture, setAuthorProfilePicture] = useState(null);
 
     useEffect(() => {
-        // Fetch author's profile picture URL when component mounts
         fetchAuthorProfilePicture(post.authorId);
     }, [post.authorId]);
 
@@ -21,15 +21,12 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
         try {
             const userDoc = await getDoc(doc(db, 'users', authorId));
             if (userDoc.exists()) {
-                const userData = userDoc.data();
-                setAuthorProfilePicture(userData.profilePicture);
+                setAuthorProfilePicture(userDoc.data().profilePicture);
             } else {
-                console.error(`User with ID ${authorId} not found.`);
-                setAuthorProfilePicture(null); // Set to null if user not found (handle accordingly in UI)
+                setAuthorProfilePicture(null);
             }
         } catch (error) {
-            console.error('Error fetching author profile picture:', error);
-            setAuthorProfilePicture(null); // Set to null on error (handle accordingly in UI)
+            setAuthorProfilePicture(null);
         }
     };
 
@@ -38,12 +35,11 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
     const handleEdit = async () => {
         setLoading(true);
         try {
-            const postRef = doc(db, 'posts', post.id);
-            await updateDoc(postRef, {
+            await updateDoc(doc(db, 'posts', post.id), {
                 title: newTitle,
                 content: newContent,
                 imageUrl: newImageUrl,
-                visibility: newVisibility, // Update visibility
+                visibility: newVisibility,
                 updatedAt: new Date(),
             });
             if (onPostUpdated) {
@@ -85,7 +81,7 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
                         value={newContent}
                         onChange={(e) => setNewContent(e.target.value)}
                         disabled={loading}
-                    ></textarea>
+                    />
                     {newImageUrl && <img src={newImageUrl} alt="Posted" style={{ maxWidth: '100%' }} />}
                     <div className={styles.visibility}>
                         <label>
@@ -129,7 +125,9 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
                             <div className={styles.defaultProfilePicture}></div>
                         )}
                         <div className={styles.authorInfo}>
-                            <small>{post.author}</small>
+                            <Link href={`/profile/${post.authorId}`}>
+                                <small>{post.author}</small>
+                            </Link>
                         </div>
                     </div>
                     <h2>{post.title}</h2>
@@ -152,4 +150,5 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
 };
 
 export default Post;
+
 
