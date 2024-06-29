@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { auth, db, storage } from '../../firebase';
-import Image from 'next/image';
 import ProfileImageUpload from '../ImageUpload/ProfileImageUpload';
 import styles from './About.module.css';
 
@@ -92,11 +91,9 @@ const About = () => {
                 <div>
                     {profilePictureUrl ? (
                         <div className={styles.profilePictureContainer}>
-                            <Image
+                            <img
                                 src={profilePictureUrl}
                                 alt="Profile Picture"
-                                width={100}
-                                height={100}
                                 className={styles.profilePicture}
                             />
                         </div>
