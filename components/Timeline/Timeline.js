@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, query, orderBy, limit, startAfter, getDocs, doc, getDoc } from 'firebase/firestore';
+import { collection, query, orderBy, limit, startAfter, getDocs, doc, getDoc, where } from 'firebase/firestore';
 import { db } from '../../firebase';
 import Post from '../Posts/Post';
 import styles from './Timeline.module.css';
@@ -20,25 +20,21 @@ const Timeline = () => {
     try {
       let q = query(
         collection(db, 'posts'),
+        where('visibility', '==', 'public'),
+        where('approved', '==', true),
         orderBy('createdAt', 'desc'),
         limit(10)
       );
-  
+
       if (lastVisible) {
         q = query(q, startAfter(lastVisible));
       }
-  
+
       const snapshot = await getDocs(q);
       const newPosts = await Promise.all(snapshot.docs.map(async docSnapshot => {
         const postData = docSnapshot.data();
         console.log('Fetched post data:', postData);
-  
-        // Check if the post is approved and public
-        if (!postData.approved || postData.visibility !== 'public') {
-          console.log('Post is not approved or not public:', docSnapshot.id);
-          return null;
-        }
-  
+
         const userDoc = await getDoc(doc(db, 'users', postData.authorId));
         const userProfile = userDoc.data();
         return {
@@ -47,9 +43,9 @@ const Timeline = () => {
           authorProfilePicture: userProfile?.profilePicture
         };
       }));
-  
+
       const filteredPosts = newPosts.filter(post => post !== null);
-  
+
       if (filteredPosts.length > 0) {
         setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
         setPosts(prevPosts => {
@@ -66,7 +62,7 @@ const Timeline = () => {
       setLoading(false);
     }
   };
-  
+
   const loadMore = () => {
     fetchPosts();
   };
@@ -100,6 +96,8 @@ const Timeline = () => {
 };
 
 export default Timeline;
+
+
 
 
 
