@@ -9,7 +9,7 @@ function Footer() {
     };
 
     // Generate the copyright statement
-    const copyrightStatement = `© ${getCurrentYear()} Your Company Name. All rights reserved.`;
+    const copyrightStatement = `© ${getCurrentYear()} Watered & Blogged. All rights reserved.`;
 
     return (
         <div className={styles.footer}>
