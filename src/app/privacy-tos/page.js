@@ -1,3 +1,5 @@
+// PrivacyPolicyPage.js
+
 import React from 'react';
 import Link from 'next/link';
 import styles from './page.module.css';
@@ -87,4 +89,5 @@ function PrivacyPolicyPage() {
 }
 
 export default PrivacyPolicyPage;
+
 

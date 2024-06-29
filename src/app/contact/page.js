@@ -1,6 +1,4 @@
 'use client'
-// ContactPage.js
-
 import { useState } from 'react';
 import styles from './page.module.css'; // Update with your CSS module path
 
@@ -41,7 +39,7 @@ const ContactPage = () => {
   if (submitted) {
     return (
       <div className={styles.contactForm}>
-        <p>Thank you for your message! We'll get back to you soon.</p>
+        <p>Thank you for your message! We&apos;ll get back to you soon.</p>
       </div>
     );
   }
@@ -80,6 +78,7 @@ const ContactPage = () => {
 };
 
 export default ContactPage;
+
 
 
 
