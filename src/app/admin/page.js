@@ -78,7 +78,9 @@ const AdminPage = () => {
                         <h2>{post.title}</h2>
                         <p>{post.content}</p>
                         {post.imageUrl && <img src={post.imageUrl} alt="Post image" className={styles.image} />}
-                        <button onClick={() => handleApprove(post.id)}>Approve</button>
+                        {!post.approved && (
+                            <button onClick={() => handleApprove(post.id)}>Approve</button>
+                        )}
                     </li>
                 ))}
             </ul>
@@ -91,6 +93,7 @@ const AdminPage = () => {
 };
 
 export default AdminPage;
+
 
 
 
