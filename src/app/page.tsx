@@ -24,7 +24,8 @@ export default function Home() {
           <NewPost onPostCreated={undefined} />
         </div>
       )}
-      <div>WELCOME!  This place it still under construction so you should expect it to change and break and get fixed and stuff for the time being</div>
+      <div className={styles.welcome}>WELCOME!</div>
+      <div className={styles.welcome}>This place is still under construction so you should expect it to change and break and get fixed and stuff for the time being</div>
       <Timeline />
     </main>
   )
