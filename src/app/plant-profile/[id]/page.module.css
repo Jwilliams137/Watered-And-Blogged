@@ -1,0 +1,15 @@
+/* pages/plant-profile/page.module.css */
+
+.plantProfile {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .plantImage {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    margin-top: 20px;
+  }
+  
