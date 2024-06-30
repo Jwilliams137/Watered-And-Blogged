@@ -1,38 +1,34 @@
 'use client';
+
 import { useEffect, useState } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../../../firebase'; // Adjust this path if needed
-import { useParams } from 'next/navigation'; // Import useParams
+import { db } from '../../../../../../firebase'; // Adjust the path as needed
+import { useRouter, useParams } from 'next/navigation'; // Import useParams
 
 const PlantProfilePage = () => {
-  const { id } = useParams(); // Use useParams to get dynamic route parameters
+  const { id: userId, plantId } = useParams(); // Use useParams to get dynamic route parameters
   const [plantData, setPlantData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchPlantData = async () => {
-      if (!id) {
+      if (!userId || !plantId) {
         setLoading(false);
-        setError('Plant ID not found in URL');
+        setError('User ID or Plant ID not found in URL');
         return;
       }
 
       try {
-        // Assuming 'userId' is known or passed through some context or prop
-        const userId = 'your-user-id-here'; // Replace with the actual user ID
-        console.log('Fetching plant data for userId:', userId, 'plantId:', id); // Log the userId and plantId
-        const plantRef = doc(db, `users/${userId}/plants`, id);
+        const plantRef = doc(db, `users/${userId}/plants/${plantId}`);
         const plantSnap = await getDoc(plantRef);
 
         if (plantSnap.exists()) {
-          console.log('Plant data:', plantSnap.data()); // Log the retrieved plant data
           setPlantData(plantSnap.data());
         } else {
           setError('Plant not found');
         }
       } catch (error) {
-        console.error('Error fetching plant data:', error);
         setError('Failed to fetch plant data');
       } finally {
         setLoading(false);
@@ -40,7 +36,7 @@ const PlantProfilePage = () => {
     };
 
     fetchPlantData();
-  }, [id]);
+  }, [userId, plantId]);
 
   if (loading) {
     return <p>Loading...</p>;
@@ -66,6 +62,9 @@ const PlantProfilePage = () => {
 };
 
 export default PlantProfilePage;
+
+
+
 
 
 

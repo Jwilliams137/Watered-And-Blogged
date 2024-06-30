@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, getDocs } from 'firebase/firestore';
 import { db, auth } from '../../firebase';
 import Link from 'next/link'; // Import Link from Next.js
 import styles from './PlantList.module.css';
@@ -45,15 +45,15 @@ const PlantList = () => {
                     {plants.map((plant) => (
                         <li key={plant.id}>
                             {/* Wrap the plant's name and image with Link */}
-                            <Link href={`/plant-profile/${plant.id}`}>
-                                
+                            <Link href={`/profile/${auth.currentUser.uid}/plants/${plant.id}`}>
+                                <div>
                                     <img
                                         src={plant.imageUrl}
                                         alt={plant.name}
                                         className={styles.plantImage}
                                     />
                                     <p>{plant.name}</p>
-                                
+                                </div>
                             </Link>
                         </li>
                     ))}
@@ -64,4 +64,5 @@ const PlantList = () => {
 };
 
 export default PlantList;
+
 
