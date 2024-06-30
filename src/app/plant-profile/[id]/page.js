@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import { useEffect, useState } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../../firebase'; // Adjust this path if needed
@@ -19,10 +19,14 @@ const PlantProfilePage = () => {
       }
 
       try {
-        const plantRef = doc(db, 'plants', id);
+        // Assuming 'userId' is known or passed through some context or prop
+        const userId = 'your-user-id-here'; // Replace with the actual user ID
+        console.log('Fetching plant data for userId:', userId, 'plantId:', id); // Log the userId and plantId
+        const plantRef = doc(db, `users/${userId}/plants`, id);
         const plantSnap = await getDoc(plantRef);
 
         if (plantSnap.exists()) {
+          console.log('Plant data:', plantSnap.data()); // Log the retrieved plant data
           setPlantData(plantSnap.data());
         } else {
           setError('Plant not found');
@@ -35,9 +39,7 @@ const PlantProfilePage = () => {
       }
     };
 
-    if (id) {
-      fetchPlantData();
-    }
+    fetchPlantData();
   }, [id]);
 
   if (loading) {
@@ -64,6 +66,8 @@ const PlantProfilePage = () => {
 };
 
 export default PlantProfilePage;
+
+
 
 
 
