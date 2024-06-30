@@ -50,10 +50,10 @@ const UserProfilePage = () => {
       {error && <p>Error: {error}</p>}
       {userData && (
         <>
-          <img src={userData.profilePicture} alt={`${userData.name}'s profile`} /> {/* Display profile picture */}
-          <h2>{userData.name}</h2> {/* Display user name */}
-          <p>{userData.aboutMe ? userData.aboutMe : 'This user has not written anything about themselves yet.'}</p> {/* Display user bio */}
-          <PublicWall /> {/* Display the PublicWall component */}
+          <img src={userData.profilePicture} alt={`${userData.name}'s profile`} /> 
+          <h2>{userData.name}</h2> 
+          <p>{userData.aboutMe ? userData.aboutMe : 'This user has not written anything about themselves yet.'}</p> 
+          <PublicWall /> 
         </>
       )}
     </div>

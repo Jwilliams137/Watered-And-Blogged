@@ -5,6 +5,7 @@ import About from '../../../components/About/About'
 import useAuth from '../../../hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
+import AddPlant from '../../../components/Plant/AddPlant'
 
 const ProfilePage = () => {
     const { user, loading } = useAuth();
@@ -32,6 +33,7 @@ const ProfilePage = () => {
                 <div>
                     <h1 className={styles.welcome}>{user.displayName}</h1>
                     <About />
+                    <AddPlant />
                     <Wall />
                 </div>
             ) : (
