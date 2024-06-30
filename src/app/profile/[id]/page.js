@@ -5,6 +5,8 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../../firebase'; // Adjust this path if needed
 import { useParams } from 'next/navigation'; // Import useParams
 
+import PublicWall from '../../../../components/Wall/PublicWall'; // Adjust the import path as needed
+
 const UserProfilePage = () => {
   const router = useRouter();
   const params = useParams(); // Use useParams to get dynamic route parameters
@@ -50,7 +52,8 @@ const UserProfilePage = () => {
         <>
           <img src={userData.profilePicture} alt={`${userData.name}'s profile`} /> {/* Display profile picture */}
           <h2>{userData.name}</h2> {/* Display user name */}
-          <p>{userData.aboutMe}</p> {/* Display user bio */}
+          <p>{userData.aboutMe ? userData.aboutMe : 'This user has not written anything about themselves yet.'}</p> {/* Display user bio */}
+          <PublicWall /> {/* Display the PublicWall component */}
         </>
       )}
     </div>
@@ -58,14 +61,3 @@ const UserProfilePage = () => {
 };
 
 export default UserProfilePage;
-
-
-
-
-
-
-
-
-
-
-
