@@ -69,41 +69,46 @@ const NewPost = ({ onPostCreated }) => {
         }
     };
 
+    const handleTextareaChange = (e) => {
+        setContent(e.target.value);
+        e.target.style.height = 'auto';
+        e.target.style.height = `${e.target.scrollHeight}px`;
+    };
+
     return (
         <form className={styles.new_post} onSubmit={handleSubmit}>
-            <div className={styles.fields}>
-                <textarea
-                    placeholder="What's happening in your garden?"
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                    className={styles.contentTextarea}
-                ></textarea>
-                <div className={styles.contentRow}>
-                    <ImageUpload setImageFile={setImageFile} imagePreview={imagePreview} setImagePreview={setImagePreview} />
-                    <div className={styles.visibility}>
-                        <label>
-                            <input
-                                type="radio"
-                                value="public"
-                                checked={visibility === 'public'}
-                                onChange={() => setVisibility('public')}
-                            />
-                            Public
-                        </label>
-                        <label>
-                            <input
-                                type="radio"
-                                value="private"
-                                checked={visibility === 'private'}
-                                onChange={() => setVisibility('private')}
-                            />
-                            Private
-                        </label>
-                    </div>
-                    <button type="submit" className={styles.button}>Post</button>
+            <textarea
+                placeholder="What's happening in your garden?"
+                value={content}
+                onChange={handleTextareaChange}
+                className={`${styles.contentTextarea} ${styles.autoExpand}`}
+                rows="1"
+            ></textarea>
+            <div className={styles.optionsRow}>
+                <ImageUpload setImageFile={setImageFile} imagePreview={imagePreview} setImagePreview={setImagePreview} />
+                <div className={styles.visibility}>
+                    <label>
+                        <input
+                            type="radio"
+                            value="public"
+                            checked={visibility === 'public'}
+                            onChange={() => setVisibility('public')}
+                        />
+                        Public
+                    </label>
+                    <label>
+                        <input
+                            type="radio"
+                            value="private"
+                            checked={visibility === 'private'}
+                            onChange={() => setVisibility('private')}
+                        />
+                        Private
+                    </label>
                 </div>
-                {uploadProgress > 0 && <p>Upload Progress: {uploadProgress.toFixed(2)}%</p>}
+                <button type="submit" className={styles.button}>Post</button>
             </div>
+            {uploadProgress > 0 && <p>Upload Progress: {uploadProgress.toFixed(2)}%</p>}
         </form>
     );
 };
