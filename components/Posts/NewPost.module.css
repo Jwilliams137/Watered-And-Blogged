@@ -31,6 +31,11 @@
     justify-content: space-between;
 }
 
+.submit {
+display: flex;
+align-items: center;
+}
+
 .button {
     padding: 10px 15px;
     border: 2px solid chartreuse;
@@ -39,6 +44,7 @@
     color: rgb(2, 48, 48);
     background-color: honeydew;
     transition-duration: 0.5s;
+    margin-left: 10px;
 }
 
 .button:hover {

@@ -85,28 +85,33 @@ const NewPost = ({ onPostCreated }) => {
                 rows="1"
             ></textarea>
             <div className={styles.optionsRow}>
-                <ImageUpload setImageFile={setImageFile} imagePreview={imagePreview} setImagePreview={setImagePreview} />
-                <div className={styles.visibility}>
-                    <label>
-                        <input
-                            type="radio"
-                            value="public"
-                            checked={visibility === 'public'}
-                            onChange={() => setVisibility('public')}
-                        />
-                        Public
-                    </label>
-                    <label>
-                        <input
-                            type="radio"
-                            value="private"
-                            checked={visibility === 'private'}
-                            onChange={() => setVisibility('private')}
-                        />
-                        Private
-                    </label>
+                <div className={styles.upload}>
+                    <ImageUpload setImageFile={setImageFile} imagePreview={imagePreview} setImagePreview={setImagePreview} />
                 </div>
-                <button type="submit" className={styles.button}>Post</button>
+                <div className={styles.submit}>
+                    <div className={styles.visibility}>
+                        <label>
+                            <input
+                                type="radio"
+                                value="public"
+                                checked={visibility === 'public'}
+                                onChange={() => setVisibility('public')}
+                            />
+                            Public
+                        </label>
+                        <label>
+                            <input
+                                type="radio"
+                                value="private"
+                                checked={visibility === 'private'}
+                                onChange={() => setVisibility('private')}
+                            />
+                            Private
+                        </label>
+                    </div>
+                    <button type="submit" className={styles.button}>Post</button>
+                </div>
+
             </div>
             {uploadProgress > 0 && <p>Upload Progress: {uploadProgress.toFixed(2)}%</p>}
         </form>
