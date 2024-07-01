@@ -1,12 +1,36 @@
+/* Timeline.module.css */
 .timeline {
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .timeline > :not(:last-child) {
+    margin-bottom: 20px;
   }
   
   .error {
     color: red;
+    font-size: 14px;
+    margin-top: 20px;
   }
   
   .loadMore {
-    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #007BFF;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .loadMore:hover {
+    background-color: #0056b3;
+  }
+  
+  @media (max-width: 768px) {
+    
   }
   

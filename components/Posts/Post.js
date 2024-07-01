@@ -76,13 +76,15 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
                         value={newTitle}
                         onChange={(e) => setNewTitle(e.target.value)}
                         disabled={loading}
+                        className={styles.inputField}
                     />
                     <textarea
                         value={newContent}
                         onChange={(e) => setNewContent(e.target.value)}
                         disabled={loading}
+                        className={styles.textArea}
                     />
-                    {newImageUrl && <img src={newImageUrl} alt="Posted" style={{ maxWidth: '100%' }} />}
+                    {newImageUrl && <img src={newImageUrl} alt="Posted" className={styles.postImage} />}
                     <div className={styles.visibility}>
                         <label>
                             <input
@@ -105,10 +107,10 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
                             Private
                         </label>
                     </div>
-                    <button onClick={handleEdit} disabled={loading}>
+                    <button onClick={handleEdit} disabled={loading} className={styles.button}>
                         {loading ? 'Saving...' : 'Save'}
                     </button>
-                    <button onClick={() => setEditing(false)} disabled={loading}>
+                    <button onClick={() => setEditing(false)} disabled={loading} className={styles.button}>
                         Cancel
                     </button>
                 </div>
@@ -126,23 +128,23 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
                         )}
                         <div className={styles.authorInfo}>
                             <Link href={`/profile/${post.authorId}`}>
-                                <small>{post.author}</small>
+                                <small className={styles.authorName}>{post.author}</small>
                             </Link>
                         </div>
                     </div>
-                    <h2>{post.title}</h2>
-                    {post.imageUrl && <img src={post.imageUrl} alt="Posted" style={{ maxWidth: '100%' }} />}
+                    <div className={styles.postTitle}>{post.title}</div>
+                    {post.imageUrl && <img src={post.imageUrl} alt="Posted" className={styles.postImage} />}
                     {currentUser && post.authorId === currentUser.uid && (
                         <div className={styles.edit}>
-                            <button onClick={() => setEditing(true)} disabled={loading}>
+                            <button onClick={() => setEditing(true)} disabled={loading} className={styles.button}>
                                 Edit
                             </button>
-                            <button onClick={handleDelete} disabled={loading}>
+                            <button onClick={handleDelete} disabled={loading} className={styles.button}>
                                 Delete
                             </button>
                         </div>
                     )}
-                    <p>{post.content}</p>
+                    <div className={styles.postContent}>{post.content}</div>
                 </div>
             )}
         </div>
@@ -150,5 +152,7 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
 };
 
 export default Post;
+
+
 
 

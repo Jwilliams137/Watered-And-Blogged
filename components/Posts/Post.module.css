@@ -1,47 +1,103 @@
 .post {
-    padding: 15px 0px;
+    padding: 15px;
     background-color: rgb(233, 231, 229);
-    margin: 30px 0px;
-    border-radius: .7%;
-  }
-  
-  .postHeader {
+    margin: 30px 0;
+    border-radius: 0.7%;
+    width: 100%;
+}
+
+.postHeader {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
-  }
-  
-  .profilePicture {
+}
+
+.profilePicture {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     object-fit: cover;
     margin-left: 10px;
-  }
-  
-  .defaultProfilePicture {
+}
+
+.defaultProfilePicture {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     background-color: gray;
     margin-left: 10px;
-  }
-  
-  .authorInfo {
+}
+
+.authorInfo {
     display: flex;
     flex-direction: column;
     margin-left: 10px;
-  }
+}
 
-  .edit {
+.authorName {
+    font-size: 14px;
+}
+
+.postTitle {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.postImage {
+    max-width: 100%;
+    border-radius: 0.5%;
+    margin: 10px 0;
+}
+
+.postContent {
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+.edit {
     text-align: right;
     margin-right: 10px;
-  }
+}
 
-  @media (prefers-color-scheme: dark) {
+.inputField,
+.textArea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: vertical;
+}
+
+.visibility label {
+    margin-right: 10px;
+}
+
+.button {
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #0056b3;
+}
+
+.button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+@media (prefers-color-scheme: dark) {
     .post {
         background-color: rgb(40, 40, 41);
         color: white;
     }
-  }
-  
+}
+
