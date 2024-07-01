@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { updateDoc, deleteDoc, doc, getDoc } from 'firebase/firestore';
 import { db, auth } from '../../firebase';
 import styles from './Post.module.css';
+import Link from 'next/link'; // Import Link component from Next.js
 
 const Post = ({ post, onPostUpdated, onDeletePost }) => {
   const [editing, setEditing] = useState(false);
@@ -118,16 +119,20 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
         <div>
           <div className={styles.postHeader}>
             {authorProfilePicture ? (
-              <img
-                src={authorProfilePicture}
-                alt={`${post.author}'s profile`}
-                className={styles.profilePicture}
-              />
+              <Link href={`/profile/${post.authorId}`}>
+                <img
+                  src={authorProfilePicture}
+                  alt={`${post.author}'s profile`}
+                  className={styles.profilePicture}
+                />
+              </Link>
             ) : (
               <div className={styles.defaultProfilePicture}></div>
             )}
             <div className={styles.authorInfo}>
-              <small className={styles.authorName}>{post.author}</small>
+              <Link href={`/profile/${post.authorId}`}>
+                <small className={styles.authorName}>{post.author}</small>
+              </Link>
             </div>
           </div>
           {displayedImageUrl && <img src={displayedImageUrl} alt="Posted" className={styles.postImage} />}
@@ -149,6 +154,7 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
 };
 
 export default Post;
+
 
 
 
