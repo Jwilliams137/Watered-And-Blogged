@@ -6,7 +6,6 @@ import ImageUpload from '../ImageUpload/ImageUpload';
 import styles from './NewPost.module.css';
 
 const NewPost = ({ onPostCreated }) => {
-    const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [imageFile, setImageFile] = useState(null);
     const [uploadProgress, setUploadProgress] = useState(0);
@@ -47,7 +46,6 @@ const NewPost = ({ onPostCreated }) => {
 
         if (auth.currentUser) {
             const newPost = {
-                title,
                 content,
                 imageUrl,
                 author: auth.currentUser.displayName,
@@ -60,7 +58,6 @@ const NewPost = ({ onPostCreated }) => {
             try {
                 const docRef = await addDoc(collection(db, 'posts'), newPost);
                 onPostCreated({ id: docRef.id, ...newPost });
-                setTitle('');
                 setContent('');
                 setImageFile(null);
                 setUploadProgress(0);
@@ -75,47 +72,45 @@ const NewPost = ({ onPostCreated }) => {
     return (
         <form className={styles.new_post} onSubmit={handleSubmit}>
             <div className={styles.fields}>
-                <h2>What&apos;s happening in your garden?</h2>
-                <input
-                    type="text"
-                    placeholder="Title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                />
                 <textarea
-                    placeholder="Content"
+                    placeholder="What's happening in your garden?"
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
+                    className={styles.contentTextarea}
                 ></textarea>
-                <ImageUpload setImageFile={setImageFile} imagePreview={imagePreview} setImagePreview={setImagePreview} />
-                {uploadProgress > 0 && <p>Upload Progress: {uploadProgress.toFixed(2)}%</p>}
-                <div className={styles.visibility}>
-                    <label>
-                        <input
-                            type="radio"
-                            value="public"
-                            checked={visibility === 'public'}
-                            onChange={() => setVisibility('public')}
-                        />
-                        Public
-                    </label>
-                    <label>
-                        <input
-                            type="radio"
-                            value="private"
-                            checked={visibility === 'private'}
-                            onChange={() => setVisibility('private')}
-                        />
-                        Private
-                    </label>
+                <div className={styles.contentRow}>
+                    <ImageUpload setImageFile={setImageFile} imagePreview={imagePreview} setImagePreview={setImagePreview} />
+                    <div className={styles.visibility}>
+                        <label>
+                            <input
+                                type="radio"
+                                value="public"
+                                checked={visibility === 'public'}
+                                onChange={() => setVisibility('public')}
+                            />
+                            Public
+                        </label>
+                        <label>
+                            <input
+                                type="radio"
+                                value="private"
+                                checked={visibility === 'private'}
+                                onChange={() => setVisibility('private')}
+                            />
+                            Private
+                        </label>
+                    </div>
+                    <button type="submit" className={styles.button}>Post</button>
                 </div>
+                {uploadProgress > 0 && <p>Upload Progress: {uploadProgress.toFixed(2)}%</p>}
             </div>
-            <button type="submit" className={styles.button}>Post</button>
         </form>
     );
 };
 
 export default NewPost;
+
+
 
 
 

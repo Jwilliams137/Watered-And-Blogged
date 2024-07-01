@@ -33,7 +33,10 @@ const ImageUpload = ({ setImageFile, imagePreview, setImagePreview }) => {
 
     return (
         <div className={styles.imageUploadContainer}>
-            <input type="file" accept="image/*" onChange={handleFileChange} />
+            <label className={styles.customFileUpload}>
+                <input type="file" accept="image/*" onChange={handleFileChange} />
+                <img src="/imageupload.svg" alt="Upload Image" className={styles.uploadIcon} />
+            </label>
             {imagePreview && (
                 <div className={styles.imagePreview}>
                     <img src={imagePreview} alt="Preview" />
@@ -45,6 +48,8 @@ const ImageUpload = ({ setImageFile, imagePreview, setImagePreview }) => {
 };
 
 export default ImageUpload;
+
+
 
 
 
