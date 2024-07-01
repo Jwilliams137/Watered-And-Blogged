@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, query, where, orderBy, limit, startAfter, onSnapshot, deleteDoc, doc, getDoc } from 'firebase/firestore';
+import { collection, query, where, orderBy, limit, startAfter, onSnapshot, deleteDoc, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '../../firebase';
 import Post from '../Posts/Post';
 import NewPost from '../Posts/NewPost';
@@ -21,11 +21,7 @@ const Wall = () => {
         const userProfile = userDoc.data();
         return { id: docSnapshot.id, ...postData, authorProfilePicture: userProfile?.profilePicture };
       }));
-      setPosts((prevPosts) => {
-        const postIds = new Set(prevPosts.map(post => post.id));
-        const filteredPosts = newPosts.filter(post => !postIds.has(post.id));
-        return [...filteredPosts, ...prevPosts];
-      });
+      setPosts(newPosts);
       if (snapshot.docs.length > 0) {
         setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
       }
@@ -49,11 +45,7 @@ const Wall = () => {
         }));
         if (snapshot.docs.length > 0) {
           setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
-          setPosts((prevPosts) => {
-            const postIds = new Set(prevPosts.map(post => post.id));
-            const filteredPosts = newPosts.filter(post => !postIds.has(post.id));
-            return [...prevPosts, ...filteredPosts];
-          });
+          setPosts((prevPosts) => [...prevPosts, ...newPosts]);
         }
         setLoading(false);
       });
@@ -61,19 +53,24 @@ const Wall = () => {
   };
 
   const handlePostCreated = (newPost) => {
-    setPosts((prevPosts) => {
-      const postIds = new Set(prevPosts.map(post => post.id));
-      if (!postIds.has(newPost.id)) {
-        return [newPost, ...prevPosts];
-      }
-      return prevPosts;
-    });
+    setPosts((prevPosts) => [newPost, ...prevPosts]);
   };
 
-  const handlePostUpdated = (postId, newTitle, newContent, newImageUrl, newVisibility) => {
-    setPosts((prevPosts) => prevPosts.map(post =>
-      post.id === postId ? { ...post, title: newTitle, content: newContent, imageUrl: newImageUrl, visibility: newVisibility } : post
-    ));
+  const handlePostUpdated = async (postId, newTitle, newContent, newImageUrl, newVisibility) => {
+    try {
+      await updateDoc(doc(db, 'posts', postId), {
+        title: newTitle,
+        content: newContent,
+        imageUrl: newImageUrl,
+        visibility: newVisibility,
+        updatedAt: new Date(),
+      });
+      setPosts((prevPosts) =>
+        prevPosts.map(post => (post.id === postId ? { ...post, title: newTitle, content: newContent, imageUrl: newImageUrl, visibility: newVisibility } : post))
+      );
+    } catch (error) {
+      console.error('Error updating post:', error);
+    }
   };
 
   const handleDeletePost = async (postId) => {
@@ -81,7 +78,7 @@ const Wall = () => {
       await deleteDoc(doc(db, 'posts', postId));
       setPosts((prevPosts) => prevPosts.filter(post => post.id !== postId));
     } catch (error) {
-      console.error('Error deleting post: ', error);
+      console.error('Error deleting post:', error);
     }
   };
 
@@ -105,6 +102,7 @@ const Wall = () => {
 };
 
 export default Wall;
+
 
 
 
