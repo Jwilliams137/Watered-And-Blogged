@@ -29,6 +29,12 @@ export default function Home() {
 
   return (
     <main className={styles.main}>
+      <div className={styles.welcomeSection}>
+        <h1 className={styles.welcomeTitle}>Welcome!</h1>
+        <p className={styles.welcomeText}>
+          This place is still under construction, so expect changes and updates!
+        </p>
+      </div>
       {!user && (
         <div className={styles.login}>
           <Login />
@@ -40,12 +46,7 @@ export default function Home() {
           <NewPost onPostCreated={handlePostCreated} />
         </div>
       )}
-      <div className={styles.welcomeSection}>
-        <h1 className={styles.welcomeTitle}>Welcome!</h1>
-        <p className={styles.welcomeText}>
-          This place is still under construction, so expect changes and updates!
-        </p>
-      </div>
+      
       <Timeline />
     </main>
   );
