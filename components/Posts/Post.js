@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 import { updateDoc, deleteDoc, doc, getDoc } from 'firebase/firestore';
 import { db, auth } from '../../firebase';
@@ -6,12 +5,12 @@ import styles from './Post.module.css';
 
 const Post = ({ post, onPostUpdated, onDeletePost }) => {
     const [editing, setEditing] = useState(false);
-    const [newTitle, setNewTitle] = useState(post.title);
     const [newContent, setNewContent] = useState(post.content);
-    const [newImageUrl, setNewImageUrl] = useState(post.imageUrl);
     const [newVisibility, setNewVisibility] = useState(post.visibility);
     const [loading, setLoading] = useState(false);
     const [authorProfilePicture, setAuthorProfilePicture] = useState(null);
+    const [displayedContent, setDisplayedContent] = useState(post.content);
+    const [displayedImageUrl, setDisplayedImageUrl] = useState(post.imageUrl);
 
     useEffect(() => {
         fetchAuthorProfilePicture(post.authorId);
@@ -27,6 +26,7 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
             }
         } catch (error) {
             setAuthorProfilePicture(null);
+            console.error('Error fetching author profile picture:', error);
         }
     };
 
@@ -36,16 +36,15 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
         setLoading(true);
         try {
             await updateDoc(doc(db, 'posts', post.id), {
-                title: newTitle,
                 content: newContent,
-                imageUrl: newImageUrl,
                 visibility: newVisibility,
                 updatedAt: new Date(),
             });
             if (onPostUpdated) {
-                onPostUpdated(post.id, newTitle, newContent, newImageUrl);
+                onPostUpdated(post.id, newContent, displayedImageUrl, newVisibility);
             }
             setEditing(false);
+            setDisplayedContent(newContent);
         } catch (error) {
             console.error('Error updating post:', error);
         } finally {
@@ -67,24 +66,23 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
         }
     };
 
+    const handleCancelEdit = () => {
+        setNewContent(post.content);
+        setNewVisibility(post.visibility);
+        setEditing(false);
+    };
+
     return (
         <div className={styles.post}>
             {editing ? (
                 <div>
-                    <input
-                        type="text"
-                        value={newTitle}
-                        onChange={(e) => setNewTitle(e.target.value)}
-                        disabled={loading}
-                        className={styles.inputField}
-                    />
                     <textarea
                         value={newContent}
                         onChange={(e) => setNewContent(e.target.value)}
                         disabled={loading}
                         className={styles.textArea}
                     />
-                    {newImageUrl && <img src={newImageUrl} alt="Posted" className={styles.postImage} />}
+                    {displayedImageUrl && <img src={displayedImageUrl} alt="Posted" className={styles.postImage} />}
                     <div className={styles.visibility}>
                         <label>
                             <input
@@ -110,7 +108,7 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
                     <button onClick={handleEdit} disabled={loading} className={styles.button}>
                         {loading ? 'Saving...' : 'Save'}
                     </button>
-                    <button onClick={() => setEditing(false)} disabled={loading} className={styles.button}>
+                    <button onClick={handleCancelEdit} disabled={loading} className={styles.button}>
                         Cancel
                     </button>
                 </div>
@@ -127,16 +125,17 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
                             <div className={styles.defaultProfilePicture}></div>
                         )}
                         <div className={styles.authorInfo}>
-                            <Link href={`/profile/${post.authorId}`}>
-                                <small className={styles.authorName}>{post.author}</small>
-                            </Link>
+                            <small className={styles.authorName}>{post.author}</small>
                         </div>
                     </div>
-                    <div className={styles.postTitle}>{post.title}</div>
-                    {post.imageUrl && <img src={post.imageUrl} alt="Posted" className={styles.postImage} />}
+                    {displayedImageUrl && <img src={displayedImageUrl} alt="Posted" className={styles.postImage} />}
                     {currentUser && post.authorId === currentUser.uid && (
                         <div className={styles.edit}>
-                            <button onClick={() => setEditing(true)} disabled={loading} className={styles.button}>
+                            <button onClick={() => {
+                                setNewContent(post.content);
+                                setNewVisibility(post.visibility);
+                                setEditing(true);
+                            }} disabled={loading} className={styles.button}>
                                 Edit
                             </button>
                             <button onClick={handleDelete} disabled={loading} className={styles.button}>
@@ -144,7 +143,7 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
                             </button>
                         </div>
                     )}
-                    <div className={styles.postContent}>{post.content}</div>
+                    <div className={styles.postContent}>{displayedContent}</div>
                 </div>
             )}
         </div>
@@ -152,6 +151,13 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
 };
 
 export default Post;
+
+
+
+
+
+
+
 
 
 

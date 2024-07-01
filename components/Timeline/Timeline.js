@@ -75,6 +75,10 @@ const Timeline = () => {
     )
   }
 
+  const handlePostDeleted = (postId) => {
+    setPosts(prevPosts => prevPosts.filter(post => post.id !== postId))
+  }
+
   return (
     <div className={styles.timeline}>
       {posts.map(post => (
@@ -82,6 +86,7 @@ const Timeline = () => {
           key={post.id}
           post={post}
           onPostUpdated={handlePostUpdated}
+          onDeletePost={handlePostDeleted}
         />
       ))}
       {loading && <p>Loading...</p>}
@@ -96,6 +101,7 @@ const Timeline = () => {
 }
 
 export default Timeline
+
 
 
 

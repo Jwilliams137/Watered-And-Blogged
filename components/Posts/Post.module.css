@@ -5,6 +5,7 @@
     border-radius: 0.7%;
     width: 99%;
     text-align: center;
+    box-shadow: 0 3px 8px rgba(34, 44, 34, 0.1);
 }
 
 .postHeader {

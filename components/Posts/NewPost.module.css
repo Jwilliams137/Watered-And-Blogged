@@ -5,9 +5,10 @@
     margin: auto;
     padding: 20px;
     background-color: #f0f0f0;
-    border: 1px solid #ccc;
     border-radius: 10px;
+    box-shadow: 0 3px 8px rgba(34, 44, 34, 0.1);
 }
+
 
 .upload {
    margin: 0;
