@@ -21,8 +21,8 @@
 }
 
 .autoExpand {
-    overflow-y: hidden; /* Hide vertical scrollbar */
-    transition: height 0.2s ease; /* Smooth transition on height change */
+    overflow-y: hidden; 
+    transition: height 0.2s ease;
 }
 
 .optionsRow {
