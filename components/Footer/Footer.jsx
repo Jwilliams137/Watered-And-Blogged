@@ -1,23 +1,25 @@
-import React from 'react';
-import Link from 'next/link';
-import styles from './footer.module.css';
+import React from 'react'
+import Link from 'next/link'
+import styles from './footer.module.css'
 
 function Footer() {
-    // Function to get the current year
     const getCurrentYear = () => {
-        return new Date().getFullYear();
-    };
+        return new Date().getFullYear()
+    }
 
-    // Generate the copyright statement
-    const copyrightStatement = `© ${getCurrentYear()} Watered & Blogged. All rights reserved.`;
+    const copyrightStatement = `© ${getCurrentYear()} Watered & Blogged. All rights reserved.`
 
     return (
-        <div className={styles.footer}>
-            <Link href="/privacy-tos">Privacy</Link>
-            <Link href="/contact">Contact</Link>
+        <footer className={styles.footer}>
+            <div className={styles.links}>
+                <Link href="/privacy-tos" className={styles.link}>Privacy</Link>
+                <Link href="/contact" className={styles.link}>Contact</Link>
+            </div>
+            <div className={styles.separator}></div>
             <span className={styles.copyright}>{copyrightStatement}</span>
-        </div>
-    );
+        </footer>
+    )
 }
 
-export default Footer;
+export default Footer
+
