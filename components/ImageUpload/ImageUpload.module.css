@@ -1,19 +1,13 @@
-/* ImageUpload.module.css */
-
 .imageUploadContainer {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    width: 100%; /* Ensure container takes full width */
+    align-items: left; 
 }
 
 .customFileUpload {
     display: inline-block;
     position: relative;
-    cursor: pointer;
-    padding: 10px;
-    margin-bottom: 10px; /* Add margin for spacing */
-    text-align: center; /* Center text and icon */
+    cursor: pointer; 
 }
 
 .customFileUpload input[type="file"] {

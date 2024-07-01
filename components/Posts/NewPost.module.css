@@ -9,15 +9,20 @@
     border-radius: 10px;
 }
 
+.upload {
+   margin: 0;
+   padding: 0;
+}
+
 .contentTextarea {
     width: 100%;
     min-height: 50px; 
     padding: 10px;
-    margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
     resize: none;
     font-size: 16px;
+    margin-bottom: 10px;
 }
 
 .autoExpand {
@@ -28,12 +33,7 @@
 .optionsRow {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-}
-
-.submit {
-display: flex;
-align-items: center;
+    justify-content: right;
 }
 
 .button {
