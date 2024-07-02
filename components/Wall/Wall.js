@@ -53,7 +53,13 @@ const Wall = () => {
   };
 
   const handlePostCreated = (newPost) => {
-    setPosts((prevPosts) => [newPost, ...prevPosts]);
+    setPosts((prevPosts) => {
+      const exists = prevPosts.find(post => post.id === newPost.id);
+      if (exists) {
+        return prevPosts;
+      }
+      return [newPost, ...prevPosts];
+    });
   };
 
   const handlePostUpdated = async (postId, newTitle, newContent, newImageUrl, newVisibility) => {
@@ -102,6 +108,7 @@ const Wall = () => {
 };
 
 export default Wall;
+
 
 
 
