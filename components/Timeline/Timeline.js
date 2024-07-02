@@ -60,11 +60,13 @@ const Timeline = () => {
   };
 
   const handlePostUpdated = (postId, updatedPost) => {
-    setPosts(prevPosts =>
-      prevPosts.map(post =>
-        post.id === postId ? updatedPost : post
-      )
-    );
+    setPosts(prevPosts => {
+      if (updatedPost.visibility === 'private') {
+        return prevPosts.filter(post => post.id !== postId);
+      } else {
+        return prevPosts.map(post => post.id === postId ? updatedPost : post);
+      }
+    });
   };
 
   const handlePostDeleted = (postId) => {
@@ -97,6 +99,7 @@ const Timeline = () => {
 };
 
 export default Timeline;
+
 
 
 
