@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDoc } from 'firebase/firestore';
 import { db, auth } from '../../firebase';
 import styles from './Comment.module.css';
 
@@ -11,13 +11,40 @@ const Comment = ({ postId }) => {
   const [loading, setLoading] = useState(false);
   const [likesCount, setLikesCount] = useState(0);
   const [liked, setLiked] = useState(false);
+  const [postOwnerId, setPostOwnerId] = useState('');
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, `posts/${postId}/comments`), (snapshot) => {
+    const postRef = doc(db, 'posts', postId);
+
+    const fetchPostOwner = async () => {
+      const postDoc = await getDoc(postRef);
+      if (postDoc.exists()) {
+        const postData = postDoc.data();
+        setLikesCount(postData.likes || 0);
+        setLiked(postData.likesBy && postData.likesBy.includes(auth.currentUser.uid));
+        setPostOwnerId(postData.userId);  // Assuming userId is the field for post owner's ID
+      }
+    };
+
+    fetchPostOwner();
+
+    const unsubscribe = onSnapshot(postRef, (doc) => {
+      if (doc.exists()) {
+        const postData = doc.data();
+        setLikesCount(postData.likes || 0);
+        setLiked(postData.likesBy && postData.likesBy.includes(auth.currentUser.uid));
+      }
+    });
+
+    const commentsRef = collection(db, `posts/${postId}/comments`);
+    const commentsUnsubscribe = onSnapshot(commentsRef, (snapshot) => {
       setComments(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      commentsUnsubscribe();
+    };
   }, [postId]);
 
   const handleLikePost = async () => {
@@ -25,24 +52,22 @@ const Comment = ({ postId }) => {
     try {
       const postRef = doc(db, 'posts', postId);
       const user = auth.currentUser;
-      const postDoc = await doc(postRef).get();
+      const postDoc = await getDoc(postRef);
 
       if (postDoc.exists()) {
         const postData = postDoc.data();
-        if (!postData.likesBy || !postData.likesBy.includes(user.uid)) {
+        const likedByUser = (postData.likesBy && postData.likesBy.includes(user.uid));
+
+        if (!likedByUser) {
           await updateDoc(postRef, {
             likes: postData.likes ? postData.likes + 1 : 1,
             likesBy: [...(postData.likesBy || []), user.uid],
           });
-          setLiked(true);
-          setLikesCount(postData.likes + 1);
         } else {
           await updateDoc(postRef, {
             likes: postData.likes - 1,
             likesBy: postData.likesBy.filter(uid => uid !== user.uid),
           });
-          setLiked(false);
-          setLikesCount(postData.likes - 1);
         }
       }
     } catch (error) {
@@ -59,6 +84,7 @@ const Comment = ({ postId }) => {
       await addDoc(commentsCollection, {
         content: newComment,
         createdAt: new Date(),
+        userId: auth.currentUser.uid, // Store the ID of the comment creator
       });
       setNewComment('');
     } catch (error) {
@@ -137,21 +163,25 @@ const Comment = ({ postId }) => {
             ) : (
               <>
                 <span>{comment.content}</span>
-                <button
-                  onClick={() => {
-                    setEditingCommentId(comment.id);
-                    setEditingCommentContent(comment.content);
-                  }}
-                  className={styles.commentButton}
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDeleteComment(comment.id)}
-                  className={styles.commentButton}
-                >
-                  Delete
-                </button>
+                {comment.userId === auth.currentUser.uid && (
+                  <button
+                    onClick={() => {
+                      setEditingCommentId(comment.id);
+                      setEditingCommentContent(comment.content);
+                    }}
+                    className={styles.commentButton}
+                  >
+                    Edit
+                  </button>
+                )}
+                {(comment.userId === auth.currentUser.uid || postOwnerId === auth.currentUser.uid) && (
+                  <button
+                    onClick={() => handleDeleteComment(comment.id)}
+                    className={styles.commentButton}
+                  >
+                    Delete
+                  </button>
+                )}
               </>
             )}
           </div>
@@ -179,6 +209,14 @@ const Comment = ({ postId }) => {
 };
 
 export default Comment;
+
+
+
+
+
+
+
+
 
 
 
