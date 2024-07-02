@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { collection, addDoc, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc } from 'firebase/firestore';
-import { db } from '../../firebase';
+import { collection, addDoc, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc, increment, getDoc } from 'firebase/firestore'; // Import getDoc from Firestore
+import { db, auth } from '../../firebase'; // Ensure auth is imported from firebase
 import styles from './Comment.module.css';
 
 const Comment = ({ postId }) => {
@@ -9,20 +9,52 @@ const Comment = ({ postId }) => {
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editingCommentContent, setEditingCommentContent] = useState('');
   const [loading, setLoading] = useState(false);
+  const [likesCount, setLikesCount] = useState(0);
+  const [liked, setLiked] = useState(false);
 
   useEffect(() => {
-    const commentsCollection = collection(db, 'posts', postId, 'comments');
-    const q = query(commentsCollection, orderBy('createdAt', 'asc'));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const commentsData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setComments(commentsData);
+    const postRef = doc(db, 'posts', postId);
+
+    const unsubscribe = onSnapshot(postRef, (doc) => {
+      if (doc.exists()) {
+        const postData = doc.data();
+        setLikesCount(postData.likes || 0);
+        setLiked(postData.likesBy && postData.likesBy.includes(auth.currentUser.uid));
+      }
     });
 
     return () => unsubscribe();
   }, [postId]);
+
+  const handleLikePost = async () => {
+    setLoading(true);
+    try {
+      const postRef = doc(db, 'posts', postId);
+      const user = auth.currentUser;
+
+      // Fetch post data again inside the function to ensure it's up-to-date
+      const postSnapshot = await getDoc(postRef);
+      const postData = postSnapshot.data();
+
+      if (!liked) {
+        await updateDoc(postRef, {
+          likes: increment(1),
+          likesBy: user ? [...(postData.likesBy || []), user.uid] : [user.uid],
+        });
+      } else {
+        await updateDoc(postRef, {
+          likes: increment(-1),
+          likesBy: postData.likesBy.filter((uid) => uid !== user.uid),
+        });
+      }
+
+      setLiked(!liked);
+    } catch (error) {
+      console.error('Error liking post:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAddComment = async () => {
     setLoading(true);
@@ -70,6 +102,16 @@ const Comment = ({ postId }) => {
 
   return (
     <div className={styles.commentSection}>
+      <div className={styles.postActions}>
+        <button
+          onClick={handleLikePost}
+          disabled={loading}
+          className={styles.likeButton}
+        >
+          {liked ? 'Unlike' : 'Like'}
+        </button>
+        <span className={styles.likesCount}>{likesCount} {likesCount === 1 ? 'like' : 'likes'}</span>
+      </div>
       <div className={styles.commentList}>
         {comments.map(comment => (
           <div key={comment.id} className={styles.comment}>
@@ -141,5 +183,9 @@ const Comment = ({ postId }) => {
 };
 
 export default Comment;
+
+
+
+
 
 
