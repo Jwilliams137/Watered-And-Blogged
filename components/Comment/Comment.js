@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDoc } from 'firebase/firestore';
 import { db, auth } from '../../firebase';
 import styles from './Comment.module.css';
+import Modal from '../Modal/Modal';
 
 const Comment = ({ postId }) => {
   const [comments, setComments] = useState([]);
@@ -12,6 +13,7 @@ const Comment = ({ postId }) => {
   const [likesCount, setLikesCount] = useState(0);
   const [liked, setLiked] = useState(false);
   const [postOwnerId, setPostOwnerId] = useState('');
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   useEffect(() => {
     const postRef = doc(db, 'posts', postId);
@@ -22,7 +24,7 @@ const Comment = ({ postId }) => {
         const postData = postDoc.data();
         setLikesCount(postData.likes || 0);
         setLiked(postData.likesBy && postData.likesBy.includes(auth.currentUser?.uid));
-        setPostOwnerId(postData.userId);  // Assuming userId is the field for post owner's ID
+        setPostOwnerId(postData.userId);
       }
     };
 
@@ -48,6 +50,11 @@ const Comment = ({ postId }) => {
   }, [postId]);
 
   const handleLikePost = async () => {
+    if (!auth.currentUser) {
+      setShowLoginModal(true);
+      return;
+    }
+
     setLoading(true);
     try {
       const postRef = doc(db, 'posts', postId);
@@ -78,13 +85,18 @@ const Comment = ({ postId }) => {
   };
 
   const handleAddComment = async () => {
+    if (!auth.currentUser) {
+      setShowLoginModal(true);
+      return;
+    }
+
     setLoading(true);
     try {
       const commentsCollection = collection(db, `posts/${postId}/comments`);
       await addDoc(commentsCollection, {
         content: newComment,
         createdAt: new Date(),
-        userId: auth.currentUser?.uid || 'anonymous', // Store the ID of the comment creator or use 'anonymous'
+        userId: auth.currentUser?.uid || 'anonymous',
       });
       setNewComment('');
     } catch (error) {
@@ -112,14 +124,13 @@ const Comment = ({ postId }) => {
 
   const handleDeleteComment = async (commentId, commentUserId) => {
     if (!auth.currentUser) {
-      console.error('User must be signed in to delete a comment.');
+      setShowLoginModal(true);
       return;
     }
 
     setLoading(true);
     try {
       const commentRef = doc(db, `posts/${postId}/comments`, commentId);
-      // Check if the current user is either the post owner or the comment owner
       if (auth.currentUser.uid === postOwnerId || auth.currentUser.uid === commentUserId) {
         await deleteDoc(commentRef);
       } else {
@@ -132,8 +143,20 @@ const Comment = ({ postId }) => {
     }
   };
 
+  const handleCommentBoxClick = () => {
+    if (!auth.currentUser) {
+      setShowLoginModal(true);
+    }
+  };
+
+  const handleLoginSuccess = () => {
+    setShowLoginModal(false); // Close the modal on successful login
+  };
+
   return (
     <div className={styles.commentSection}>
+      <Modal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} onSuccess={handleLoginSuccess} />
+
       <div className={styles.postActions}>
         <button
           onClick={handleLikePost}
@@ -177,7 +200,8 @@ const Comment = ({ postId }) => {
           onChange={(e) => setNewComment(e.target.value)}
           placeholder="Add a comment..."
           className={styles.commentInput}
-          disabled={loading || !auth.currentUser}
+          onClick={handleCommentBoxClick}
+          disabled={loading}
         />
         <button
           onClick={handleAddComment}
@@ -192,14 +216,6 @@ const Comment = ({ postId }) => {
 };
 
 export default Comment;
-
-
-
-
-
-
-
-
 
 
 
