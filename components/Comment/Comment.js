@@ -111,11 +111,16 @@ const Comment = ({ postId }) => {
   };
 
   const handleDeleteComment = async (commentId, commentUserId) => {
+    if (!auth.currentUser) {
+      console.error('User must be signed in to delete a comment.');
+      return;
+    }
+
     setLoading(true);
     try {
       const commentRef = doc(db, `posts/${postId}/comments`, commentId);
       // Check if the current user is either the post owner or the comment owner
-      if (auth.currentUser?.uid === postOwnerId || auth.currentUser?.uid === commentUserId) {
+      if (auth.currentUser.uid === postOwnerId || auth.currentUser.uid === commentUserId) {
         await deleteDoc(commentRef);
       } else {
         console.error('You are not authorized to delete this comment.');
@@ -143,14 +148,14 @@ const Comment = ({ postId }) => {
         {comments.map(comment => (
           <div key={comment.id} className={styles.comment}>
             <span>{comment.content}</span>
-            {(auth.currentUser?.uid === comment.userId || auth.currentUser?.uid === postOwnerId) && (
+            {(auth.currentUser?.uid === comment.userId || auth.currentUser?.uid === postOwnerId) && auth.currentUser ? (
               <button
                 onClick={() => handleDeleteComment(comment.id, comment.userId)}
                 className={styles.commentButton}
               >
                 Delete
               </button>
-            )}
+            ) : null}
             {auth.currentUser?.uid === comment.userId && (
               <button
                 onClick={() => {
@@ -187,6 +192,9 @@ const Comment = ({ postId }) => {
 };
 
 export default Comment;
+
+
+
 
 
 
