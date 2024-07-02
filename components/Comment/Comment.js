@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { collection, addDoc, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc, increment, getDoc } from 'firebase/firestore'; // Import getDoc from Firestore
-import { db, auth } from '../../firebase'; // Ensure auth is imported from firebase
+import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { db, auth } from '../../firebase';
 import styles from './Comment.module.css';
 
 const Comment = ({ postId }) => {
@@ -13,14 +13,8 @@ const Comment = ({ postId }) => {
   const [liked, setLiked] = useState(false);
 
   useEffect(() => {
-    const postRef = doc(db, 'posts', postId);
-
-    const unsubscribe = onSnapshot(postRef, (doc) => {
-      if (doc.exists()) {
-        const postData = doc.data();
-        setLikesCount(postData.likes || 0);
-        setLiked(postData.likesBy && postData.likesBy.includes(auth.currentUser.uid));
-      }
+    const unsubscribe = onSnapshot(collection(db, `posts/${postId}/comments`), (snapshot) => {
+      setComments(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     });
 
     return () => unsubscribe();
@@ -31,24 +25,26 @@ const Comment = ({ postId }) => {
     try {
       const postRef = doc(db, 'posts', postId);
       const user = auth.currentUser;
+      const postDoc = await doc(postRef).get();
 
-      // Fetch post data again inside the function to ensure it's up-to-date
-      const postSnapshot = await getDoc(postRef);
-      const postData = postSnapshot.data();
-
-      if (!liked) {
-        await updateDoc(postRef, {
-          likes: increment(1),
-          likesBy: user ? [...(postData.likesBy || []), user.uid] : [user.uid],
-        });
-      } else {
-        await updateDoc(postRef, {
-          likes: increment(-1),
-          likesBy: postData.likesBy.filter((uid) => uid !== user.uid),
-        });
+      if (postDoc.exists()) {
+        const postData = postDoc.data();
+        if (!postData.likesBy || !postData.likesBy.includes(user.uid)) {
+          await updateDoc(postRef, {
+            likes: postData.likes ? postData.likes + 1 : 1,
+            likesBy: [...(postData.likesBy || []), user.uid],
+          });
+          setLiked(true);
+          setLikesCount(postData.likes + 1);
+        } else {
+          await updateDoc(postRef, {
+            likes: postData.likes - 1,
+            likesBy: postData.likesBy.filter(uid => uid !== user.uid),
+          });
+          setLiked(false);
+          setLikesCount(postData.likes - 1);
+        }
       }
-
-      setLiked(!liked);
     } catch (error) {
       console.error('Error liking post:', error);
     } finally {
@@ -59,7 +55,7 @@ const Comment = ({ postId }) => {
   const handleAddComment = async () => {
     setLoading(true);
     try {
-      const commentsCollection = collection(db, 'posts', postId, 'comments');
+      const commentsCollection = collection(db, `posts/${postId}/comments`);
       await addDoc(commentsCollection, {
         content: newComment,
         createdAt: new Date(),
@@ -75,7 +71,7 @@ const Comment = ({ postId }) => {
   const handleEditComment = async (commentId) => {
     setLoading(true);
     try {
-      const commentRef = doc(db, 'posts', postId, 'comments', commentId);
+      const commentRef = doc(db, `posts/${postId}/comments`, commentId);
       await updateDoc(commentRef, {
         content: editingCommentContent,
       });
@@ -91,7 +87,7 @@ const Comment = ({ postId }) => {
   const handleDeleteComment = async (commentId) => {
     setLoading(true);
     try {
-      const commentRef = doc(db, 'posts', postId, 'comments', commentId);
+      const commentRef = doc(db, `posts/${postId}/comments`, commentId);
       await deleteDoc(commentRef);
     } catch (error) {
       console.error('Error deleting comment:', error);
@@ -183,6 +179,7 @@ const Comment = ({ postId }) => {
 };
 
 export default Comment;
+
 
 
 
