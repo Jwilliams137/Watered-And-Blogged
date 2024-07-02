@@ -3,6 +3,7 @@ import { updateDoc, deleteDoc, doc, getDoc } from 'firebase/firestore';
 import { db, auth } from '../../firebase';
 import styles from './Post.module.css';
 import Link from 'next/link'; // Import Link component from Next.js
+import Comment from '../Comment/Comment'; // Import the Comment component
 
 const Post = ({ post, onPostUpdated, onDeletePost }) => {
   const [editing, setEditing] = useState(false);
@@ -147,6 +148,8 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
             </div>
           )}
           <div className={styles.postContent}>{displayedContent}</div>
+          {/* Add the Comment component here */}
+          <Comment postId={post.id} />
         </div>
       )}
     </div>
@@ -154,6 +157,7 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
 };
 
 export default Post;
+
 
 
 
