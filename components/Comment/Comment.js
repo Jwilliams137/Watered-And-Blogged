@@ -21,7 +21,7 @@ const Comment = ({ postId }) => {
       if (postDoc.exists()) {
         const postData = postDoc.data();
         setLikesCount(postData.likes || 0);
-        setLiked(postData.likesBy && postData.likesBy.includes(auth.currentUser.uid));
+        setLiked(postData.likesBy && postData.likesBy.includes(auth.currentUser?.uid));
         setPostOwnerId(postData.userId);  // Assuming userId is the field for post owner's ID
       }
     };
@@ -32,7 +32,7 @@ const Comment = ({ postId }) => {
       if (doc.exists()) {
         const postData = doc.data();
         setLikesCount(postData.likes || 0);
-        setLiked(postData.likesBy && postData.likesBy.includes(auth.currentUser.uid));
+        setLiked(postData.likesBy && postData.likesBy.includes(auth.currentUser?.uid));
       }
     });
 
@@ -56,17 +56,17 @@ const Comment = ({ postId }) => {
 
       if (postDoc.exists()) {
         const postData = postDoc.data();
-        const likedByUser = (postData.likesBy && postData.likesBy.includes(user.uid));
+        const likedByUser = (postData.likesBy && postData.likesBy.includes(user?.uid));
 
         if (!likedByUser) {
           await updateDoc(postRef, {
             likes: postData.likes ? postData.likes + 1 : 1,
-            likesBy: [...(postData.likesBy || []), user.uid],
+            likesBy: [...(postData.likesBy || []), user?.uid],
           });
         } else {
           await updateDoc(postRef, {
             likes: postData.likes - 1,
-            likesBy: postData.likesBy.filter(uid => uid !== user.uid),
+            likesBy: postData.likesBy.filter(uid => uid !== user?.uid),
           });
         }
       }
@@ -84,7 +84,7 @@ const Comment = ({ postId }) => {
       await addDoc(commentsCollection, {
         content: newComment,
         createdAt: new Date(),
-        userId: auth.currentUser.uid, // Store the ID of the comment creator
+        userId: auth.currentUser?.uid || 'anonymous', // Store the ID of the comment creator or use 'anonymous'
       });
       setNewComment('');
     } catch (error) {
@@ -110,11 +110,16 @@ const Comment = ({ postId }) => {
     }
   };
 
-  const handleDeleteComment = async (commentId) => {
+  const handleDeleteComment = async (commentId, commentUserId) => {
     setLoading(true);
     try {
       const commentRef = doc(db, `posts/${postId}/comments`, commentId);
-      await deleteDoc(commentRef);
+      // Check if the current user is either the post owner or the comment owner
+      if (auth.currentUser?.uid === postOwnerId || auth.currentUser?.uid === commentUserId) {
+        await deleteDoc(commentRef);
+      } else {
+        console.error('You are not authorized to delete this comment.');
+      }
     } catch (error) {
       console.error('Error deleting comment:', error);
     } finally {
@@ -137,52 +142,25 @@ const Comment = ({ postId }) => {
       <div className={styles.commentList}>
         {comments.map(comment => (
           <div key={comment.id} className={styles.comment}>
-            {editingCommentId === comment.id ? (
-              <>
-                <input
-                  type="text"
-                  value={editingCommentContent}
-                  onChange={(e) => setEditingCommentContent(e.target.value)}
-                  placeholder="Edit your comment..."
-                  className={styles.commentInput}
-                />
-                <button
-                  onClick={() => handleEditComment(comment.id)}
-                  disabled={loading || !editingCommentContent}
-                  className={styles.commentButton}
-                >
-                  {loading ? 'Updating...' : 'Update'}
-                </button>
-                <button
-                  onClick={() => setEditingCommentId(null)}
-                  className={styles.commentButton}
-                >
-                  Cancel
-                </button>
-              </>
-            ) : (
-              <>
-                <span>{comment.content}</span>
-                {comment.userId === auth.currentUser.uid && (
-                  <button
-                    onClick={() => {
-                      setEditingCommentId(comment.id);
-                      setEditingCommentContent(comment.content);
-                    }}
-                    className={styles.commentButton}
-                  >
-                    Edit
-                  </button>
-                )}
-                {(comment.userId === auth.currentUser.uid || postOwnerId === auth.currentUser.uid) && (
-                  <button
-                    onClick={() => handleDeleteComment(comment.id)}
-                    className={styles.commentButton}
-                  >
-                    Delete
-                  </button>
-                )}
-              </>
+            <span>{comment.content}</span>
+            {(auth.currentUser?.uid === comment.userId || auth.currentUser?.uid === postOwnerId) && (
+              <button
+                onClick={() => handleDeleteComment(comment.id, comment.userId)}
+                className={styles.commentButton}
+              >
+                Delete
+              </button>
+            )}
+            {auth.currentUser?.uid === comment.userId && (
+              <button
+                onClick={() => {
+                  setEditingCommentId(comment.id);
+                  setEditingCommentContent(comment.content);
+                }}
+                className={styles.commentButton}
+              >
+                Edit
+              </button>
             )}
           </div>
         ))}
@@ -194,11 +172,11 @@ const Comment = ({ postId }) => {
           onChange={(e) => setNewComment(e.target.value)}
           placeholder="Add a comment..."
           className={styles.commentInput}
-          disabled={loading}
+          disabled={loading || !auth.currentUser}
         />
         <button
           onClick={handleAddComment}
-          disabled={loading || !newComment}
+          disabled={loading || !newComment || !auth.currentUser}
           className={styles.commentButton}
         >
           {loading ? 'Adding...' : 'Add Comment'}
@@ -209,6 +187,7 @@ const Comment = ({ postId }) => {
 };
 
 export default Comment;
+
 
 
 
