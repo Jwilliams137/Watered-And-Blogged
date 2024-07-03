@@ -1,15 +1,25 @@
-/* pages/plant-profile/page.module.css */
+.plantProfileContainer {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
 
-.plantProfile {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-  
-  .plantImage {
-    width: 100%;
-    max-height: 400px;
-    object-fit: cover;
-    margin-top: 20px;
-  }
-  
+.plantName {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.plantImage {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 20px;
+  border: 4px solid #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}

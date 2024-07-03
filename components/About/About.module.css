@@ -1,9 +1,24 @@
+.aboutContainer {
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    max-width: 600px;
+    margin: auto;
+}
+
+.viewMode, .editMode {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .profilePictureContainer {
     display: flex;
     justify-content: center;
     align-items: center;
     margin-top: 10px;
-    width: 100px; /* Ensure the container has a consistent size */
+    width: 100px;
     height: 100px;
     border-radius: 50%;
     overflow: hidden;
@@ -17,6 +32,79 @@
     height: 100%;
 }
 
-.defaultProfilePicture {
-    background-color: gray; /* Solid gray background for default */
+.aboutText {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.aboutText h2 {
+    margin: 10px 0;
+    font-size: 1.5rem;
+}
+
+.aboutText p {
+    font-size: 1rem;
+    color: #555;
+}
+
+.editButton {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.editButton:hover {
+    background-color: #0056b3;
+}
+
+.textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    resize: none;
+}
+
+.input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.buttonGroup {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.saveButton, .cancelButton {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.saveButton {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.saveButton:hover {
+    background-color: #218838;
+}
+
+.cancelButton {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.cancelButton:hover {
+    background-color: #c82333;
 }

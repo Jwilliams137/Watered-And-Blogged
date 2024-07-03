@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { collection, query, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { db, auth } from '../../firebase';
-import Link from 'next/link'; // Import Link from Next.js
+import Link from 'next/link';
 import styles from './PlantList.module.css';
 
 const PlantList = () => {
@@ -47,8 +47,8 @@ const PlantList = () => {
     };
 
     return (
-        <div>
-            <h2 onClick={togglePlantList} style={{ cursor: 'pointer' }}>
+        <div className={styles.plantListContainer}>
+            <h2 className={styles.plantListTitle} onClick={togglePlantList}>
                 My Plants
             </h2>
             {showPlants && (
@@ -63,8 +63,15 @@ const PlantList = () => {
                                         className={styles.plantImage}
                                     />
                                 </Link>
-                                <p>{plant.name}</p>
-                                <button onClick={() => handleDeletePlant(plant.id)}>Delete Plant</button>
+                                <div className={styles.plantDetails}>
+                                    <p className={styles.plantName}>{plant.name}</p>
+                                    <button
+                                        className={styles.deleteButton}
+                                        onClick={() => handleDeletePlant(plant.id)}
+                                    >
+                                        Delete Plant
+                                    </button>
+                                </div>
                             </div>
                         </li>
                     ))}
@@ -75,6 +82,7 @@ const PlantList = () => {
 };
 
 export default PlantList;
+
 
 
 

@@ -86,36 +86,29 @@ const About = () => {
     };
 
     return (
-        <div>
+        <div className={styles.aboutContainer}>
             {!editMode ? (
-                <div>
-                    {profilePictureUrl ? (
-                        <div className={styles.profilePictureContainer}>
-                            <img
-                                src={profilePictureUrl}
-                                alt="Profile Picture"
-                                className={styles.profilePicture}
-                            />
-                        </div>
-                    ) : (
-                        <div className={styles.profilePictureContainer}>
-                            <img
-                                src="/avatar.png"
-                                alt="Default Avatar"
-                                className={styles.profilePicture}
-                            />
-                        </div>
-                    )}
-                    <p>{aboutMe || 'Tell us about yourself'}</p>
-                    <p>Username: {username}</p>
-                    <button onClick={() => setEditMode(true)}>Edit</button>
+                <div className={styles.viewMode}>
+                    <div className={styles.profilePictureContainer}>
+                        <img
+                            src={profilePictureUrl}
+                            alt="Profile Picture"
+                            className={styles.profilePicture}
+                        />
+                    </div>
+                    <div className={styles.aboutText}>
+                        <h2>{username}</h2>
+                        <p>{aboutMe || 'Tell us about yourself'}</p>
+                        <button onClick={() => setEditMode(true)} className={styles.editButton}>Edit</button>
+                    </div>
                 </div>
             ) : (
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} className={styles.editMode}>
                     <textarea
                         value={aboutMe}
                         onChange={(e) => setAboutMe(e.target.value)}
                         placeholder="Tell us about yourself"
+                        className={styles.textarea}
                     />
                     <ProfileImageUpload
                         setImageFile={handleFileChange}
@@ -128,10 +121,13 @@ const About = () => {
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         placeholder="Choose a username"
+                        className={styles.input}
                     />
                     {uploadProgress > 0 && <p>Upload Progress: {uploadProgress.toFixed(2)}%</p>}
-                    <button type="submit">Save</button>
-                    <button type="button" onClick={() => setEditMode(false)}>Cancel</button>
+                    <div className={styles.buttonGroup}>
+                        <button type="submit" className={styles.saveButton}>Save</button>
+                        <button type="button" onClick={() => setEditMode(false)} className={styles.cancelButton}>Cancel</button>
+                    </div>
                 </form>
             )}
         </div>
@@ -139,6 +135,7 @@ const About = () => {
 };
 
 export default About;
+
 
 
 

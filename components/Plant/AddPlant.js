@@ -3,6 +3,7 @@ import { collection, addDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, auth, storage } from '../../firebase';
 import ProfileImageUpload from '../ImageUpload/ProfileImageUpload';
+import styles from './AddPlant.module.css';
 
 const AddPlant = () => {
     const [showForm, setShowForm] = useState(false);
@@ -41,7 +42,7 @@ const AddPlant = () => {
             setPlantType('');
             setImageFile(null);
             setImagePreview('');
-            setShowForm(false); // Hide form after successful addition
+            setShowForm(false);
 
         } catch (error) {
             console.error('Error adding plant:', error);
@@ -66,21 +67,23 @@ const AddPlant = () => {
     };
 
     return (
-        <div>
+        <div className={styles.addPlantContainer}>
             {!showForm ? (
-                <div>
+                <div className={styles.initialView}>
                     <p>Add your plant profile here</p>
-                    <button onClick={toggleForm}>Edit</button>
+                    <button className={styles.editButton} onClick={toggleForm}>Edit</button>
                 </div>
             ) : (
-                <form onSubmit={handleSubmit}>
+                <form className={styles.plantForm} onSubmit={handleSubmit}>
                     <input
+                        className={styles.inputField}
                         type="text"
                         value={plantName}
                         onChange={(e) => setPlantName(e.target.value)}
                         placeholder="Plant Name"
                     />
                     <input
+                        className={styles.inputField}
                         type="text"
                         value={plantType}
                         onChange={(e) => setPlantType(e.target.value)}
@@ -90,11 +93,15 @@ const AddPlant = () => {
                         setImageFile={handleImageChange}
                         imagePreview={imagePreview}
                         setImagePreview={setImagePreview}
-                        setCroppedImageFile={() => {}} // No need to set cropped image file for this form
+                        setCroppedImageFile={() => {}} 
                     />
-                    {uploadProgress > 0 && <p>Upload Progress: {uploadProgress.toFixed(2)}%</p>}
-                    <button type="submit">Add Plant</button>
-                    <button type="button" onClick={toggleForm}>Cancel</button>
+                    {uploadProgress > 0 && (
+                        <p className={styles.uploadProgress}>Upload Progress: {uploadProgress.toFixed(2)}%</p>
+                    )}
+                    <div className={styles.buttonContainer}>
+                        <button className={styles.submitButton} type="submit">Add Plant</button>
+                        <button className={styles.cancelButton} type="button" onClick={toggleForm}>Cancel</button>
+                    </div>
                 </form>
             )}
         </div>
@@ -102,6 +109,7 @@ const AddPlant = () => {
 };
 
 export default AddPlant;
+
 
 
 
