@@ -13,25 +13,30 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
   const [displayedContent, setDisplayedContent] = useState(post.content);
   const [displayedImageUrl, setDisplayedImageUrl] = useState(post.imageUrl);
   const [authorProfilePicture, setAuthorProfilePicture] = useState(null);
-  const [showFullContent, setShowFullContent] = useState(false); // New state to toggle full content
+  const [authorName, setAuthorName] = useState(post.author);
+  const [showFullContent, setShowFullContent] = useState(false);
 
   useEffect(() => {
     setDisplayedContent(post.content);
     setDisplayedImageUrl(post.imageUrl);
-    fetchAuthorProfilePicture(post.authorId);
+    fetchAuthorDetails(post.authorId);
   }, [post]);
 
-  const fetchAuthorProfilePicture = async (authorId) => {
+  const fetchAuthorDetails = async (authorId) => {
     try {
       const userDoc = await getDoc(doc(db, 'users', authorId));
       if (userDoc.exists()) {
-        setAuthorProfilePicture(userDoc.data().profilePicture);
+        const userData = userDoc.data();
+        setAuthorProfilePicture(userData.profilePicture);
+        setAuthorName(userData.username || post.author);
       } else {
         setAuthorProfilePicture(null);
+        setAuthorName(post.author);
       }
     } catch (error) {
-      console.error('Error fetching author profile picture:', error);
+      console.error('Error fetching author details:', error);
       setAuthorProfilePicture(null);
+      setAuthorName(post.author);
     }
   };
 
@@ -152,20 +157,20 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
               <Link href={`/profile/${post.authorId}`}>
                 <img
                   src={authorProfilePicture}
-                  alt={`${post.author}'s profile`}
+                  alt={`${authorName}'s profile`}
                   className={styles.profilePicture}
                 />
               </Link>
             ) : (
               <img
                 src="/avatar.png"
-                alt={`${post.author}'s profile`}
+                alt={`${authorName}'s profile`}
                 className={styles.profilePicture}
               />
             )}
             <div className={styles.authorInfo}>
               <Link href={`/profile/${post.authorId}`}>
-                <small className={styles.authorName}>{post.author}</small>
+                <small className={styles.authorName}>{authorName}</small>
               </Link>
             </div>
           </div>
@@ -180,7 +185,6 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
               </button>
             </div>
           )}
-          {/* Updated post content display */}
           {renderContent()}
           <Comment postId={post.id} />
         </div>
@@ -190,23 +194,3 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
 };
 
 export default Post;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

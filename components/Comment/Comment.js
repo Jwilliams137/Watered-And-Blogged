@@ -3,6 +3,7 @@ import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDoc } fro
 import { db, auth } from '../../firebase';
 import styles from './Comment.module.css';
 import Modal from '../Modal/Modal';
+import Link from 'next/link'; // Import Link from next/link
 
 const Comment = ({ postId }) => {
     const [comments, setComments] = useState([]);
@@ -210,12 +211,16 @@ const Comment = ({ postId }) => {
                     <div key={comment.id} className={styles.comment}>
                         {commentAuthors[comment.id] && (
                             <div className={styles.commentHeader}>
-                                <img
-                                    src={commentAuthors[comment.id].profilePicture || '/avatar.png'} // Use default avatar path directly
-                                    alt={`${commentAuthors[comment.id].name || 'Unknown User'}'s profile`}
-                                    className={styles.profilePicture}
-                                />
-                                <small className={styles.authorName}>{commentAuthors[comment.id].name || 'Unknown User'}</small>
+                                <Link href={`/profile/${comment.userId}`}>
+                                    <img
+                                        src={commentAuthors[comment.id].profilePicture || '/avatar.png'} // Use default avatar path directly
+                                        alt={`${commentAuthors[comment.id].name || 'Unknown User'}'s profile`}
+                                        className={styles.profilePicture}
+                                    />
+                                </Link>
+                                <Link href={`/profile/${comment.userId}`}>
+                                    <small className={styles.authorName}>{commentAuthors[comment.id].name || 'Unknown User'}</small>
+                                </Link>
                             </div>
                         )}
                         {editingCommentId === comment.id ? (
@@ -274,10 +279,10 @@ const Comment = ({ postId }) => {
                 />
                 <button
                     onClick={handleAddComment}
-                    disabled={!newComment || loading}
+                    disabled={loading || !newComment.trim()}
                     className={styles.commentButton}
                 >
-                    Comment
+                    Post
                 </button>
             </div>
         </div>
@@ -285,6 +290,7 @@ const Comment = ({ postId }) => {
 };
 
 export default Comment;
+
 
 
 
