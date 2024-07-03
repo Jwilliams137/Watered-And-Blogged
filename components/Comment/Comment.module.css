@@ -1,2 +1,64 @@
-
+.commentSection {
+    margin: 20px;
+  }
+  
+  .postActions {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .likeButton {
+    margin-right: 10px;
+  }
+  
+  .likesCount {
+    font-weight: bold;
+  }
+  
+  .commentList {
+    margin-top: 10px;
+  }
+  
+  .comment {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .commentHeader {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+  }
+  
+  .profilePicture {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  
+  .authorName {
+    font-weight: bold;
+  }
+  
+  .addComment {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+  }
+  
+  .commentInput {
+    flex: 1;
+    padding: 10px;
+    margin-right: 10px;
+  }
+  
+  .commentButton {
+    padding: 10px;
+  }
+  
+   
+  
   

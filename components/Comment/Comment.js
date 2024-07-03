@@ -14,6 +14,7 @@ const Comment = ({ postId }) => {
   const [liked, setLiked] = useState(false);
   const [postOwnerId, setPostOwnerId] = useState('');
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [commentAuthors, setCommentAuthors] = useState({});
 
   useEffect(() => {
     const postRef = doc(db, 'posts', postId);
@@ -40,7 +41,9 @@ const Comment = ({ postId }) => {
 
     const commentsRef = collection(db, `posts/${postId}/comments`);
     const commentsUnsubscribe = onSnapshot(commentsRef, (snapshot) => {
-      setComments(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      const commentsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setComments(commentsData);
+      fetchCommentAuthors(commentsData);
     });
 
     return () => {
@@ -48,6 +51,34 @@ const Comment = ({ postId }) => {
       commentsUnsubscribe();
     };
   }, [postId]);
+
+  const fetchCommentAuthors = async (comments) => {
+    const authorPromises = comments.map(async (comment) => {
+      try {
+        if (!comment.userId) {
+          console.error('comment.userId is undefined for comment:', comment);
+          return { [comment.id]: { name: 'Unknown User' } }; // Default to 'Unknown User'
+        }
+
+        const userDocRef = doc(db, 'users', comment.userId);
+        const userDoc = await getDoc(userDocRef);
+
+        if (userDoc.exists()) {
+          return { [comment.id]: userDoc.data() };
+        } else {
+          console.error('No user found for userId:', comment.userId);
+          return { [comment.id]: { name: 'Unknown User' } }; // Default to 'Unknown User'
+        }
+      } catch (error) {
+        console.error('Error fetching userDoc:', error);
+        return { [comment.id]: { name: 'Unknown User' } }; // Default to 'Unknown User'
+      }
+    });
+
+    const authorData = await Promise.all(authorPromises);
+    const authors = authorData.reduce((acc, author) => ({ ...acc, ...author }), {});
+    setCommentAuthors(authors);
+  };
 
   const handleLikePost = async () => {
     if (!auth.currentUser) {
@@ -150,7 +181,7 @@ const Comment = ({ postId }) => {
   };
 
   const handleLoginSuccess = () => {
-    setShowLoginModal(false); // Close the modal on successful login
+    setShowLoginModal(false);
   };
 
   return (
@@ -170,6 +201,16 @@ const Comment = ({ postId }) => {
       <div className={styles.commentList}>
         {comments.map(comment => (
           <div key={comment.id} className={styles.comment}>
+            {commentAuthors[comment.id] && (
+              <div className={styles.commentHeader}>
+                <img
+                  src={commentAuthors[comment.id]?.profilePicture || '/default-profile.png'}
+                  alt={`${commentAuthors[comment.id]?.name || 'Unknown User'}'s profile`}
+                  className={styles.profilePicture}
+                />
+                <small className={styles.authorName}>{commentAuthors[comment.id]?.name || 'Unknown User'}</small>
+              </div>
+            )}
             <span>{comment.content}</span>
             {(auth.currentUser?.uid === comment.userId || auth.currentUser?.uid === postOwnerId) && auth.currentUser ? (
               <button
@@ -216,6 +257,13 @@ const Comment = ({ postId }) => {
 };
 
 export default Comment;
+
+
+
+
+
+
+
 
 
 
