@@ -24,7 +24,7 @@ const About = () => {
                     const data = docSnap.data();
                     setAboutMe(data.aboutMe || '');
                     setProfilePictureUrl(data.profilePicture || '');
-                    setUsername(data.username || '');
+                    setUsername(data.username || auth.currentUser.displayName); // Default to Google display name
                 }
             }
         };
@@ -74,7 +74,7 @@ const About = () => {
 
         try {
             const userRef = doc(db, 'users', auth.currentUser.uid);
-            await setDoc(userRef, { aboutMe, profilePicture: imageUrl }, { merge: true });
+            await setDoc(userRef, { aboutMe, profilePicture: imageUrl, username }, { merge: true });
             setProfilePictureUrl(imageUrl);
             setProfilePictureFile(null);
             setImagePreview('');
@@ -103,6 +103,7 @@ const About = () => {
                         ></div>
                     )}
                     <p>{aboutMe || 'Tell us about yourself'}</p>
+                    <p>Username: {username}</p>
                     <button onClick={() => setEditMode(true)}>Edit</button>
                 </div>
             ) : (
@@ -118,6 +119,12 @@ const About = () => {
                         setImagePreview={setImagePreview}
                         setCroppedImageFile={setCroppedImageFile}
                     />
+                    <input
+                        type="text"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="Choose a username"
+                    />
                     {uploadProgress > 0 && <p>Upload Progress: {uploadProgress.toFixed(2)}%</p>}
                     <button type="submit">Save</button>
                     <button type="button" onClick={() => setEditMode(false)}>Cancel</button>
@@ -128,6 +135,7 @@ const About = () => {
 };
 
 export default About;
+
 
 
 

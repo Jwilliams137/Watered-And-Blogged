@@ -17,67 +17,74 @@ const Comment = ({ postId }) => {
   const [commentAuthors, setCommentAuthors] = useState({});
 
   useEffect(() => {
-    const postRef = doc(db, 'posts', postId);
+    const fetchPostData = async () => {
+      try {
+        const postRef = doc(db, 'posts', postId);
+        const postDoc = await getDoc(postRef);
 
-    const fetchPostOwner = async () => {
-      const postDoc = await getDoc(postRef);
-      if (postDoc.exists()) {
-        const postData = postDoc.data();
-        setLikesCount(postData.likes || 0);
-        setLiked(postData.likesBy && postData.likesBy.includes(auth.currentUser?.uid));
-        setPostOwnerId(postData.userId);
+        if (postDoc.exists()) {
+          const postData = postDoc.data();
+          setLikesCount(postData.likes || 0);
+          setLiked(postData.likesBy && postData.likesBy.includes(auth.currentUser?.uid));
+          setPostOwnerId(postData.userId);
+        }
+      } catch (error) {
+        console.error('Error fetching post data:', error);
       }
     };
 
-    fetchPostOwner();
-
-    const unsubscribe = onSnapshot(postRef, (doc) => {
+    const unsubscribePost = onSnapshot(doc(db, 'posts', postId), (doc) => {
       if (doc.exists()) {
         const postData = doc.data();
         setLikesCount(postData.likes || 0);
         setLiked(postData.likesBy && postData.likesBy.includes(auth.currentUser?.uid));
+        setPostOwnerId(postData.userId);
       }
     });
 
-    const commentsRef = collection(db, `posts/${postId}/comments`);
-    const commentsUnsubscribe = onSnapshot(commentsRef, (snapshot) => {
+    const unsubscribeComments = onSnapshot(collection(db, `posts/${postId}/comments`), (snapshot) => {
       const commentsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setComments(commentsData);
       fetchCommentAuthors(commentsData);
     });
 
     return () => {
-      unsubscribe();
-      commentsUnsubscribe();
+      unsubscribePost();
+      unsubscribeComments();
     };
   }, [postId]);
 
-  const fetchCommentAuthors = async (comments) => {
-    const authorPromises = comments.map(async (comment) => {
+  const fetchCommentAuthors = async (commentsData) => {
+    const authorPromises = commentsData.map(async (comment) => {
       try {
         if (!comment.userId) {
           console.error('comment.userId is undefined for comment:', comment);
-          return { [comment.id]: { name: 'Unknown User' } }; // Default to 'Unknown User'
+          return { id: comment.id, name: 'Unknown User', profilePicture: '/default-profile.png' };
         }
 
         const userDocRef = doc(db, 'users', comment.userId);
         const userDoc = await getDoc(userDocRef);
 
         if (userDoc.exists()) {
-          return { [comment.id]: userDoc.data() };
+          const userData = userDoc.data();
+          return { id: comment.id, name: userData.username || 'Unknown User', profilePicture: userData.profilePicture || '/default-profile.png' };
         } else {
           console.error('No user found for userId:', comment.userId);
-          return { [comment.id]: { name: 'Unknown User' } }; // Default to 'Unknown User'
+          return { id: comment.id, name: 'Unknown User', profilePicture: '/default-profile.png' };
         }
       } catch (error) {
-        console.error('Error fetching userDoc:', error);
-        return { [comment.id]: { name: 'Unknown User' } }; // Default to 'Unknown User'
+        console.error('Error fetching user data:', error);
+        return { id: comment.id, name: 'Unknown User', profilePicture: '/default-profile.png' };
       }
     });
 
-    const authorData = await Promise.all(authorPromises);
-    const authors = authorData.reduce((acc, author) => ({ ...acc, ...author }), {});
-    setCommentAuthors(authors);
+    try {
+      const authorsData = await Promise.all(authorPromises);
+      const authors = authorsData.reduce((acc, author) => ({ ...acc, [author.id]: author }), {});
+      setCommentAuthors(authors);
+    } catch (error) {
+      console.error('Error fetching comment authors:', error);
+    }
   };
 
   const handleLikePost = async () => {
@@ -89,22 +96,21 @@ const Comment = ({ postId }) => {
     setLoading(true);
     try {
       const postRef = doc(db, 'posts', postId);
-      const user = auth.currentUser;
       const postDoc = await getDoc(postRef);
 
       if (postDoc.exists()) {
         const postData = postDoc.data();
-        const likedByUser = (postData.likesBy && postData.likesBy.includes(user?.uid));
+        const likedByUser = (postData.likesBy && postData.likesBy.includes(auth.currentUser.uid));
 
         if (!likedByUser) {
           await updateDoc(postRef, {
             likes: postData.likes ? postData.likes + 1 : 1,
-            likesBy: [...(postData.likesBy || []), user?.uid],
+            likesBy: [...(postData.likesBy || []), auth.currentUser.uid],
           });
         } else {
           await updateDoc(postRef, {
             likes: postData.likes - 1,
-            likesBy: postData.likesBy.filter(uid => uid !== user?.uid),
+            likesBy: postData.likesBy.filter(uid => uid !== auth.currentUser.uid),
           });
         }
       }
@@ -123,11 +129,11 @@ const Comment = ({ postId }) => {
 
     setLoading(true);
     try {
-      const commentsCollection = collection(db, `posts/${postId}/comments`);
-      await addDoc(commentsCollection, {
+      const commentsCollectionRef = collection(db, `posts/${postId}/comments`);
+      await addDoc(commentsCollectionRef, {
         content: newComment,
         createdAt: new Date(),
-        userId: auth.currentUser?.uid || 'anonymous',
+        userId: auth.currentUser.uid,
       });
       setNewComment('');
     } catch (error) {
@@ -198,17 +204,18 @@ const Comment = ({ postId }) => {
         </button>
         <span className={styles.likesCount}>{likesCount} {likesCount === 1 ? 'like' : 'likes'}</span>
       </div>
+
       <div className={styles.commentList}>
         {comments.map(comment => (
           <div key={comment.id} className={styles.comment}>
             {commentAuthors[comment.id] && (
               <div className={styles.commentHeader}>
                 <img
-                  src={commentAuthors[comment.id]?.profilePicture || '/default-profile.png'}
-                  alt={`${commentAuthors[comment.id]?.name || 'Unknown User'}'s profile`}
+                  src={commentAuthors[comment.id].profilePicture || '/default-profile.png'}
+                  alt={`${commentAuthors[comment.id].name || 'Unknown User'}'s profile`}
                   className={styles.profilePicture}
                 />
-                <small className={styles.authorName}>{commentAuthors[comment.id]?.name || 'Unknown User'}</small>
+                <small className={styles.authorName}>{commentAuthors[comment.id].name || 'Unknown User'}</small>
               </div>
             )}
             <span>{comment.content}</span>
@@ -234,6 +241,7 @@ const Comment = ({ postId }) => {
           </div>
         ))}
       </div>
+
       <div className={styles.addComment}>
         <input
           type="text"
@@ -257,11 +265,6 @@ const Comment = ({ postId }) => {
 };
 
 export default Comment;
-
-
-
-
-
 
 
 
