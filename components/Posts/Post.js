@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { updateDoc, deleteDoc, doc, getDoc } from 'firebase/firestore';
 import { db, auth } from '../../firebase';
 import styles from './Post.module.css';
-import Link from 'next/link'; // Import Link component from Next.js
-import Comment from '../Comment/Comment'; // Import the Comment component
+import Link from 'next/link';
+import Comment from '../Comment/Comment';
 
 const Post = ({ post, onPostUpdated, onDeletePost }) => {
   const [editing, setEditing] = useState(false);
@@ -128,7 +128,11 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
                 />
               </Link>
             ) : (
-              <div className={styles.defaultProfilePicture}></div>
+              <img
+                src="/avatar.png"
+                alt={`${post.author}'s profile`}
+                className={styles.profilePicture}
+              />
             )}
             <div className={styles.authorInfo}>
               <Link href={`/profile/${post.authorId}`}>
@@ -147,8 +151,8 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
               </button>
             </div>
           )}
+          {/* Updated post content display */}
           <div className={styles.postContent}>{displayedContent}</div>
-          {/* Add the Comment component here */}
           <Comment postId={post.id} />
         </div>
       )}
@@ -157,6 +161,8 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
 };
 
 export default Post;
+
+
 
 
 
