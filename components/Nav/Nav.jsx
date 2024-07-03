@@ -1,11 +1,13 @@
 'use client';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { logout } from '../../utils/auth';
 import useAuth from '../../hooks/useAuth';
-import { useState, useEffect } from 'react';
 import Login from '../Login/Login';
-import styles from './Nav.module.css'
+import { db } from '../../firebase'; // Import Firestore instance
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import styles from './Nav.module.css';
 
 function Nav() {
     const { user } = useAuth();
@@ -39,6 +41,23 @@ function Nav() {
         setIsMenuOpen(false);
     };
 
+    const handleLoginSuccess = async () => {
+        if (user) {
+            const userRef = doc(db, `users/${user.uid}`);
+            const userSnap = await getDoc(userRef);
+
+            if (!userSnap.exists()) {
+                const { displayName, email } = user;
+                const username = displayName || email.split('@')[0]; // Assign username based on display name or email
+
+                await setDoc(userRef, {
+                    username,
+                    // Any other initial user data if needed
+                }, { merge: true }); // Merge ensures existing data isn't overwritten
+            }
+        }
+    };
+
     return (
         <>
             <div className={`${styles.hamburger} ${isMenuOpen ? styles.open : ''}`} onClick={toggleMenu}>
@@ -56,7 +75,6 @@ function Nav() {
                 </div>
 
                 <div className={`${styles.rightNav} ${isMenuOpen ? styles.open : ''}`}>
-
                     {user ? (
                         <>
                             <Link href="/" className={styles.link} onClick={closeMenu}>
@@ -75,8 +93,8 @@ function Nav() {
                             </p>
                         </>
                     ) : (
-                        <div className={styles.link} onClick={closeMenu}>                            
-                            <Login />
+                        <div className={styles.link} onClick={closeMenu}>
+                            <Login onSuccess={handleLoginSuccess} />
                         </div>
                     )}
                 </div>
@@ -86,6 +104,10 @@ function Nav() {
 }
 
 export default Nav;
+
+
+
+
 
 
 
