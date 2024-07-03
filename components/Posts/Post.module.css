@@ -83,15 +83,24 @@
     cursor: not-allowed;
   }
   
+  .readMoreButton {
+    background: none;
+    border: none;
+    color: blue;
+    cursor: pointer;
+  }
+  
   @media (prefers-color-scheme: dark) {
     .post {
       background-color: rgb(82, 107, 92);
       color: white;
     }
+  
     .button {
       background-color: #333;
       color: white;
     }
+  
     .button:hover {
       background-color: #444;
       color: #fff;

@@ -13,6 +13,7 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
   const [displayedContent, setDisplayedContent] = useState(post.content);
   const [displayedImageUrl, setDisplayedImageUrl] = useState(post.imageUrl);
   const [authorProfilePicture, setAuthorProfilePicture] = useState(null);
+  const [showFullContent, setShowFullContent] = useState(false); // New state to toggle full content
 
   useEffect(() => {
     setDisplayedContent(post.content);
@@ -74,6 +75,34 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
     setNewContent(post.content);
     setNewVisibility(post.visibility);
     setEditing(false);
+  };
+
+  const toggleContent = () => {
+    setShowFullContent(!showFullContent);
+  };
+
+  const renderContent = () => {
+    if (displayedContent.length > 300 && !showFullContent) {
+      return (
+        <>
+          <div className={styles.postContent}>{displayedContent.slice(0, 300)}...</div>
+          <button onClick={toggleContent} className={styles.readMoreButton}>
+            Read more...
+          </button>
+        </>
+      );
+    } else if (displayedContent.length > 300 && showFullContent) {
+      return (
+        <>
+          <div className={styles.postContent}>{displayedContent}</div>
+          <button onClick={toggleContent} className={styles.readMoreButton}>
+            See less
+          </button>
+        </>
+      );
+    } else {
+      return <div className={styles.postContent}>{displayedContent}</div>;
+    }
   };
 
   return (
@@ -152,7 +181,7 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
             </div>
           )}
           {/* Updated post content display */}
-          <div className={styles.postContent}>{displayedContent}</div>
+          {renderContent()}
           <Comment postId={post.id} />
         </div>
       )}
@@ -161,6 +190,8 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
 };
 
 export default Post;
+
+
 
 
 
