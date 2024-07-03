@@ -23,7 +23,7 @@ const About = () => {
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     setAboutMe(data.aboutMe || '');
-                    setProfilePictureUrl(data.profilePicture || '');
+                    setProfilePictureUrl(data.profilePicture || '/avatar.png');
                     setUsername(data.username || auth.currentUser.displayName); // Default to Google display name
                 }
             }
@@ -98,9 +98,13 @@ const About = () => {
                             />
                         </div>
                     ) : (
-                        <div
-                            className={`${styles.profilePictureContainer} ${styles.defaultProfilePicture}`}
-                        ></div>
+                        <div className={styles.profilePictureContainer}>
+                            <img
+                                src="/avatar.png"
+                                alt="Default Avatar"
+                                className={styles.profilePicture}
+                            />
+                        </div>
                     )}
                     <p>{aboutMe || 'Tell us about yourself'}</p>
                     <p>Username: {username}</p>
@@ -135,6 +139,7 @@ const About = () => {
 };
 
 export default About;
+
 
 
 

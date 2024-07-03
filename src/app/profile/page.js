@@ -32,7 +32,6 @@ const ProfilePage = () => {
         <div className={styles.profilePage}>
             {user ? (
                 <div>
-                    <h1 className={styles.welcome}>{user.displayName}</h1>
                     <About />
                     <PlantList />
                     <AddPlant />
