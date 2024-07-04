@@ -1,4 +1,4 @@
-This blog/social sharing site was created for gardeners to share pictures of their plants.  It could easily be used for any other theme you might like or just as a general social media site.  
+This blog/social sharing site was created for gardeners to share pictures of their plants.  It could easily be used for any other theme you might like or just as a general social media site. This blog allows gardeners to create subprofiles belonging to their prized plants so that each plant is able to have it's own timeline. 
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
