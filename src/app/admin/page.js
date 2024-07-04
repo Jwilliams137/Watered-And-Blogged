@@ -17,7 +17,7 @@ const AdminPage = () => {
         try {
             setLoading(true);
 
-            let q = query(collection(db, 'posts'), 
+            let q = query(collection(db, 'plantPosts'),
                           where('visibility', '==', 'public'),
                           where('approved', '==', false),
                           orderBy('createdAt', 'desc'),
@@ -30,17 +30,17 @@ const AdminPage = () => {
             const snapshot = await getDocs(q);
             const newPosts = await Promise.all(snapshot.docs.map(async (docSnapshot) => {
                 const postData = docSnapshot.data();
-                const authorId = postData.authorId;
+                const plantId = postData.plantId;
 
-                // Fetch user data to get profilePicture
-                const authorDoc = await getDoc(doc(db, 'users', authorId));
-                const authorData = authorDoc.data();
+                // Fetch plant details to get plantName and profilePicture
+                const plantDoc = await getDoc(doc(db, 'plants', plantId));
+                const plantData = plantDoc.data();
 
                 return {
                     id: docSnapshot.id,
                     ...postData,
-                    author: postData.author, // Assuming 'author' field in posts collection contains author name
-                    profilePicture: authorData.profilePicture, // Assuming 'profilePicture' field in users collection
+                    plantName: plantData.name, // Assuming 'name' field in plants collection
+                    plantProfilePicture: plantData.profilePicture, // Assuming 'profilePicture' field in plants collection
                 };
             }));
 
@@ -54,7 +54,7 @@ const AdminPage = () => {
                 setLastVisible(null);
             }
         } catch (error) {
-            console.error('Error fetching pending posts:', error);
+            console.error('Error fetching pending plant posts:', error);
         } finally {
             setLoading(false);
         }
@@ -62,11 +62,11 @@ const AdminPage = () => {
 
     const handleApprove = async (postId) => {
         try {
-            const postRef = doc(db, 'posts', postId);
+            const postRef = doc(db, 'plantPosts', postId);
             await updateDoc(postRef, { approved: true });
             setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
         } catch (error) {
-            console.error('Error approving post:', error);
+            console.error('Error approving plant post:', error);
         }
     };
 
@@ -83,14 +83,13 @@ const AdminPage = () => {
                 {posts.map(post => (
                     <li key={post.id}>
                         <div className={styles.postHeader}>
-                            <h2>{post.title}</h2>
-                            {post.profilePicture && (
-                                <img src={post.profilePicture} alt="Author's profile" className={styles.profilePicture} />
+                            <h2>{post.plantName}</h2>
+                            {post.plantProfilePicture && (
+                                <img src={post.plantProfilePicture} alt="Plant Profile" className={styles.profilePicture} />
                             )}
-                            <p>{post.author}</p> {/* Displaying author from posts collection */}
+                            <p>Submitted by: {post.author}</p> {/* Assuming 'author' field in posts collection */}
                         </div>
                         <p>{post.content}</p>
-                        {post.imageUrl && <img src={post.imageUrl} alt="Post image" className={styles.image} />}
                         {!post.approved && (
                             <button onClick={() => handleApprove(post.id)}>Approve</button>
                         )}
@@ -106,6 +105,7 @@ const AdminPage = () => {
 };
 
 export default AdminPage;
+
 
 
 

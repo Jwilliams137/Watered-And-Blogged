@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, query, where, orderBy, limit, startAfter, onSnapshot, deleteDoc, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { collection, query, where, orderBy, limit, startAfter, onSnapshot, deleteDoc, doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../../firebase';
 import PlantPost from '../Posts/PlantPost';
 import NewPost from '../Posts/NewPost';
@@ -17,9 +17,9 @@ const PlantWall = () => {
     const unsubscribe = onSnapshot(q, async (snapshot) => {
       const newPosts = await Promise.all(snapshot.docs.map(async (docSnapshot) => {
         const postData = docSnapshot.data();
-        // Replace with logic to fetch plant details
+        // Fetch plant details
         const plantDoc = await getDoc(doc(db, 'plants', postData.plantId));
-        const plantData = plantDoc.data();
+        const plantData = plantDoc.exists() ? plantDoc.data() : null;
         return { id: docSnapshot.id, ...postData, plantName: plantData?.name, plantProfilePicture: plantData?.profilePicture };
       }));
       setPosts(newPosts);
@@ -40,9 +40,9 @@ const PlantWall = () => {
       onSnapshot(q, async (snapshot) => {
         const newPosts = await Promise.all(snapshot.docs.map(async (docSnapshot) => {
           const postData = docSnapshot.data();
-          // Replace with logic to fetch plant details
+          // Fetch plant details
           const plantDoc = await getDoc(doc(db, 'plants', postData.plantId));
-          const plantData = plantDoc.data();
+          const plantData = plantDoc.exists() ? plantDoc.data() : null;
           return { id: docSnapshot.id, ...postData, plantName: plantData?.name, plantProfilePicture: plantData?.profilePicture };
         }));
         if (snapshot.docs.length > 0) {
@@ -110,3 +110,4 @@ const PlantWall = () => {
 };
 
 export default PlantWall;
+

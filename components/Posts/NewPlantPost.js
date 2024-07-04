@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { collection, addDoc, doc } from 'firebase/firestore';
+import { collection, addDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { db, storage, auth } from '../../firebase';
+import { auth, db, storage } from '../../firebase';
 import ImageUpload from '../ImageUpload/ImageUpload';
 import styles from './NewPlantPost.module.css';
 
@@ -47,21 +47,17 @@ const NewPlantPost = ({ onPostCreated, plantId }) => {
         const newPost = {
             content,
             imageUrl,
-            author: `Plant ${plantId}`, // Example: Use plantId to identify it's from the plant
-            authorId: plantId, // Example: Use plantId to identify it's from the plant
+            author: `Plant ${plantId}`, // Set author to identify it's from the plant
+            authorId: plantId, // Set authorId to identify it's from the plant
             createdAt: new Date(),
             visibility,
             approved: false,
         };
 
         try {
-            // Debug: Log plantId to check its value
-            console.log('Plant ID:', plantId);
-
-            // Add the new post to the plantPosts subcollection under the specific plant document
-            const plantRef = doc(db, `users/${auth.currentUser.uid}/plants/${plantId}/plantPosts`);
-            const docRef = await addDoc(plantRef, newPost);
-            console.log('New plant post added with ID: ', docRef.id);
+            // Ensure 'plantPosts' is a collection reference, not a document reference
+            const plantPostsRef = collection(db, `users/${auth.currentUser.uid}/plants/${plantId}/plantPosts`);
+            const docRef = await addDoc(plantPostsRef, newPost);
             onPostCreated({ id: docRef.id, ...newPost });
             setContent('');
             setImageFile(null);
@@ -120,6 +116,9 @@ const NewPlantPost = ({ onPostCreated, plantId }) => {
 };
 
 export default NewPlantPost;
+
+
+
 
 
 

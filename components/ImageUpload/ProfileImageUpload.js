@@ -1,50 +1,50 @@
-import React, { useState, useCallback } from 'react';
-import Cropper from 'react-easy-crop';
-import getCroppedImg from '../../utils/getCroppedImg';
-import styles from './ProfileImageUpload.module.css';
+import React, { useState, useCallback } from 'react'
+import Cropper from 'react-easy-crop'
+import getCroppedImg from '../../utils/getCroppedImg'
+import styles from './ProfileImageUpload.module.css'
 
 const ProfileImageUpload = ({ setImageFile, imagePreview, setImagePreview, setCroppedImageFile }) => {
-    const [loading, setLoading] = useState(false);
-    const [crop, setCrop] = useState({ x: 0, y: 0 });
-    const [zoom, setZoom] = useState(1);
-    const [croppedImage, setCroppedImage] = useState(null);
-    const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+    const [loading, setLoading] = useState(false)
+    const [crop, setCrop] = useState({ x: 0, y: 0 })
+    const [zoom, setZoom] = useState(1)
+    const [croppedImage, setCroppedImage] = useState(null)
+    const [croppedAreaPixels, setCroppedAreaPixels] = useState(null)
 
     const handleFileChange = async (e) => {
-        const file = e.target.files[0];
+        const file = e.target.files[0]
 
         if (file) {
-            setLoading(true);
-            const imageUrl = URL.createObjectURL(file);
-            setImagePreview(imageUrl);
-            setImageFile(file);
-            setLoading(false);
-            setCroppedImage(null);
-            setCroppedImageFile(null); // Reset the cropped image file state
+            setLoading(true)
+            const imageUrl = URL.createObjectURL(file)
+            setImagePreview(imageUrl)
+            setImageFile(file)
+            setLoading(false)
+            setCroppedImage(null)
+            setCroppedImageFile(null)
         }
-    };
+    }
 
     const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
-        setCroppedAreaPixels(croppedAreaPixels);
-    }, []);
+        setCroppedAreaPixels(croppedAreaPixels)
+    }, [])
 
     const showCroppedImage = useCallback(async () => {
         try {
-            const croppedImageBlob = await getCroppedImg(imagePreview, croppedAreaPixels);
-            setCroppedImage(croppedImageBlob);
-            setCroppedImageFile(croppedImageBlob); // Pass the cropped image blob to the parent component
+            const croppedImageBlob = await getCroppedImg(imagePreview, croppedAreaPixels)
+            setCroppedImage(croppedImageBlob)
+            setCroppedImageFile(croppedImageBlob)
         } catch (error) {
-            console.error('Error cropping image:', error);
+            console.error('Error cropping image:', error)
         }
-    }, [croppedAreaPixels, imagePreview, setCroppedImageFile]);
+    }, [croppedAreaPixels, imagePreview, setCroppedImageFile])
 
     const calculatePreviewSize = () => {
-        const previewSize = Math.min(200, Math.max(croppedAreaPixels.width, croppedAreaPixels.height));
+        const previewSize = Math.min(200, Math.max(croppedAreaPixels.width, croppedAreaPixels.height))
         return {
             width: previewSize,
             height: previewSize,
-        };
-    };
+        }
+    }
 
     return (
         <div className={styles.imageUploadContainer}>
@@ -84,10 +84,10 @@ const ProfileImageUpload = ({ setImageFile, imagePreview, setImagePreview, setCr
                 </div>
             )}
         </div>
-    );
-};
+    )
+}
 
-export default ProfileImageUpload;
+export default ProfileImageUpload
 
 
 

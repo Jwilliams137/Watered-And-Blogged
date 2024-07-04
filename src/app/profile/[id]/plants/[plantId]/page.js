@@ -3,7 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { doc, getDoc, collection, addDoc } from 'firebase/firestore';
 import { db, auth } from '../../../../../../firebase'; // Adjust the path as needed
 import { useParams } from 'next/navigation'; // Import useParams
-import NewPlantPost from '../../../../../../components/Posts/NewPlantPost'; // Import the NewPost component
+import NewPlantPost from '../../../../../../components/Posts/NewPlantPost'; // Import the NewPlantPost component
+import PlantWall from '../../../../../../components/Wall/PlantWall'
 
 const PlantProfilePage = () => {
   const { id: userId, plantId } = useParams();
@@ -43,7 +44,7 @@ const PlantProfilePage = () => {
   const handlePostCreated = async (newPost) => {
     try {
       // Add the new post to the user's plant subprofile
-      const newPostRef = await addDoc(collection(db, `users/${userId}/plants/${plantId}/posts`), newPost);
+      const newPostRef = await addDoc(collection(db, `users/${userId}/plants/${plantId}/plantPosts`), newPost); // Ensure 'plantPosts' subcollection is used
       console.log('New post added with ID: ', newPostRef.id);
     } catch (error) {
       console.error('Error adding post: ', error);
@@ -70,14 +71,15 @@ const PlantProfilePage = () => {
       <img src={imageUrl} alt={name} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
       
       {/* Render NewPlantPost only if the current user is the owner */}
-      {isOwner && <NewPlantPost onPostCreated={handlePostCreated} />}
+      {isOwner && <NewPlantPost onPostCreated={handlePostCreated} plantId={plantId} />}
       
-      {/* Add more details about the plant as needed */}
+      <PlantWall />
     </div>
   );
 };
 
 export default PlantProfilePage;
+
 
 
 

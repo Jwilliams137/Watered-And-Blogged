@@ -20,13 +20,13 @@ const PlantPost = ({ post, plantName, plantProfilePicture, onPostUpdated, onDele
   const handleEdit = async () => {
     setLoading(true);
     try {
-      await updateDoc(doc(db, 'posts', post.id), {
+      await updateDoc(doc(db, 'plantPosts', post.id), {
         content: newContent,
         visibility: newVisibility,
         updatedAt: new Date(),
       });
       if (onPostUpdated) {
-        onPostUpdated(post.id, { ...post, content: newContent, visibility: newVisibility });
+        onPostUpdated(post.id, newContent, newVisibility);
       }
       setEditing(false);
     } catch (error) {
@@ -39,7 +39,7 @@ const PlantPost = ({ post, plantName, plantProfilePicture, onPostUpdated, onDele
   const handleDelete = async () => {
     setLoading(true);
     try {
-      await deleteDoc(doc(db, 'posts', post.id));
+      await deleteDoc(doc(db, 'plantPosts', post.id));
       if (onDeletePost) {
         onDeletePost(post.id);
       }
@@ -161,3 +161,4 @@ const PlantPost = ({ post, plantName, plantProfilePicture, onPostUpdated, onDele
 };
 
 export default PlantPost;
+
