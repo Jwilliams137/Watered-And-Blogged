@@ -1,3 +1,4 @@
+// PlantPost.jsx
 import React, { useState, useEffect } from 'react';
 import { updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import { db, auth } from '../../firebase';
@@ -143,6 +144,12 @@ const PlantPost = ({ post, plantName, plantProfilePicture, onPostUpdated, onDele
               <small className={styles.authorName}>{plantName}</small>
             </div>
           </div>
+          
+          {/* Render Image Here */}
+          {post.imageUrl && (
+            <img src={post.imageUrl} alt="Post Image" className={styles.postImage} />
+          )}
+
           {currentUser && (
             <div className={styles.edit}>
               <button onClick={() => setEditing(true)} disabled={loading} className={styles.button}>
@@ -161,4 +168,5 @@ const PlantPost = ({ post, plantName, plantProfilePicture, onPostUpdated, onDele
 };
 
 export default PlantPost;
+
 
