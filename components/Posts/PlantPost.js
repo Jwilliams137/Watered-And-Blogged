@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db, auth } from '../../firebase';
+import Link from 'next/link';
 import styles from './PlantPost.module.css';
 
-const PlantPost = ({ post, plantId, userId }) => { 
+const PlantPost = ({ post, plantId, userId }) => {
     const [editing, setEditing] = useState(false);
     const [newContent, setNewContent] = useState(post.content);
     const [newVisibility, setNewVisibility] = useState(post.visibility);
@@ -97,8 +98,12 @@ const PlantPost = ({ post, plantId, userId }) => {
         <div className={styles.plantPost}>
             {plantData && (
                 <div className={styles.plantInfo}>
-                    <img src={plantData.imageUrl} alt={plantData.name} className={styles.plantImage} />
-                    <h2>{plantData.name}</h2>
+                    <Link href={`/profile/${userId}/plants/${plantId}`}>
+                        
+                            <img src={plantData.imageUrl} alt={plantData.name} className={styles.plantImage} />
+                            <h2>{plantData.name}</h2>
+                        
+                    </Link>
                 </div>
             )}
 
@@ -163,5 +168,6 @@ const PlantPost = ({ post, plantId, userId }) => {
 };
 
 export default PlantPost;
+
 
 
