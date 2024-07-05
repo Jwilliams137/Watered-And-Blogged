@@ -36,7 +36,7 @@ const PlantWall = ({ plantId, currentUserUid }) => {
                 />
             ))}
             {loading && <p>Loading...</p>}
-            {!loading && posts.length === 0 && <p>Sorry, This plant hasn't posted yet</p>}
+            {!loading && posts.length === 0 && <p>Sorry, No posts from this plant yet</p>}
         </div>
     )
 }
