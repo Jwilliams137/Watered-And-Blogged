@@ -1,3 +1,4 @@
+// PlantWall component
 import React, { useState, useEffect } from 'react';
 import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
 import { db } from '../../firebase';
@@ -32,6 +33,7 @@ const PlantWall = ({ plantId, currentUserUid }) => {
                 <PlantPost
                     key={post.id}
                     post={post}
+                    plantId={plantId} // Ensure plantId is passed to PlantPost
                 />
             ))}
             {loading && <p>Loading...</p>}
@@ -41,6 +43,8 @@ const PlantWall = ({ plantId, currentUserUid }) => {
 };
 
 export default PlantWall;
+
+
 
 
 

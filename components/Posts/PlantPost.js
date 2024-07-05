@@ -3,7 +3,7 @@ import { updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import { db, auth } from '../../firebase';
 import styles from './PlantPost.module.css';
 
-const PlantPost = ({ post }) => {
+const PlantPost = ({ post, plantId }) => { // Ensure plantId is passed as a prop
     const [editing, setEditing] = useState(false);
     const [newContent, setNewContent] = useState(post.content);
     const [newVisibility, setNewVisibility] = useState(post.visibility);
@@ -15,7 +15,8 @@ const PlantPost = ({ post }) => {
     const handleEdit = async () => {
         setLoading(true);
         try {
-            await updateDoc(doc(db, `users/${auth.currentUser.uid}/plants/${post.plantId}/plantPosts`, post.id), {
+            // Ensure plantId is used in Firestore document path
+            await updateDoc(doc(db, `users/${auth.currentUser.uid}/plants/${plantId}/plantPosts/${post.id}`), {
                 content: newContent,
                 visibility: newVisibility,
                 updatedAt: new Date(),
@@ -31,7 +32,8 @@ const PlantPost = ({ post }) => {
     const handleDelete = async () => {
         setLoading(true);
         try {
-            await deleteDoc(doc(db, `users/${auth.currentUser.uid}/plants/${post.plantId}/plantPosts`, post.id));
+            // Ensure plantId is used in Firestore document path
+            await deleteDoc(doc(db, `users/${auth.currentUser.uid}/plants/${plantId}/plantPosts/${post.id}`));
         } catch (error) {
             console.error('Error deleting post:', error);
         } finally {
@@ -137,6 +139,8 @@ const PlantPost = ({ post }) => {
 };
 
 export default PlantPost;
+
+
 
 
 

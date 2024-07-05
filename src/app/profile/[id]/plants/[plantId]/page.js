@@ -88,3 +88,4 @@ const PlantProfilePage = () => {
 };
 
 export default PlantProfilePage;
+
