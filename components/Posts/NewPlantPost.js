@@ -1,4 +1,3 @@
-// NewPlantPost.jsx
 import React, { useState } from 'react';
 import { collection, addDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
@@ -66,6 +65,8 @@ const NewPlantPost = ({ onPostCreated, plantId }) => {
         try {
             const docRef = await addDoc(collection(db, `users/${auth.currentUser.uid}/plants/${plantId}/plantPosts`), newPost);
             onPostCreated({ id: docRef.id, ...newPost });
+
+            // Reset form state after successful submission
             setContent('');
             setImageFile(null);
             setUploadProgress(0);
@@ -85,7 +86,7 @@ const NewPlantPost = ({ onPostCreated, plantId }) => {
     };
 
     return (
-        <form className={styles.new_plant_post} onSubmit={handleSubmit}>
+        <form className={styles.newPlantPost} onSubmit={handleSubmit}>
             <textarea
                 placeholder="What's happening with your plant?"
                 value={content}
@@ -112,15 +113,5 @@ const NewPlantPost = ({ onPostCreated, plantId }) => {
 };
 
 export default NewPlantPost;
-
-  
-
-
-
-
-
-
-
-
 
 
