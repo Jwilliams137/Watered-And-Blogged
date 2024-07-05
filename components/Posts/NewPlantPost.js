@@ -1,3 +1,4 @@
+// NewPlantPost.jsx
 import React, { useState } from 'react';
 import { collection, addDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
@@ -11,9 +12,17 @@ const NewPlantPost = ({ onPostCreated, plantId }) => {
     const [uploadProgress, setUploadProgress] = useState(0);
     const [imagePreview, setImagePreview] = useState('');
     const [visibility, setVisibility] = useState('private');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (isSubmitting) {
+            return;
+        }
+
+        setIsSubmitting(true);
+
         let imageUrl = '';
 
         if (imageFile) {
@@ -40,6 +49,7 @@ const NewPlantPost = ({ onPostCreated, plantId }) => {
                 });
             } catch (error) {
                 console.error('Error uploading image: ', error);
+                setIsSubmitting(false);
                 return;
             }
         }
@@ -47,17 +57,14 @@ const NewPlantPost = ({ onPostCreated, plantId }) => {
         const newPost = {
             content,
             imageUrl,
-            author: `Plant ${plantId}`, // Set author to identify it's from the plant
-            authorId: plantId, // Set authorId to identify it's from the plant
+            authorId: auth.currentUser.uid,
             createdAt: new Date(),
             visibility,
             approved: false,
         };
 
         try {
-            // Ensure 'plantPosts' is a collection reference, not a document reference
-            const plantPostsRef = collection(db, `users/${auth.currentUser.uid}/plants/${plantId}/plantPosts`);
-            const docRef = await addDoc(plantPostsRef, newPost);
+            const docRef = await addDoc(collection(db, `users/${auth.currentUser.uid}/plants/${plantId}/plantPosts`), newPost);
             onPostCreated({ id: docRef.id, ...newPost });
             setContent('');
             setImageFile(null);
@@ -66,6 +73,8 @@ const NewPlantPost = ({ onPostCreated, plantId }) => {
             setVisibility('private');
         } catch (error) {
             console.error('Error creating plant post: ', error);
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -85,37 +94,28 @@ const NewPlantPost = ({ onPostCreated, plantId }) => {
                 rows="1"
             ></textarea>
             <div className={styles.upload}>
-                <ImageUpload setImageFile={setImageFile} imagePreview={imagePreview} setImagePreview={setImagePreview} />
+                <ImageUpload setImageFile={setImageFile} setImagePreview={setImagePreview} />
+                {imagePreview && (
+                    <img src={imagePreview} alt="Preview" className={styles.imagePreview} />
+                )}
             </div>
-            <div className={styles.optionsRow}>
-                <div className={styles.visibility}>
-                    <label>
-                        <input
-                            type="radio"
-                            value="public"
-                            checked={visibility === 'public'}
-                            onChange={() => setVisibility('public')}
-                        />
-                        Public
-                    </label>
-                    <label>
-                        <input
-                            type="radio"
-                            value="private"
-                            checked={visibility === 'private'}
-                            onChange={() => setVisibility('private')}
-                        />
-                        Private
-                    </label>
-                </div>
-                <button type="submit" className={styles.button}>Post</button>
-            </div>
-            {uploadProgress > 0 && <p>Upload Progress: {uploadProgress.toFixed(2)}%</p>}
+            <select value={visibility} onChange={(e) => setVisibility(e.target.value)}>
+                <option value="private">Private</option>
+                <option value="public">Public</option>
+            </select>
+            <button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? 'Submitting...' : 'Post'}
+            </button>
+            {uploadProgress > 0 && <progress value={uploadProgress} max="100" />}
         </form>
     );
 };
 
 export default NewPlantPost;
+
+  
+
+
 
 
 
