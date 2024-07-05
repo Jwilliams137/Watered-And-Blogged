@@ -1,22 +1,41 @@
-import React, { useState } from 'react';
-import { updateDoc, deleteDoc, doc } from 'firebase/firestore';
+import React, { useState, useEffect } from 'react';
+import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db, auth } from '../../firebase';
 import styles from './PlantPost.module.css';
 
-const PlantPost = ({ post, plantId }) => { // Ensure plantId is passed as a prop
+const PlantPost = ({ post, plantId, userId }) => { 
     const [editing, setEditing] = useState(false);
     const [newContent, setNewContent] = useState(post.content);
     const [newVisibility, setNewVisibility] = useState(post.visibility);
     const [loading, setLoading] = useState(false);
     const [showFullContent, setShowFullContent] = useState(false);
+    const [plantData, setPlantData] = useState(null);
 
     const currentUser = auth.currentUser;
+
+    useEffect(() => {
+        const fetchPlantData = async () => {
+            try {
+                const plantRef = doc(db, `users/${userId}/plants/${plantId}`);
+                const plantSnap = await getDoc(plantRef);
+
+                if (plantSnap.exists()) {
+                    setPlantData(plantSnap.data());
+                } else {
+                    console.error('Plant not found');
+                }
+            } catch (error) {
+                console.error('Failed to fetch plant data', error);
+            }
+        };
+
+        fetchPlantData();
+    }, [userId, plantId]);
 
     const handleEdit = async () => {
         setLoading(true);
         try {
-            // Ensure plantId is used in Firestore document path
-            await updateDoc(doc(db, `users/${auth.currentUser.uid}/plants/${plantId}/plantPosts/${post.id}`), {
+            await updateDoc(doc(db, `users/${userId}/plants/${plantId}/plantPosts/${post.id}`), {
                 content: newContent,
                 visibility: newVisibility,
                 updatedAt: new Date(),
@@ -32,8 +51,7 @@ const PlantPost = ({ post, plantId }) => { // Ensure plantId is passed as a prop
     const handleDelete = async () => {
         setLoading(true);
         try {
-            // Ensure plantId is used in Firestore document path
-            await deleteDoc(doc(db, `users/${auth.currentUser.uid}/plants/${plantId}/plantPosts/${post.id}`));
+            await deleteDoc(doc(db, `users/${userId}/plants/${plantId}/plantPosts/${post.id}`));
         } catch (error) {
             console.error('Error deleting post:', error);
         } finally {
@@ -77,7 +95,13 @@ const PlantPost = ({ post, plantId }) => { // Ensure plantId is passed as a prop
 
     return (
         <div className={styles.plantPost}>
-            {/* Render Image Here */}
+            {plantData && (
+                <div className={styles.plantInfo}>
+                    <img src={plantData.imageUrl} alt={plantData.name} className={styles.plantImage} />
+                    <h2>{plantData.name}</h2>
+                </div>
+            )}
+
             {post.imageUrl && (
                 <img src={post.imageUrl} alt="Post Image" className={styles.postImage} />
             )}
@@ -139,9 +163,5 @@ const PlantPost = ({ post, plantId }) => { // Ensure plantId is passed as a prop
 };
 
 export default PlantPost;
-
-
-
-
 
 
