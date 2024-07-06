@@ -4,7 +4,7 @@ import { collection, collectionGroup, query, where, orderBy, limit, startAfter, 
 import { db } from '../../../firebase';
 import styles from './page.module.css';
 
-const AdminPage = () => {
+const AdminPage = ({ currentUserUid }) => {
     const [posts, setPosts] = useState([]);
     const [plantPosts, setPlantPosts] = useState([]);
     const [lastVisible, setLastVisible] = useState(null);
@@ -31,21 +31,13 @@ const AdminPage = () => {
             }
 
             const snapshot = await getDocs(q);
-            const newPosts = await Promise.all(snapshot.docs.map(async (docSnapshot) => {
+            const newPosts = snapshot.docs.map(docSnapshot => {
                 const postData = docSnapshot.data();
-                const authorId = postData.authorId;
-
-                // Fetch user data to get profilePicture
-                const authorDoc = await getDoc(doc(db, 'users', authorId));
-                const authorData = authorDoc.data();
-
                 return {
                     id: docSnapshot.id,
                     ...postData,
-                    author: postData.author, // Assuming 'author' field in posts collection contains author name
-                    profilePicture: authorData.profilePicture, // Assuming 'profilePicture' field in users collection
                 };
-            }));
+            });
 
             setPosts(prevPosts => {
                 return lastVisible ? [...prevPosts, ...newPosts] : newPosts;
@@ -78,19 +70,13 @@ const AdminPage = () => {
             }
 
             const snapshot = await getDocs(q);
-            const newPlantPosts = await Promise.all(snapshot.docs.map(async (docSnapshot) => {
+            const newPlantPosts = snapshot.docs.map(docSnapshot => {
                 const postData = docSnapshot.data();
-                const plantId = postData.plantId;
-                const plantDoc = await getDoc(doc(db, `users/${postData.authorId}/plants/${plantId}`));
-                const plantData = plantDoc.data();
-
                 return {
                     id: docSnapshot.id,
                     ...postData,
-                    plantName: plantData.name, // Assuming 'name' field in plants collection
-                    plantProfilePicture: plantData.profilePicture, // Assuming 'profilePicture' field in plants collection
                 };
-            }));
+            });
 
             setPlantPosts(prevPosts => {
                 return lastVisiblePlantPost ? [...prevPosts, ...newPlantPosts] : newPlantPosts;
@@ -108,17 +94,18 @@ const AdminPage = () => {
         }
     };
 
-    const handleApprove = async (postId, collectionName) => {
+    const handleApprove = async (postId, collectionPath) => {
         try {
-            const postRef = doc(db, collectionName, postId);
+            const postRef = doc(db, collectionPath, postId);
             await updateDoc(postRef, { approved: true });
-            if (collectionName === 'posts') {
+
+            if (collectionPath === 'posts') {
                 setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
-            } else {
+            } else if (collectionPath.includes('plantPosts')) {
                 setPlantPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
             }
         } catch (error) {
-            console.error(`Error approving ${collectionName.slice(0, -1)} post:`, error);
+            console.error(`Error approving ${collectionPath.slice(0, -1)} post:`, error);
         }
     };
 
@@ -136,15 +123,11 @@ const AdminPage = () => {
             <ul>
                 {posts.map(post => (
                     <li key={post.id}>
-                        <div className={styles.postHeader}>
-                            <h2>{post.title}</h2>
-                            {post.profilePicture && (
-                                <img src={post.profilePicture} alt="Author's profile" className={styles.profilePicture} />
-                            )}
-                            <p>{post.author}</p> {/* Displaying author from posts collection */}
-                        </div>
+                        <h3>{post.title}</h3>
                         <p>{post.content}</p>
-                        {post.imageUrl && <img src={post.imageUrl} alt="Post image" className={styles.image} />}
+                        {post.imageUrl && (
+                            <img src={post.imageUrl} alt="Post Image" className={styles.postImage} />
+                        )}
                         {!post.approved && (
                             <button onClick={() => handleApprove(post.id, 'posts')}>Approve</button>
                         )}
@@ -155,49 +138,23 @@ const AdminPage = () => {
             <ul>
                 {plantPosts.map(post => (
                     <li key={post.id}>
-                        <div className={styles.postHeader}>
-                            <h2>{post.plantName}</h2>
-                            {post.plantProfilePicture && (
-                                <img src={post.plantProfilePicture} alt="Plant Profile" className={styles.profilePicture} />
-                            )}
-                            <p>{post.author}</p> {/* Assuming 'author' field in posts collection */}
-                        </div>
+                        <h3>{post.plantName}</h3>
                         <p>{post.content}</p>
+                        {post.imageUrl && (
+                            <img src={post.imageUrl} alt="Plant Image" className={styles.postImage} />
+                        )}
                         {!post.approved && (
-                            <button onClick={() => handleApprove(post.id, `users/${post.authorId}/plants/${post.plantId}/plantPosts`)}>Approve</button>
+                            <button onClick={() => handleApprove(post.id, 'plantPosts')}>Approve</button>
                         )}
                     </li>
                 ))}
             </ul>
             {loading && <p>Loading...</p>}
-            {lastVisible || lastVisiblePlantPost ? (
+            {(lastVisible || lastVisiblePlantPost) && (
                 <button onClick={loadMore} disabled={loading}>Load More</button>
-            ) : null}
+            )}
         </div>
     );
 };
 
 export default AdminPage;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
