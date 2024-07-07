@@ -6,7 +6,7 @@ import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { db } from '../../../firebase';
 import styles from './page.module.css';
 
-const AdminPage = ({ currentUserUid }) => {
+const AdminPage = () => {
     const [lastVisiblePlantPost, setLastVisiblePlantPost] = useState(null);
     const [lastVisibleUserPost, setLastVisibleUserPost] = useState(null); // New state for user posts
     const [loading, setLoading] = useState(false);
