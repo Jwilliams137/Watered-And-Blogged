@@ -1,20 +1,28 @@
 // src/components/PostListItem.js
-'use client';
 import React from 'react';
 import styles from './PostListItem.module.css';
 
-const PostListItem = ({ post, collectionPath, handleApprove }) => (
+const PostListItem = ({ post, handleApprove }) => (
     <li key={post.id}>
-        <h3>{post.title || post.plantName}</h3>
+        {post.plantData ? (
+            <div className={styles.plantInfo}>
+                <img src={post.plantData.imageUrl} alt={post.plantData.name} className={styles.plantImage} />
+                <h3>{post.plantData.name}</h3>
+            </div>
+        ) : (
+            <div className={styles.plantInfo}>
+                <h3>Unknown Plant</h3>
+            </div>
+        )}
+        <h3>{post.title}</h3>
         <p>{post.content}</p>
         {post.imageUrl && (
-            <img src={post.imageUrl} alt={post.title ? "Post Image" : "Plant Image"} className={styles.postImage} />
+            <img src={post.imageUrl} alt="Post Image" className={styles.postImage} />
         )}
         {!post.approved && (
-            <button onClick={() => handleApprove(post.id, collectionPath)}>Approve</button>
+            <button onClick={() => handleApprove(post.id)}>Approve</button>
         )}
     </li>
 );
 
 export default PostListItem;
-
