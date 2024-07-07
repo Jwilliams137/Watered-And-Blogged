@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { collectionGroup, query, where, orderBy, limit, startAfter, getDocs, updateDoc } from 'firebase/firestore';
+import { collectionGroup, query, where, orderBy, limit, startAfter, getDocs } from 'firebase/firestore';
 import { db } from '../../firebase';
 import styles from './PendingPlantPosts.module.css';
 
@@ -28,10 +28,15 @@ const PendingPlantPosts = ({ lastVisiblePlantPost, setLastVisiblePlantPost, hand
             }
 
             const snapshot = await getDocs(q);
-            const newPlantPosts = snapshot.docs.map(docSnapshot => ({
-                id: docSnapshot.id,
-                ...docSnapshot.data(),
-            }));
+            const newPlantPosts = snapshot.docs.map(docSnapshot => {
+                const parentPathSegments = docSnapshot.ref.parent.path.split('/');
+                const userId = parentPathSegments[1]; // Extract user ID from parent path
+                return {
+                    id: docSnapshot.id,
+                    userId: userId,
+                    ...docSnapshot.data(),
+                };
+            });
 
             setPlantPosts(prevPosts => lastVisiblePlantPost ? [...prevPosts, ...newPlantPosts] : newPlantPosts);
 
@@ -64,7 +69,7 @@ const PendingPlantPosts = ({ lastVisiblePlantPost, setLastVisiblePlantPost, hand
                         {post.imageUrl && <img src={post.imageUrl} alt="Post Image" className={styles.postImage} />}
                         <p>Author: {post.author}</p>
                         <p>Visibility: {post.visibility}</p>
-                        <button onClick={() => handleApprove(post.id, 'plantPosts')}>Approve</button>
+                        <button onClick={() => handleApprove(post.id, post.userId)}>Approve</button>
                     </li>
                 ))}
             </ul>
