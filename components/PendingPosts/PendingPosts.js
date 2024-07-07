@@ -49,6 +49,7 @@ const PendingPosts = ({ lastVisible, setLastVisible, handleApprove }) => {
                     return {
                         id: docSnapshot.id,
                         ...postData,
+                        authorId, // Ensure authorId is included in the post data
                         authorData: authorData || { username: 'Unknown Author', profilePicture: '/avatar.png' }, // Default values if data not found
                     };
                 })

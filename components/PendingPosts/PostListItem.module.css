@@ -1,51 +1,54 @@
-/* PostListItem.module.css */
 .postListItem {
-    padding: 16px;
-    border: 1px solid #ccc;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: flex-start;
-  }
-  
-  .authorInfo {
-    margin-right: 16px;
-  }
-  
-  .profilePicture {
-    width: 40px; /* Adjust as needed */
-    height: 40px; /* Adjust as needed */
-    border-radius: 50%; /* Makes the image round */
-    object-fit: cover; /* Ensures the image fills the circle */
-    cursor: pointer; /* Change cursor to pointer on hover or click */
-  }
-  
-  .authorName {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.postListItem h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.postListItem p {
     font-size: 16px;
-    font-weight: bold;
-    margin-bottom: 4px;
-  }
-  
-  .postDetails {
-    flex: 1; /* Allow post details to take remaining space */
-  }
-  
-  .postImage {
+    margin-bottom: 10px;
+}
+
+.postImage {
     max-width: 100%;
-    margin-top: 12px;
-    border-radius: 8px; /* Rounded corners for images */
-  }
-  
-  .button {
-    margin-top: 8px;
-    padding: 8px 16px;
-    background-color: #007bff;
+    border-radius: 8px; /* Rounded corners */
+    margin-bottom: 10px;
+}
+
+.authorDetails {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.authorDetails p {
+    margin-right: 10px;
+}
+
+.authorAvatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.approveButton {
+    background-color: #4caf50;
     color: white;
     border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
     cursor: pointer;
-    border-radius: 4px;
-  }
-  
-  .button:hover {
-    background-color: #0056b3;
-  }
-  
+}
+
+.approveButton:hover {
+    background-color: #45a049;
+}

@@ -5,7 +5,7 @@ const PostListItem = ({ post, handleApprove }) => {
     const { id, title, content, authorData, imageUrl } = post;
 
     const approvePost = () => {
-        handleApprove(id);
+        handleApprove(id, authorData.authorId || post.authorId); // Ensuring authorId is passed correctly
     };
 
     return (
@@ -13,13 +13,13 @@ const PostListItem = ({ post, handleApprove }) => {
             <h3>{title}</h3>
             <p>{content}</p>
             {imageUrl && <img src={imageUrl} alt="Post Image" className={styles.postImage} />}
-            <p>Author: {authorData.username}</p>
-            <p>Profile Picture: <img src={authorData.profilePicture} alt="Author Avatar" className={styles.authorAvatar} /></p>
-            <button onClick={approvePost}>Approve</button>
+            <div className={styles.authorDetails}>
+                <p>Author: {authorData.username}</p>
+                <img src={authorData.profilePicture} alt="Author Avatar" className={styles.authorAvatar} />
+            </div>
+            <button className={styles.approveButton} onClick={approvePost}>Approve</button>
         </li>
     );
 };
 
 export default PostListItem;
-
-
