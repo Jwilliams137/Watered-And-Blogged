@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { collection, query, orderBy, limit, startAfter, getDocs, doc, getDoc, where } from 'firebase/firestore';
+import { collection, query, orderBy, limit, startAfter, getDocs, doc, getDoc, where, collectionGroup } from 'firebase/firestore'; // Ensure collectionGroup is imported
 import { db } from '../../firebase';
 import Post from '../Posts/Post';
+import PlantPost from '../Posts/PlantPost'; // Import the PlantPost component
 import styles from './Timeline.module.css';
 
 const Timeline = () => {
@@ -18,7 +19,7 @@ const Timeline = () => {
     setLoading(true);
     setError(null);
     try {
-      let q = query(
+      const userPostsQuery = query(
         collection(db, 'posts'),
         where('visibility', '==', 'public'),
         where('approved', '==', true),
@@ -26,12 +27,20 @@ const Timeline = () => {
         limit(10)
       );
 
-      if (lastVisible) {
-        q = query(q, startAfter(lastVisible));
-      }
+      const plantPostsQuery = query(
+        collectionGroup(db, 'plantPosts'),
+        where('visibility', '==', 'public'),
+        where('approved', '==', true),
+        orderBy('createdAt', 'desc'),
+        limit(10)
+      );
 
-      const snapshot = await getDocs(q);
-      const newPosts = await Promise.all(snapshot.docs.map(async docSnapshot => {
+      const [userPostsSnapshot, plantPostsSnapshot] = await Promise.all([
+        getDocs(userPostsQuery),
+        getDocs(plantPostsQuery)
+      ]);
+
+      const userPosts = await Promise.all(userPostsSnapshot.docs.map(async docSnapshot => {
         const postData = docSnapshot.data();
         const userDoc = await getDoc(doc(db, 'users', postData.authorId));
         const userProfile = userDoc.data();
@@ -42,10 +51,26 @@ const Timeline = () => {
         };
       }));
 
-      if (newPosts.length > 0) {
-        setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
+      const plantPosts = await Promise.all(plantPostsSnapshot.docs.map(async docSnapshot => {
+        const postData = docSnapshot.data();
+        const userDoc = await getDoc(doc(db, `users/${postData.userId}`));
+        const userProfile = userDoc.data();
+        return {
+          id: docSnapshot.id,
+          ...postData,
+          authorProfilePicture: userProfile?.profilePicture
+        };
+      }));
+
+      const allPosts = [...userPosts, ...plantPosts].sort((a, b) => b.createdAt - a.createdAt);
+
+      if (allPosts.length > 0) {
+        setLastVisible({
+          userPostsLastVisible: userPostsSnapshot.docs[userPostsSnapshot.docs.length - 1],
+          plantPostsLastVisible: plantPostsSnapshot.docs[plantPostsSnapshot.docs.length - 1]
+        });
         setPosts(prevPosts => {
-          const updatedPosts = newPosts.filter(newPost => !prevPosts.some(prevPost => prevPost.id === newPost.id));
+          const updatedPosts = allPosts.filter(newPost => !prevPosts.some(prevPost => prevPost.id === newPost.id));
           return [...prevPosts, ...updatedPosts];
         });
       } else {
@@ -79,7 +104,16 @@ const Timeline = () => {
 
   return (
     <div className={styles.timeline}>
-      {posts.map(post => (
+      {posts.map(post => post.plantId ? (
+        <PlantPost
+          key={post.id}
+          post={post}
+          plantId={post.plantId}
+          userId={post.userId}
+          onPostUpdated={handlePostUpdated}
+          onDeletePost={handlePostDeleted}
+        />
+      ) : (
         <Post
           key={post.id}
           post={post}
@@ -99,14 +133,6 @@ const Timeline = () => {
 };
 
 export default Timeline;
-
-
-
-
-
-
-
-
 
 
 
