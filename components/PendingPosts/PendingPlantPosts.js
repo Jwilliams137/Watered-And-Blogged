@@ -1,3 +1,5 @@
+// PendingPlantPosts.js
+
 import React, { useEffect, useState } from 'react';
 import { collectionGroup, query, where, orderBy, limit, startAfter, getDocs } from 'firebase/firestore';
 import { db } from '../../firebase';
@@ -31,9 +33,11 @@ const PendingPlantPosts = ({ lastVisiblePlantPost, setLastVisiblePlantPost, hand
             const newPlantPosts = snapshot.docs.map(docSnapshot => {
                 const parentPathSegments = docSnapshot.ref.parent.path.split('/');
                 const userId = parentPathSegments[1]; // Extract user ID from parent path
+                const plantId = parentPathSegments[3]; // Assuming plantId is at index 3, adjust if necessary
                 return {
                     id: docSnapshot.id,
                     userId: userId,
+                    plantId: plantId,
                     ...docSnapshot.data(),
                 };
             });
@@ -69,7 +73,7 @@ const PendingPlantPosts = ({ lastVisiblePlantPost, setLastVisiblePlantPost, hand
                         {post.imageUrl && <img src={post.imageUrl} alt="Post Image" className={styles.postImage} />}
                         <p>Author: {post.author}</p>
                         <p>Visibility: {post.visibility}</p>
-                        <button onClick={() => handleApprove(post.id, post.userId)}>Approve</button>
+                        <button onClick={() => handleApprove(post.id, post.plantId, post.userId)}>Approve</button>
                     </li>
                 ))}
             </ul>
@@ -79,3 +83,4 @@ const PendingPlantPosts = ({ lastVisiblePlantPost, setLastVisiblePlantPost, hand
 };
 
 export default PendingPlantPosts;
+

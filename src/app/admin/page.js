@@ -1,32 +1,31 @@
 'use client'
+// AdminPage.js
+
 import React, { useState } from 'react';
-import PendingPosts from '../../../components/PendingPosts/PendingPosts';
 import PendingPlantPosts from '../../../components/PendingPosts/PendingPlantPosts';
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { db } from '../../../firebase';
 import styles from './page.module.css';
 
 const AdminPage = ({ currentUserUid }) => {
-    const [lastVisible, setLastVisible] = useState(null);
     const [lastVisiblePlantPost, setLastVisiblePlantPost] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    const handleApprove = async (postId, collectionName, userId) => {
+    const handleApprove = async (postId, collectionName, plantId, userId) => {
         console.log('handleApprove called with:');
         console.log('postId:', postId);
         console.log('collectionName:', collectionName);
+        console.log('plantId:', plantId);
         console.log('userId:', userId);
 
         try {
-            if (!postId || !collectionName || !userId) {
+            if (!postId || !collectionName || !plantId || !userId) {
                 throw new Error('Missing required parameters');
             }
 
             let postRef;
-            if (collectionName === 'posts') {
-                postRef = doc(db, 'posts', postId);
-            } else if (collectionName === 'plantPosts') {
-                postRef = doc(db, 'users', userId, 'plants', postId, 'plantPosts', postId);
+            if (collectionName === 'plantPosts') {
+                postRef = doc(db, 'users', userId, 'plants', plantId, 'plantPosts', postId);
             } else {
                 throw new Error('Unsupported collection name');
             }
@@ -51,27 +50,6 @@ const AdminPage = ({ currentUserUid }) => {
         if (!loading) {
             setLoading(true);
             try {
-                // Fetch more user posts
-                let userPostsQuery = query(
-                    collection(db, 'posts'),
-                    where('visibility', '==', 'public'),
-                    where('approved', '==', false),
-                    orderBy('createdAt', 'desc'),
-                    limit(10)
-                );
-
-                if (lastVisible) {
-                    userPostsQuery = query(userPostsQuery, startAfter(lastVisible));
-                }
-
-                const userPostsSnapshot = await getDocs(userPostsQuery);
-                const newUserPosts = userPostsSnapshot.docs.map(docSnapshot => ({
-                    id: docSnapshot.id,
-                    ...docSnapshot.data(),
-                }));
-
-                setLastVisible(userPostsSnapshot.docs[userPostsSnapshot.docs.length - 1]);
-                
                 // Fetch more plant posts
                 let plantPostsQuery = query(
                     collectionGroup(db, 'plantPosts'),
@@ -87,20 +65,21 @@ const AdminPage = ({ currentUserUid }) => {
 
                 const plantPostsSnapshot = await getDocs(plantPostsQuery);
                 const newPlantPosts = plantPostsSnapshot.docs.map(docSnapshot => {
-                    const parentPathSegments = docSnapshot.ref.parent.path.split('/'); // Extract user ID from parent path
+                    const parentPathSegments = docSnapshot.ref.parent.path.split('/');
                     const userId = parentPathSegments[1];
+                    const plantId = parentPathSegments[3]; // Assuming plantId is at index 3, adjust if necessary
                     return {
                         id: docSnapshot.id,
                         userId: userId,
+                        plantId: plantId,
                         ...docSnapshot.data(),
                     };
                 });
 
                 setLastVisiblePlantPost(plantPostsSnapshot.docs[plantPostsSnapshot.docs.length - 1]);
-
                 setLoading(false);
             } catch (error) {
-                console.error('Error loading more posts:', error);
+                console.error('Error loading more plant posts:', error);
                 setLoading(false);
             }
         }
@@ -109,9 +88,12 @@ const AdminPage = ({ currentUserUid }) => {
     return (
         <div className={styles.admin_page}>
             <h1>Admin Page</h1>
-            <PendingPosts lastVisible={lastVisible} setLastVisible={setLastVisible} handleApprove={(postId) => handleApprove(postId, 'posts', currentUserUid)} />
-            <PendingPlantPosts lastVisiblePlantPost={lastVisiblePlantPost} setLastVisiblePlantPost={setLastVisiblePlantPost} handleApprove={(postId, userId) => handleApprove(postId, 'plantPosts', userId)} />
-            {(lastVisible || lastVisiblePlantPost) && (
+            <PendingPlantPosts
+                lastVisiblePlantPost={lastVisiblePlantPost}
+                setLastVisiblePlantPost={setLastVisiblePlantPost}
+                handleApprove={(postId, plantId, userId) => handleApprove(postId, 'plantPosts', plantId, userId)}
+            />
+            {lastVisiblePlantPost && (
                 <button onClick={loadMore} disabled={loading}>Load More</button>
             )}
         </div>
