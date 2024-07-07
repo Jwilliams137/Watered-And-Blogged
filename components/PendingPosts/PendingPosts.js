@@ -82,4 +82,3 @@ const PendingPosts = ({ lastVisible, setLastVisible, handleApprove }) => {
 };
 
 export default PendingPosts;
-

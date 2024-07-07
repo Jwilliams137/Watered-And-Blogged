@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { collectionGroup, query, where, orderBy, limit, startAfter, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { collectionGroup, query, where, orderBy, limit, startAfter, getDocs, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import styles from './PendingPlantPosts.module.css';
 
