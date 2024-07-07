@@ -17,12 +17,16 @@ const AboutPlant = ({ plantId }) => {
     useEffect(() => {
         const fetchPlantData = async () => {
             try {
-                const docRef = doc(db, 'plants', plantId);
+                const user = auth.currentUser;
+                if (!user) return;
+
+                const docRef = doc(db, 'users', user.uid, 'plants', plantId);
                 const docSnap = await getDoc(docRef);
+
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     setPlantName(data.name || '');
-                    setPlantProfilePictureUrl(data.profilePicture || '/default-plant-image.png'); // Replace with your default plant image
+                    setPlantProfilePictureUrl(data.profilePicture || '/avatar.png'); 
                 }
             } catch (error) {
                 console.error('Error fetching plant data:', error);
@@ -73,7 +77,10 @@ const AboutPlant = ({ plantId }) => {
         }
 
         try {
-            const plantRef = doc(db, 'plants', plantId);
+            const user = auth.currentUser;
+            if (!user) return;
+
+            const plantRef = doc(db, 'users', user.uid, 'plants', plantId);
             await setDoc(plantRef, { name: plantName, profilePicture: imageUrl }, { merge: true });
             setPlantProfilePictureUrl(imageUrl);
             setPlantProfilePictureFile(null);
@@ -141,3 +148,5 @@ const AboutPlant = ({ plantId }) => {
 };
 
 export default AboutPlant;
+
+

@@ -96,12 +96,12 @@ const PlantProfilePage = () => {
             <h1 className={styles.plantName}>{name}</h1>
             <img src={imageUrl} alt={name} className={styles.plantImage} />
             {isOwner && <NewPlantPost onPostCreated={handlePostCreated} plantId={plantId} />}
-            <AboutPlant
+            {isOwner && <AboutPlant
                 plantId={plantId}
                 name={name}
                 imageUrl={imageUrl}
                 onUpdatePlant={handlePlantProfileUpdate}
-            />
+            />}
             <PlantWall plantId={plantId} posts={plantData.posts} currentUserUid={auth.currentUser.uid} />
         </div>
     );
