@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import React, { useState, useEffect } from 'react';
+import { doc, updateDoc, deleteDoc, getDoc } from 'firebase/firestore';
 import { db, auth } from '../../firebase';
 import Link from 'next/link';
 import styles from './PlantPost.module.css';
@@ -11,8 +11,27 @@ const PlantPost = ({ post, plantId, userId, onDeletePost }) => {
     const [newVisibility, setNewVisibility] = useState(post.visibility);
     const [loading, setLoading] = useState(false);
     const [showFullContent, setShowFullContent] = useState(false);
+    const [plantName, setPlantName] = useState(post.plantName); // State to hold plant name
 
     const currentUser = auth.currentUser;
+
+    // Fetch plant data when component mounts or plantId changes
+    useEffect(() => {
+        const fetchPlantData = async () => {
+            try {
+                const docRef = doc(db, `users/${userId}/plants/${plantId}`);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    setPlantName(data.name || ''); // Update plant name state
+                }
+            } catch (error) {
+                console.error('Error fetching plant data:', error);
+            }
+        };
+
+        fetchPlantData();
+    }, [plantId, userId]);
 
     const handleEdit = async () => {
         setLoading(true);
@@ -26,6 +45,14 @@ const PlantPost = ({ post, plantId, userId, onDeletePost }) => {
             // Check if visibility is set to private and delete from timeline
             if (newVisibility === 'private') {
                 onDeletePost(post.id);
+            }
+
+            // Fetch updated plant data after edit
+            const docRef = doc(db, `users/${userId}/plants/${plantId}`);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                setPlantName(data.name || ''); // Update plant name state with the latest data
             }
 
             setEditing(false);
@@ -86,8 +113,8 @@ const PlantPost = ({ post, plantId, userId, onDeletePost }) => {
         <div className={styles.plantPost}>
             <div className={styles.plantInfo}>
                 <Link href={`/profile/${userId}/plants/${plantId}`}>
-                    <img src={post.plantProfilePic} alt={post.plantName} className={styles.plantImage} />
-                    <h2>{post.plantName}</h2>
+                    <img src={post.plantProfilePic} alt={plantName} className={styles.plantImage} />
+                    <h2>{plantName}</h2>
                 </Link>
             </div>
 
