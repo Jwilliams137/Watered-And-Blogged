@@ -1,0 +1,73 @@
+.commentSection {
+    margin-top: 20px;
+    border-top: 1px solid #ccc;
+    padding-top: 20px;
+}
+
+.commentList {
+    margin-bottom: 20px;
+}
+
+.comment {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.commentHeader {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.profilePicture {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.authorName {
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.commentButton {
+    margin-left: 10px;
+    padding: 5px 10px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.commentButton:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.commentInput {
+    width: calc(100% - 80px);
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.addComment {
+    display: flex;
+    align-items: center;
+}
+
+.addComment input[type="text"],
+.addComment button {
+    margin-right: 10px;
+}
+
+.addComment button {
+    padding: 8px 15px;
+}

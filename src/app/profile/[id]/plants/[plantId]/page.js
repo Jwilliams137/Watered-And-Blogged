@@ -5,6 +5,8 @@ import { db, auth } from '../../../../../../firebase';
 import { useParams } from 'next/navigation';
 import NewPlantPost from '../../../../../../components/Posts/NewPlantPost';
 import PlantWall from '../../../../../../components/Wall/PlantWall';
+import AboutPlant from '../../../../../../components/About/AboutPlant';
+import styles from './page.module.css'; // Import CSS module
 
 const PlantProfilePage = () => {
     const { id: userId, plantId } = useParams();
@@ -28,7 +30,7 @@ const PlantProfilePage = () => {
                 if (plantSnap.exists()) {
                     setPlantData({
                         ...plantSnap.data(),
-                        posts: plantSnap.data().posts || [], // Initialize posts as an empty array
+                        posts: plantSnap.data().posts || [],
                     });
                     setIsOwner(auth.currentUser && auth.currentUser.uid === userId);
                 } else {
@@ -46,7 +48,6 @@ const PlantProfilePage = () => {
 
     const handlePostCreated = async (newPost) => {
         try {
-            // Check if the post already exists
             const existingPost = plantData.posts.find(post => post.id === newPost.id);
             if (!existingPost) {
                 const updatedPosts = [...plantData.posts, newPost];
@@ -55,12 +56,24 @@ const PlantProfilePage = () => {
                     posts: updatedPosts,
                 }));
 
-                // Update Firestore
                 const postRef = doc(db, `users/${userId}/plants/${plantId}/plantPosts`, newPost.id);
                 await setDoc(postRef, newPost);
             }
         } catch (error) {
             console.error('Error adding post: ', error);
+        }
+    };
+
+    const handlePlantProfileUpdate = async (updatedPlantData) => {
+        try {
+            const plantRef = doc(db, `users/${userId}/plants/${plantId}`);
+            await setDoc(plantRef, updatedPlantData, { merge: true });
+            setPlantData(prevData => ({
+                ...prevData,
+                ...updatedPlantData,
+            }));
+        } catch (error) {
+            console.error('Error updating plant profile:', error);
         }
     };
 
@@ -79,15 +92,19 @@ const PlantProfilePage = () => {
     const { name, imageUrl } = plantData;
 
     return (
-        <div>
-            <h1>{name}</h1>
-            <img src={imageUrl} alt={name} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+        <div className={styles.plantProfileContainer}>
+            <h1 className={styles.plantName}>{name}</h1>
+            <img src={imageUrl} alt={name} className={styles.plantImage} />
             {isOwner && <NewPlantPost onPostCreated={handlePostCreated} plantId={plantId} />}
+            <AboutPlant
+                plantId={plantId}
+                name={name}
+                imageUrl={imageUrl}
+                onUpdatePlant={handlePlantProfileUpdate}
+            />
             <PlantWall plantId={plantId} posts={plantData.posts} currentUserUid={auth.currentUser.uid} />
         </div>
     );
 };
 
 export default PlantProfilePage;
-
-

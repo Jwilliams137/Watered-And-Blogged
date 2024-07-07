@@ -1,0 +1,76 @@
+/* AboutPlant.module.css */
+.aboutPlantContainer {
+    margin-bottom: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.viewMode {
+    display: flex;
+    align-items: center;
+}
+
+.profilePictureContainer {
+    margin-right: 20px;
+}
+
+.profilePicture {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.aboutText {
+    flex: 1;
+}
+
+.editButton {
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.editMode {
+    display: flex;
+    align-items: center;
+}
+
+.input {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.buttonGroup {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.saveButton,
+.cancelButton {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.saveButton {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.cancelButton {
+    background-color: #dc3545;
+    color: #fff;
+}

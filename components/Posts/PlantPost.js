@@ -3,6 +3,7 @@ import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db, auth } from '../../firebase';
 import Link from 'next/link';
 import styles from './PlantPost.module.css';
+import PlantComment from '../../components/Comment/PlantComment'; // Adjust the path as per your actual file structure
 
 const PlantPost = ({ post, plantId, userId, onDeletePost }) => {
     const [editing, setEditing] = useState(false);
@@ -144,6 +145,9 @@ const PlantPost = ({ post, plantId, userId, onDeletePost }) => {
                         </div>
                     )}
                     {renderContent()}
+
+                    {/* Include PlantComment component here */}
+                    <PlantComment plantPostId={post.id} />
                 </div>
             )}
         </div>
