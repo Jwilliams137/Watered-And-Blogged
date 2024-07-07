@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db, auth } from '../../../../../../firebase';
 import { useParams } from 'next/navigation';
 import NewPlantPost from '../../../../../../components/Posts/NewPlantPost';
@@ -56,7 +56,8 @@ const PlantProfilePage = () => {
                 }));
 
                 // Update Firestore
-                await db.collection(`users/${userId}/plants/${plantId}/plantPosts`).doc(newPost.id).set(newPost);
+                const postRef = doc(db, `users/${userId}/plants/${plantId}/plantPosts`, newPost.id);
+                await setDoc(postRef, newPost);
             }
         } catch (error) {
             console.error('Error adding post: ', error);
@@ -88,4 +89,5 @@ const PlantProfilePage = () => {
 };
 
 export default PlantProfilePage;
+
 

@@ -10,28 +10,8 @@ const PlantPost = ({ post, plantId, userId }) => {
     const [newVisibility, setNewVisibility] = useState(post.visibility);
     const [loading, setLoading] = useState(false);
     const [showFullContent, setShowFullContent] = useState(false);
-    const [plantData, setPlantData] = useState(null);
 
     const currentUser = auth.currentUser;
-
-    useEffect(() => {
-        const fetchPlantData = async () => {
-            try {
-                const plantRef = doc(db, `users/${userId}/plants/${plantId}`);
-                const plantSnap = await getDoc(plantRef);
-
-                if (plantSnap.exists()) {
-                    setPlantData(plantSnap.data());
-                } else {
-                    console.error('Plant not found');
-                }
-            } catch (error) {
-                console.error('Failed to fetch plant data', error);
-            }
-        };
-
-        fetchPlantData();
-    }, [userId, plantId]);
 
     const handleEdit = async () => {
         setLoading(true);
@@ -96,16 +76,12 @@ const PlantPost = ({ post, plantId, userId }) => {
 
     return (
         <div className={styles.plantPost}>
-            {plantData && (
-                <div className={styles.plantInfo}>
-                    <Link href={`/profile/${userId}/plants/${plantId}`}>
-                        
-                            <img src={plantData.imageUrl} alt={plantData.name} className={styles.plantImage} />
-                            <h2>{plantData.name}</h2>
-                        
-                    </Link>
-                </div>
-            )}
+            <div className={styles.plantInfo}>
+                <Link href={`/profile/${userId}/plants/${plantId}`}>
+                    <img src={post.plantProfilePic} alt={post.plantName} className={styles.plantImage} />
+                    <h2>{post.plantName}</h2>
+                </Link>
+            </div>
 
             {post.imageUrl && (
                 <img src={post.imageUrl} alt="Post Image" className={styles.postImage} />
@@ -150,7 +126,7 @@ const PlantPost = ({ post, plantId, userId }) => {
                 </div>
             ) : (
                 <div>
-                    {currentUser && (
+                    {currentUser && currentUser.uid === userId && (
                         <div className={styles.edit}>
                             <button onClick={() => setEditing(true)} disabled={loading} className={styles.button}>
                                 Edit
@@ -168,6 +144,3 @@ const PlantPost = ({ post, plantId, userId }) => {
 };
 
 export default PlantPost;
-
-
-

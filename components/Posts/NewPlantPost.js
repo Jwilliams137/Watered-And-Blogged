@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { collection, addDoc } from 'firebase/firestore';
+import React, { useState, useEffect } from 'react';
+import { collection, doc, getDoc, addDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { auth, db, storage } from '../../firebase';
 import ImageUpload from '../ImageUpload/ImageUpload';
@@ -12,6 +12,23 @@ const NewPlantPost = ({ onPostCreated, plantId }) => {
     const [imagePreview, setImagePreview] = useState('');
     const [visibility, setVisibility] = useState('private');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [plantData, setPlantData] = useState(null);
+
+    useEffect(() => {
+        const fetchPlantData = async () => {
+            if (auth.currentUser) {
+                const plantRef = doc(db, `users/${auth.currentUser.uid}/plants/${plantId}`);
+                const plantSnap = await getDoc(plantRef);
+                if (plantSnap.exists()) {
+                    setPlantData(plantSnap.data());
+                } else {
+                    console.error('No such plant document!');
+                }
+            }
+        };
+
+        fetchPlantData();
+    }, [plantId]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -53,28 +70,37 @@ const NewPlantPost = ({ onPostCreated, plantId }) => {
             }
         }
 
-        const newPost = {
-            content,
-            imageUrl,
-            authorId: auth.currentUser.uid,
-            createdAt: new Date(),
-            visibility,
-            approved: false,
-        };
+        if (plantData) {
+            const newPost = {
+                content,
+                imageUrl,
+                authorId: auth.currentUser.uid,
+                createdAt: new Date(),
+                visibility,
+                approved: false,
+                plantProfilePic: plantData.imageUrl,
+                plantName: plantData.name,
+                userId: auth.currentUser.uid,
+                plantId: plantId,
+            };
 
-        try {
-            const docRef = await addDoc(collection(db, `users/${auth.currentUser.uid}/plants/${plantId}/plantPosts`), newPost);
-            onPostCreated({ id: docRef.id, ...newPost });
+            try {
+                const docRef = await addDoc(collection(db, `users/${auth.currentUser.uid}/plants/${plantId}/plantPosts`), newPost);
+                onPostCreated({ id: docRef.id, ...newPost });
 
-            // Reset form state after successful submission
-            setContent('');
-            setImageFile(null);
-            setUploadProgress(0);
-            setImagePreview('');
-            setVisibility('private');
-        } catch (error) {
-            console.error('Error creating plant post: ', error);
-        } finally {
+                // Reset form state after successful submission
+                setContent('');
+                setImageFile(null);
+                setUploadProgress(0);
+                setImagePreview('');
+                setVisibility('private');
+            } catch (error) {
+                console.error('Error creating plant post: ', error);
+            } finally {
+                setIsSubmitting(false);
+            }
+        } else {
+            console.error('Plant data not found');
             setIsSubmitting(false);
         }
     };
@@ -113,5 +139,3 @@ const NewPlantPost = ({ onPostCreated, plantId }) => {
 };
 
 export default NewPlantPost;
-
-

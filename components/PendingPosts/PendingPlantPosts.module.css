@@ -1,0 +1,36 @@
+/* PendingPlantPosts.module.css */
+
+.postListItem {
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.plantInfo {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.plantImage {
+    width: 50px; /* Adjust the size as needed */
+    height: 50px; /* Adjust the size as needed */
+    object-fit: cover;
+    border-radius: 50%; /* Makes the image round */
+    margin-right: 10px; /* Adds space between image and text */
+}
+
+.postImage {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.postList {
+    list-style-type: none;
+    padding: 0;
+}
+
+/* Additional styles for other elements in the component */

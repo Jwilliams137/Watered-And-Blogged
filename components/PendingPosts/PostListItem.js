@@ -1,28 +1,25 @@
-// src/components/PostListItem.js
 import React from 'react';
 import styles from './PostListItem.module.css';
 
-const PostListItem = ({ post, handleApprove }) => (
-    <li key={post.id}>
-        {post.plantData ? (
-            <div className={styles.plantInfo}>
-                <img src={post.plantData.imageUrl} alt={post.plantData.name} className={styles.plantImage} />
-                <h3>{post.plantData.name}</h3>
-            </div>
-        ) : (
-            <div className={styles.plantInfo}>
-                <h3>Unknown Plant</h3>
-            </div>
-        )}
-        <h3>{post.title}</h3>
-        <p>{post.content}</p>
-        {post.imageUrl && (
-            <img src={post.imageUrl} alt="Post Image" className={styles.postImage} />
-        )}
-        {!post.approved && (
-            <button onClick={() => handleApprove(post.id)}>Approve</button>
-        )}
-    </li>
-);
+const PostListItem = ({ post, handleApprove }) => {
+    const { id, title, content, authorData, imageUrl } = post;
+
+    const approvePost = () => {
+        handleApprove(id);
+    };
+
+    return (
+        <li className={styles.postListItem}>
+            <h3>{title}</h3>
+            <p>{content}</p>
+            {imageUrl && <img src={imageUrl} alt="Post Image" className={styles.postImage} />}
+            <p>Author: {authorData.username}</p>
+            <p>Profile Picture: <img src={authorData.profilePicture} alt="Author Avatar" className={styles.authorAvatar} /></p>
+            <button onClick={approvePost}>Approve</button>
+        </li>
+    );
+};
 
 export default PostListItem;
+
+

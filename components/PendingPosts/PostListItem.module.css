@@ -1,0 +1,51 @@
+/* PostListItem.module.css */
+.postListItem {
+    padding: 16px;
+    border: 1px solid #ccc;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: flex-start;
+  }
+  
+  .authorInfo {
+    margin-right: 16px;
+  }
+  
+  .profilePicture {
+    width: 40px; /* Adjust as needed */
+    height: 40px; /* Adjust as needed */
+    border-radius: 50%; /* Makes the image round */
+    object-fit: cover; /* Ensures the image fills the circle */
+    cursor: pointer; /* Change cursor to pointer on hover or click */
+  }
+  
+  .authorName {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+  
+  .postDetails {
+    flex: 1; /* Allow post details to take remaining space */
+  }
+  
+  .postImage {
+    max-width: 100%;
+    margin-top: 12px;
+    border-radius: 8px; /* Rounded corners for images */
+  }
+  
+  .button {
+    margin-top: 8px;
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .button:hover {
+    background-color: #0056b3;
+  }
+  
