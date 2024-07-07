@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
+import React, { useState } from 'react';
+import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db, auth } from '../../firebase';
 import Link from 'next/link';
 import styles from './PlantPost.module.css';
 
-const PlantPost = ({ post, plantId, userId }) => {
+const PlantPost = ({ post, plantId, userId, onDeletePost }) => {
     const [editing, setEditing] = useState(false);
     const [newContent, setNewContent] = useState(post.content);
     const [newVisibility, setNewVisibility] = useState(post.visibility);
@@ -21,6 +21,12 @@ const PlantPost = ({ post, plantId, userId }) => {
                 visibility: newVisibility,
                 updatedAt: new Date(),
             });
+
+            // Check if visibility is set to private and delete from timeline
+            if (newVisibility === 'private') {
+                onDeletePost(post.id);
+            }
+
             setEditing(false);
         } catch (error) {
             console.error('Error updating post:', error);
@@ -33,6 +39,7 @@ const PlantPost = ({ post, plantId, userId }) => {
         setLoading(true);
         try {
             await deleteDoc(doc(db, `users/${userId}/plants/${plantId}/plantPosts/${post.id}`));
+            onDeletePost(post.id); // Notify the Timeline component to remove the post
         } catch (error) {
             console.error('Error deleting post:', error);
         } finally {

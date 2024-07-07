@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, query, orderBy, limit, startAfter, getDocs, doc, getDoc, where, collectionGroup } from 'firebase/firestore'; // Ensure collectionGroup is imported
+import { collection, query, orderBy, limit, startAfter, getDocs, doc, getDoc, where, collectionGroup } from 'firebase/firestore';
 import { db } from '../../firebase';
 import Post from '../Posts/Post';
 import PlantPost from '../Posts/PlantPost'; // Import the PlantPost component
@@ -111,14 +111,14 @@ const Timeline = () => {
           plantId={post.plantId}
           userId={post.userId}
           onPostUpdated={handlePostUpdated}
-          onDeletePost={handlePostDeleted}
+          onDeletePost={handlePostDeleted} // Ensure handlePostDeleted is passed to PlantPost
         />
       ) : (
         <Post
           key={post.id}
           post={post}
           onPostUpdated={handlePostUpdated}
-          onDeletePost={handlePostDeleted}
+          onDeletePost={handlePostDeleted} // Ensure handlePostDeleted is passed to Post
         />
       ))}
       {loading && <p>Loading...</p>}
@@ -133,18 +133,3 @@ const Timeline = () => {
 };
 
 export default Timeline;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
