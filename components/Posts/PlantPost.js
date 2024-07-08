@@ -44,21 +44,7 @@ const PlantPost = ({ post, plantId, userId, onDeletePost }) => {
                 updatedAt: new Date(),
             });
     
-            // Fetch updated plant data after edit
-            const plantDocRef = doc(db, `users/${userId}/plants/${plantId}`);
-            const plantDocSnap = await getDoc(plantDocRef);
-            if (plantDocSnap.exists()) {
-                const plantData = plantDocSnap.data();
-                setPlantName(plantData.name || ''); // Update plant name state
-                setPlantImageUrl(plantData.imageUrl || '/default-plant-profile-pic.png'); // Update plant profile picture state
-            }
-    
-            setEditing(false); // Always set editing to false after saving
-    
-            // Check if visibility is set to private and delete from timeline
-            if (newVisibility === 'private') {
-                onDeletePost(post.id);
-            }
+            setEditing(false); // Set editing to false after saving
         } catch (error) {
             console.error('Error updating post:', error);
         } finally {
@@ -66,12 +52,12 @@ const PlantPost = ({ post, plantId, userId, onDeletePost }) => {
         }
     };
     
-
+    
     const handleDelete = async () => {
         setLoading(true);
         try {
             await deleteDoc(doc(db, `users/${userId}/plants/${plantId}/plantPosts/${post.id}`));
-            onDeletePost(post.id); // Notify the Timeline component to remove the post
+            onDeletePost(post.id); // Notify the parent component to remove the post from UI
         } catch (error) {
             console.error('Error deleting post:', error);
         } finally {
