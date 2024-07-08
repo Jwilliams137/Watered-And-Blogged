@@ -3,6 +3,7 @@ import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDoc } fro
 import { db, auth } from '../../firebase';
 import styles from './PlantComment.module.css';
 import Link from 'next/link';
+import PlantLikes from '../Likes/PlantLikes';
 
 const PlantComment = ({ plantPostId }) => {
     const [comments, setComments] = useState([]);
@@ -109,6 +110,7 @@ const PlantComment = ({ plantPostId }) => {
 
     return (
         <div className={styles.commentSection}>
+            <PlantLikes plantPostId={plantPostId} />
             <div className={styles.commentList}>
                 {comments.map(comment => (
                     <div key={comment.id} className={styles.comment}>
@@ -187,6 +189,8 @@ const PlantComment = ({ plantPostId }) => {
                     Post
                 </button>
             </div>
+
+            
         </div>
     );
 };
