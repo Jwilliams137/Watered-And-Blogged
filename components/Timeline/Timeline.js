@@ -1,88 +1,61 @@
 import React, { useState, useEffect } from 'react';
-import { collection, query, orderBy, limit, startAfter, getDocs, doc, getDoc, where, collectionGroup } from 'firebase/firestore';
+import { collection, query, where, orderBy, onSnapshot, doc, collectionGroup } from 'firebase/firestore'; // Corrected imports
 import { db } from '../../firebase';
 import Post from '../Posts/Post';
-import PlantPost from '../Posts/PlantPost'; // Import the PlantPost component
+import PlantPost from '../Posts/PlantPost';
 import styles from './Timeline.module.css';
 
 const Timeline = () => {
   const [posts, setPosts] = useState([]);
-  const [lastVisible, setLastVisible] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchPosts();
-  }, []);
-
-  const fetchPosts = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const userPostsQuery = query(
+    const unsubscribeUserPosts = onSnapshot(
+      query(
         collection(db, 'posts'),
         where('visibility', '==', 'public'),
         where('approved', '==', true),
-        orderBy('createdAt', 'desc'),
-        limit(10)
-      );
+        orderBy('createdAt', 'desc')
+      ),
+      (snapshot) => {
+        const userPosts = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setPosts(prevPosts => [...userPosts, ...prevPosts.filter(post => !userPosts.some(p => p.id === post.id))]);
+      },
+      (error) => {
+        console.error('Error fetching user posts:', error);
+        setError('Failed to load user posts.');
+      }
+    );
 
-      const plantPostsQuery = query(
-        collectionGroup(db, 'plantPosts'),
+    const unsubscribePlantPosts = onSnapshot(
+      query(
+        collectionGroup(db, 'plantPosts'), // Ensure collectionGroup is correctly imported and used
         where('visibility', '==', 'public'),
         where('approved', '==', true),
-        orderBy('createdAt', 'desc'),
-        limit(10)
-      );
-
-      const [userPostsSnapshot, plantPostsSnapshot] = await Promise.all([
-        getDocs(userPostsQuery),
-        getDocs(plantPostsQuery)
-      ]);
-
-      const userPosts = await Promise.all(userPostsSnapshot.docs.map(async docSnapshot => {
-        const postData = docSnapshot.data();
-        const userDoc = await getDoc(doc(db, 'users', postData.authorId));
-        const userProfile = userDoc.data();
-        return {
-          id: docSnapshot.id,
-          ...postData,
-          authorProfilePicture: userProfile?.profilePicture
-        };
-      }));
-
-      const plantPosts = await Promise.all(plantPostsSnapshot.docs.map(async docSnapshot => {
-        const postData = docSnapshot.data();
-        const userDoc = await getDoc(doc(db, `users/${postData.userId}`));
-        const userProfile = userDoc.data();
-        return {
-          id: docSnapshot.id,
-          ...postData,
-          authorProfilePicture: userProfile?.profilePicture
-        };
-      }));
-
-      const allPosts = [...userPosts, ...plantPosts].sort((a, b) => b.createdAt - a.createdAt);
-
-      if (allPosts.length > 0) {
-        setLastVisible({
-          userPostsLastVisible: userPostsSnapshot.docs[userPostsSnapshot.docs.length - 1],
-          plantPostsLastVisible: plantPostsSnapshot.docs[plantPostsSnapshot.docs.length - 1]
-        });
-        setPosts(prevPosts => {
-          const updatedPosts = allPosts.filter(newPost => !prevPosts.some(prevPost => prevPost.id === newPost.id));
-          return [...prevPosts, ...updatedPosts];
-        });
-      } else {
-        setLastVisible(null);
+        orderBy('createdAt', 'desc')
+      ),
+      (snapshot) => {
+        const plantPosts = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setPosts(prevPosts => [...plantPosts, ...prevPosts.filter(post => !plantPosts.some(p => p.id === post.id))]);
+      },
+      (error) => {
+        console.error('Error fetching plant posts:', error);
+        setError('Failed to load plant posts.');
       }
-    } catch (error) {
-      console.error('Error fetching posts: ', error);
-      setError('Failed to load posts. Please try again later.');
-    } finally {
-      setLoading(false);
-    }
-  };
+    );
+
+    return () => {
+      unsubscribeUserPosts();
+      unsubscribePlantPosts();
+    };
+  }, []);
 
   const handlePostUpdated = (postId, updatedPost) => {
     setPosts(prevPosts => {
@@ -99,7 +72,9 @@ const Timeline = () => {
   };
 
   const loadMore = () => {
-    fetchPosts();
+    setLoading(true);
+    // Logic to load more posts (if required)
+    setLoading(false);
   };
 
   return (
@@ -111,23 +86,24 @@ const Timeline = () => {
           plantId={post.plantId}
           userId={post.userId}
           onPostUpdated={handlePostUpdated}
-          onDeletePost={handlePostDeleted} // Ensure handlePostDeleted is passed to PlantPost
+          onDeletePost={handlePostDeleted}
         />
       ) : (
         <Post
           key={post.id}
           post={post}
           onPostUpdated={handlePostUpdated}
-          onDeletePost={handlePostDeleted} // Ensure handlePostDeleted is passed to Post
+          onDeletePost={handlePostDeleted}
         />
       ))}
       {loading && <p>Loading...</p>}
       {error && <p className={styles.error}>{error}</p>}
-      {!loading && lastVisible && (
+      {/* Optionally, implement a Load More button */}
+      {/* {!loading && lastVisible && (
         <button onClick={loadMore} className={styles.loadMore}>
           Load More
         </button>
-      )}
+      )} */}
     </div>
   );
 };

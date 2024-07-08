@@ -1,22 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { doc, updateDoc, deleteDoc, getDoc } from 'firebase/firestore';
+import { doc, updateDoc, deleteDoc, getDoc, onSnapshot } from 'firebase/firestore';
 import { db, auth } from '../../firebase';
 import Link from 'next/link';
 import styles from './PlantPost.module.css';
 import PlantComment from '../Comment/PlantComment'; // Adjust the path as per your actual file structure
 
 const PlantPost = ({ post, plantId, userId, onDeletePost }) => {
-    const [editing, setEditing] = useState(false);
     const [newContent, setNewContent] = useState(post.content);
     const [newVisibility, setNewVisibility] = useState(post.visibility);
     const [loading, setLoading] = useState(false);
     const [showFullContent, setShowFullContent] = useState(false);
-    const [plantName, setPlantName] = useState(post.plantName); // State to hold plant name
-    const [plantImageUrl, setPlantImageUrl] = useState(post.plantProfilePic); // State to hold plant profile picture URL
-
+    const [plantName, setPlantName] = useState('');
+    const [plantImageUrl, setPlantImageUrl] = useState('/default-plant-profile-pic.png');
+    const [editMode, setEditMode] = useState(false);
     const currentUser = auth.currentUser;
 
-    // Fetch plant data when component mounts or plantId changes
     useEffect(() => {
         const fetchPlantData = async () => {
             try {
@@ -24,8 +22,8 @@ const PlantPost = ({ post, plantId, userId, onDeletePost }) => {
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) {
                     const data = docSnap.data();
-                    setPlantName(data.name || ''); // Update plant name state
-                    setPlantImageUrl(data.imageUrl || '/default-plant-profile-pic.png'); // Update plant profile picture state
+                    setPlantName(data.name || '');
+                    setPlantImageUrl(data.imageUrl || '/default-plant-profile-pic.png');
                 }
             } catch (error) {
                 console.error('Error fetching plant data:', error);
@@ -35,6 +33,18 @@ const PlantPost = ({ post, plantId, userId, onDeletePost }) => {
         fetchPlantData();
     }, [plantId, userId]);
 
+    useEffect(() => {
+        const unsubscribe = onSnapshot(doc(db, `users/${userId}/plants/${plantId}/plantPosts/${post.id}`), snapshot => {
+            const updatedPost = snapshot.data();
+            if (updatedPost) {
+                setNewContent(updatedPost.content);
+                setNewVisibility(updatedPost.visibility);
+            }
+        });
+
+        return () => unsubscribe();
+    }, [post.id, plantId, userId]);
+
     const handleEdit = async () => {
         setLoading(true);
         try {
@@ -43,21 +53,19 @@ const PlantPost = ({ post, plantId, userId, onDeletePost }) => {
                 visibility: newVisibility,
                 updatedAt: new Date(),
             });
-    
-            setEditing(false); // Set editing to false after saving
+            setEditMode(false); // Exit edit mode after successful update
         } catch (error) {
             console.error('Error updating post:', error);
         } finally {
             setLoading(false);
         }
     };
-    
-    
+
     const handleDelete = async () => {
         setLoading(true);
         try {
             await deleteDoc(doc(db, `users/${userId}/plants/${plantId}/plantPosts/${post.id}`));
-            onDeletePost(post.id); // Notify the parent component to remove the post from UI
+            onDeletePost(post.id);
         } catch (error) {
             console.error('Error deleting post:', error);
         } finally {
@@ -66,9 +74,10 @@ const PlantPost = ({ post, plantId, userId, onDeletePost }) => {
     };
 
     const handleCancelEdit = () => {
+        // Reset to original post content and visibility
         setNewContent(post.content);
         setNewVisibility(post.visibility);
-        setEditing(false);
+        setEditMode(false); // Exit edit mode
     };
 
     const toggleContent = () => {
@@ -112,7 +121,7 @@ const PlantPost = ({ post, plantId, userId, onDeletePost }) => {
                 <img src={post.imageUrl} alt="Post Image" className={styles.postImage} />
             )}
 
-            {editing ? (
+            {editMode ? (
                 <div>
                     <textarea
                         value={newContent}
@@ -153,7 +162,7 @@ const PlantPost = ({ post, plantId, userId, onDeletePost }) => {
                 <div>
                     {currentUser && currentUser.uid === userId && (
                         <div className={styles.edit}>
-                            <button onClick={() => setEditing(true)} disabled={loading} className={styles.button}>
+                            <button onClick={() => setEditMode(true)} disabled={loading} className={styles.button}>
                                 Edit
                             </button>
                             <button onClick={handleDelete} disabled={loading} className={styles.button}>
@@ -163,7 +172,6 @@ const PlantPost = ({ post, plantId, userId, onDeletePost }) => {
                     )}
                     {renderContent()}
 
-                    {/* Include PlantComment component here */}
                     <PlantComment plantPostId={post.id} />
                 </div>
             )}
