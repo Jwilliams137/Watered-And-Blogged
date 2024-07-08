@@ -5,7 +5,7 @@ import Link from 'next/link';
 import styles from './PlantPost.module.css';
 import PlantComment from '../Comment/PlantComment'; // Adjust the path as per your actual file structure
 
-const PlantPost = ({ post, plantId, userId, onDeletePost }) => {
+const PlantPost = ({ post, plantId, userId, onPostUpdated, onDeletePost }) => { // Add onPostUpdated prop
     const [newContent, setNewContent] = useState(post.content);
     const [newVisibility, setNewVisibility] = useState(post.visibility);
     const [loading, setLoading] = useState(false);
@@ -54,6 +54,7 @@ const PlantPost = ({ post, plantId, userId, onDeletePost }) => {
                 updatedAt: new Date(),
             });
             setEditMode(false); // Exit edit mode after successful update
+            onPostUpdated(post.id, { ...post, content: newContent, visibility: newVisibility }); // Notify parent of the update
         } catch (error) {
             console.error('Error updating post:', error);
         } finally {
