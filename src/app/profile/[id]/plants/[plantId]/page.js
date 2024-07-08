@@ -94,12 +94,16 @@ const PlantProfilePage = () => {
     return (
         <div className={styles.plantProfileContainer}>
             <h1 className={styles.plantName}>{name}</h1>
-            <img src={imageUrl} alt={name} className={styles.plantImage} />
+            <img 
+                src={imageUrl || '/avatar.png'}  // Use default image if imageUrl is not provided
+                alt={name} 
+                className={styles.plantImage} 
+            />
             {isOwner && <NewPlantPost onPostCreated={handlePostCreated} plantId={plantId} />}
             {isOwner && <AboutPlant
                 plantId={plantId}
                 name={name}
-                imageUrl={imageUrl}
+                imageUrl={imageUrl || '/avatar.png'} // Use default image if imageUrl is not provided
                 onUpdatePlant={handlePlantProfileUpdate}
             />}
             <PlantWall plantId={plantId} posts={plantData.posts} currentUserUid={auth.currentUser.uid} />
