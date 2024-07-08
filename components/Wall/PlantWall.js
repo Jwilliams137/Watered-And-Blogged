@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
+import { collection, query, orderBy, limit, onSnapshot, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import PlantPost from '../Posts/PlantPost';
 import styles from './PlantWall.module.css';
@@ -30,10 +30,19 @@ const PlantWall = ({ plantId, currentUserUid }) => {
         return () => unsubscribe();
     }, [plantId, currentUserUid]);
 
+    const handleDeletePost = async (postId) => {
+        try {
+            await deleteDoc(doc(db, `users/${currentUserUid}/plants/${plantId}/plantPosts/${postId}`));
+            // Optional: Update state or perform any necessary logic after deletion
+        } catch (error) {
+            console.error('Error deleting post:', error);
+        }
+    };
+
     return (
         <div className={styles.plantWall}>
             {posts.map((post) => (
-                <PlantPost key={post.id} post={post} plantId={plantId} userId={currentUserUid} />
+                <PlantPost key={post.id} post={post} plantId={plantId} userId={currentUserUid} onDeletePost={handleDeletePost} />
             ))}
             {loading && <p>Loading...</p>}
             {!loading && posts.length === 0 && <p>Sorry, No posts from this plant yet</p>}
@@ -42,14 +51,3 @@ const PlantWall = ({ plantId, currentUserUid }) => {
 };
 
 export default PlantWall;
-
-
-
-
-
-
-
-
-
-
-

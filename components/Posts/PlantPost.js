@@ -3,7 +3,7 @@ import { doc, updateDoc, deleteDoc, getDoc } from 'firebase/firestore';
 import { db, auth } from '../../firebase';
 import Link from 'next/link';
 import styles from './PlantPost.module.css';
-import PlantComment from '../../components/Comment/PlantComment'; // Adjust the path as per your actual file structure
+import PlantComment from '../Comment/PlantComment'; // Adjust the path as per your actual file structure
 
 const PlantPost = ({ post, plantId, userId, onDeletePost }) => {
     const [editing, setEditing] = useState(false);
@@ -42,11 +42,6 @@ const PlantPost = ({ post, plantId, userId, onDeletePost }) => {
                 updatedAt: new Date(),
             });
 
-            // Check if visibility is set to private and delete from timeline
-            if (newVisibility === 'private') {
-                onDeletePost(post.id);
-            }
-
             // Fetch updated plant data after edit
             const docRef = doc(db, `users/${userId}/plants/${plantId}`);
             const docSnap = await getDoc(docRef);
@@ -55,7 +50,12 @@ const PlantPost = ({ post, plantId, userId, onDeletePost }) => {
                 setPlantName(data.name || ''); // Update plant name state with the latest data
             }
 
-            setEditing(false);
+            setEditing(false); // Always set editing to false after saving
+
+            // Check if visibility is set to private and delete from timeline
+            if (newVisibility === 'private') {
+                onDeletePost(post.id);
+            }
         } catch (error) {
             console.error('Error updating post:', error);
         } finally {
