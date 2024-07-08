@@ -12,6 +12,7 @@ const PlantPost = ({ post, plantId, userId, onDeletePost }) => {
     const [loading, setLoading] = useState(false);
     const [showFullContent, setShowFullContent] = useState(false);
     const [plantName, setPlantName] = useState(post.plantName); // State to hold plant name
+    const [plantImageUrl, setPlantImageUrl] = useState(post.plantProfilePic); // State to hold plant profile picture URL
 
     const currentUser = auth.currentUser;
 
@@ -24,6 +25,7 @@ const PlantPost = ({ post, plantId, userId, onDeletePost }) => {
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     setPlantName(data.name || ''); // Update plant name state
+                    setPlantImageUrl(data.imageUrl || '/default-plant-profile-pic.png'); // Update plant profile picture state
                 }
             } catch (error) {
                 console.error('Error fetching plant data:', error);
@@ -41,17 +43,18 @@ const PlantPost = ({ post, plantId, userId, onDeletePost }) => {
                 visibility: newVisibility,
                 updatedAt: new Date(),
             });
-
+    
             // Fetch updated plant data after edit
-            const docRef = doc(db, `users/${userId}/plants/${plantId}`);
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                setPlantName(data.name || ''); // Update plant name state with the latest data
+            const plantDocRef = doc(db, `users/${userId}/plants/${plantId}`);
+            const plantDocSnap = await getDoc(plantDocRef);
+            if (plantDocSnap.exists()) {
+                const plantData = plantDocSnap.data();
+                setPlantName(plantData.name || ''); // Update plant name state
+                setPlantImageUrl(plantData.imageUrl || '/default-plant-profile-pic.png'); // Update plant profile picture state
             }
-
+    
             setEditing(false); // Always set editing to false after saving
-
+    
             // Check if visibility is set to private and delete from timeline
             if (newVisibility === 'private') {
                 onDeletePost(post.id);
@@ -62,6 +65,7 @@ const PlantPost = ({ post, plantId, userId, onDeletePost }) => {
             setLoading(false);
         }
     };
+    
 
     const handleDelete = async () => {
         setLoading(true);
@@ -113,7 +117,7 @@ const PlantPost = ({ post, plantId, userId, onDeletePost }) => {
         <div className={styles.plantPost}>
             <div className={styles.plantInfo}>
                 <Link href={`/profile/${userId}/plants/${plantId}`}>
-                    <img src={post.plantProfilePic} alt={plantName} className={styles.plantImage} />
+                    <img src={plantImageUrl} alt={plantName} className={styles.plantImage} />
                     <h2>{plantName}</h2>
                 </Link>
             </div>

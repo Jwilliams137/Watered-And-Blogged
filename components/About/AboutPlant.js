@@ -5,9 +5,9 @@ import { auth, db, storage } from '../../firebase';
 import ProfileImageUpload from '../ImageUpload/ProfileImageUpload';
 import styles from './AboutPlant.module.css'; // Import CSS module
 
-const AboutPlant = ({ plantId }) => {
+const AboutPlant = ({ plantId, onProfileImageChange }) => {
     const [plantName, setPlantName] = useState('');
-    const [plantProfilePictureUrl, setPlantProfilePictureUrl] = useState('');
+    const [imageUrl, setImageUrl] = useState('');
     const [plantProfilePictureFile, setPlantProfilePictureFile] = useState(null);
     const [imagePreview, setImagePreview] = useState('');
     const [uploadProgress, setUploadProgress] = useState(0);
@@ -20,13 +20,13 @@ const AboutPlant = ({ plantId }) => {
                 const user = auth.currentUser;
                 if (!user) return;
 
-                const docRef = doc(db, 'users', user.uid, 'plants', plantId);
+                const docRef = doc(db, 'users', user.uid, 'plants', plantId); // Updated path to nested collection
                 const docSnap = await getDoc(docRef);
 
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     setPlantName(data.name || '');
-                    setPlantProfilePictureUrl(data.profilePicture || '/avatar.png'); 
+                    setImageUrl(data.imageUrl || ''); // Use imageUrl field from Firestore
                 }
             } catch (error) {
                 console.error('Error fetching plant data:', error);
@@ -45,11 +45,11 @@ const AboutPlant = ({ plantId }) => {
         e.preventDefault();
         if (!auth.currentUser) return;
 
-        let imageUrl = plantProfilePictureUrl;
+        let newImageUrl = imageUrl;
         const fileToUpload = croppedImageFile || plantProfilePictureFile;
 
         if (fileToUpload) {
-            const storageRef = ref(storage, `plantProfilePictures/${plantId}/${fileToUpload.name}`);
+            const storageRef = ref(storage, `plantProfilePictures/${plantId}/${fileToUpload.name}`); // Updated path to nested collection
             const uploadTask = uploadBytesResumable(storageRef, fileToUpload);
 
             try {
@@ -65,7 +65,7 @@ const AboutPlant = ({ plantId }) => {
                             reject(error);
                         },
                         async () => {
-                            imageUrl = await getDownloadURL(uploadTask.snapshot.ref);
+                            newImageUrl = await getDownloadURL(uploadTask.snapshot.ref);
                             resolve();
                         }
                     );
@@ -80,13 +80,18 @@ const AboutPlant = ({ plantId }) => {
             const user = auth.currentUser;
             if (!user) return;
 
-            const plantRef = doc(db, 'users', user.uid, 'plants', plantId);
-            await setDoc(plantRef, { name: plantName, profilePicture: imageUrl }, { merge: true });
-            setPlantProfilePictureUrl(imageUrl);
+            const plantRef = doc(db, 'users', user.uid, 'plants', plantId); // Updated path to nested collection
+            await setDoc(plantRef, { name: plantName, imageUrl: newImageUrl }, { merge: true });
+            setImageUrl(newImageUrl);
             setPlantProfilePictureFile(null);
             setImagePreview('');
             setCroppedImageFile(null);
             setEditMode(false);
+
+            // Notify parent component or other components about profile image change
+            if (onProfileImageChange) {
+                onProfileImageChange(newImageUrl);
+            }
         } catch (error) {
             console.error('Error updating plant profile:', error);
         }
@@ -98,7 +103,7 @@ const AboutPlant = ({ plantId }) => {
                 <div className={styles.viewMode}>
                     <div className={styles.profilePictureContainer}>
                         <img
-                            src={plantProfilePictureUrl}
+                            src={imageUrl || '/avatar.png'} // Use imageUrl state
                             alt="Plant Profile Picture"
                             className={styles.profilePicture}
                         />
@@ -114,7 +119,7 @@ const AboutPlant = ({ plantId }) => {
                 <form onSubmit={handleSubmit} className={styles.editMode}>
                     <div className={styles.profilePictureContainer}>
                         <img
-                            src={plantProfilePictureUrl}
+                            src={imageUrl || '/avatar.png'} // Use imageUrl state
                             alt="Plant Profile Picture"
                             className={styles.profilePicture}
                         />
@@ -148,5 +153,3 @@ const AboutPlant = ({ plantId }) => {
 };
 
 export default AboutPlant;
-
-

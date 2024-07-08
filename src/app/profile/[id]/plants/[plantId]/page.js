@@ -24,7 +24,7 @@ const PlantProfilePage = () => {
             }
 
             try {
-                const plantRef = doc(db, `users/${userId}/plants/${plantId}`);
+                const plantRef = doc(db, 'users', userId, 'plants', plantId); // Updated path to nested collection
                 const plantSnap = await getDoc(plantRef);
 
                 if (plantSnap.exists()) {
@@ -56,7 +56,7 @@ const PlantProfilePage = () => {
                     posts: updatedPosts,
                 }));
 
-                const postRef = doc(db, `users/${userId}/plants/${plantId}/plantPosts`, newPost.id);
+                const postRef = doc(db, 'users', userId, 'plants', plantId, 'plantPosts', newPost.id); // Updated path to nested collection
                 await setDoc(postRef, newPost);
             }
         } catch (error) {
@@ -66,7 +66,7 @@ const PlantProfilePage = () => {
 
     const handlePlantProfileUpdate = async (updatedPlantData) => {
         try {
-            const plantRef = doc(db, `users/${userId}/plants/${plantId}`);
+            const plantRef = doc(db, 'users', userId, 'plants', plantId); // Updated path to nested collection
             await setDoc(plantRef, updatedPlantData, { merge: true });
             setPlantData(prevData => ({
                 ...prevData,
