@@ -11,7 +11,7 @@ const PlantPost = ({ post, plantId, userId, onPostUpdated, onDeletePost }) => { 
     const [loading, setLoading] = useState(false);
     const [showFullContent, setShowFullContent] = useState(false);
     const [plantName, setPlantName] = useState('');
-    const [plantImageUrl, setPlantImageUrl] = useState('/default-plant-profile-pic.png');
+    const [plantImageUrl, setPlantImageUrl] = useState('/avatar.png');
     const [editMode, setEditMode] = useState(false);
     const currentUser = auth.currentUser;
 
@@ -23,7 +23,7 @@ const PlantPost = ({ post, plantId, userId, onPostUpdated, onDeletePost }) => { 
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     setPlantName(data.name || '');
-                    setPlantImageUrl(data.imageUrl || '/default-plant-profile-pic.png');
+                    setPlantImageUrl(data.imageUrl || '/avatar.png');
                 }
             } catch (error) {
                 console.error('Error fetching plant data:', error);
