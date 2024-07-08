@@ -58,7 +58,7 @@ const PlantList = () => {
                             <div className={styles.plantContainer}>
                                 <Link href={`/profile/${auth.currentUser.uid}/plants/${plant.id}`}>
                                     <img
-                                        src={plant.imageUrl}
+                                        src={plant.imageUrl || '/avatar.png'} // Use default image if imageUrl is not provided
                                         alt={plant.name}
                                         className={styles.plantImage}
                                     />
@@ -82,7 +82,3 @@ const PlantList = () => {
 };
 
 export default PlantList;
-
-
-
-
