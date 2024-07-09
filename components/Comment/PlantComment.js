@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDoc } from 'firebase/firestore';
 import { db, auth } from '../../firebase';
-import PlantLikes from '../../components/Likes/PlantLikes'; // Ensure the path is correct
 import styles from './PlantComment.module.css';
 import Modal from '../Modal/Modal';
-import Link from 'next/link'; // Import Link from next/link
+import Link from 'next/link';
+import PlantLikes from '../Likes/PlantLikes'
 
 const PlantComment = ({ postId, userId, plantId, plantPostId }) => {
     const [comments, setComments] = useState([]);
@@ -30,6 +30,12 @@ const PlantComment = ({ postId, userId, plantId, plantPostId }) => {
                 if (postDoc.exists()) {
                     const postData = postDoc.data();
                     setPostOwnerId(postData.userId);
+                    setLikesCount(postData.likes || 0); // Assuming you have a likes field in your post data
+                    if (postData.likes && postData.likes.indexOf(auth.currentUser.uid) !== -1) {
+                        setLikedByUser(true);
+                    } else {
+                        setLikedByUser(false);
+                    }
                 } else {
                     console.error('No post found with the provided postId:', postId);
                 }
@@ -157,7 +163,7 @@ const PlantComment = ({ postId, userId, plantId, plantPostId }) => {
         <div className={styles.commentSection}>
             <Modal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} onSuccess={handleLoginSuccess} />
             
-            <PlantLikes userId={userId} plantId={plantId} plantPostId={plantPostId} />
+            <PlantLikes />
 
             <div className={styles.commentList}>
                 {comments.map(comment => (
@@ -221,21 +227,20 @@ const PlantComment = ({ postId, userId, plantId, plantPostId }) => {
             </div>
 
             <div className={styles.addComment}>
-                <input
-                    type="text"
+                <textarea
+                    placeholder="Add a comment..."
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
-                    placeholder="Add a comment..."
                     className={styles.commentInput}
                     onClick={handleCommentBoxClick}
-                    disabled={loading}
+                    disabled={!auth.currentUser || loading}
                 />
                 <button
                     onClick={handleAddComment}
-                    disabled={loading || !newComment.trim()}
                     className={styles.commentButton}
+                    disabled={!auth.currentUser || loading}
                 >
-                    Post
+                    Comment
                 </button>
             </div>
         </div>
