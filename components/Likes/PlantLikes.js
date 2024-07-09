@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db, auth } from '../../firebase'; // Adjust import as per your project structure
 
-const PlantLikes = ({ userId, plantId, plantPostId }) => {
+const PlantLikes = ({ plantPostId }) => {
     const [likes, setLikes] = useState(0);
     const [likedByUser, setLikedByUser] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -10,7 +10,7 @@ const PlantLikes = ({ userId, plantId, plantPostId }) => {
     useEffect(() => {
         const fetchPostData = async () => {
             try {
-                const postRef = doc(db, `users/${userId}/plants/${plantId}/plantPosts/${plantPostId}`);
+                const postRef = doc(db, `plantPosts/${plantPostId}`);
                 const postSnap = await getDoc(postRef);
 
                 if (postSnap.exists()) {
@@ -29,12 +29,12 @@ const PlantLikes = ({ userId, plantId, plantPostId }) => {
             setLikes(0);
             setLikedByUser(false);
         }
-    }, [userId, plantId, plantPostId, auth.currentUser]); // Ensure auth.currentUser is included in dependencies
+    }, [plantPostId, auth.currentUser]); // Ensure auth.currentUser is included in dependencies
 
     const handleLikePost = async () => {
         setLoading(true);
         try {
-            const postRef = doc(db, `users/${userId}/plants/${plantId}/plantPosts/${plantPostId}`);
+            const postRef = doc(db, `plantPosts/${plantPostId}`);
             const postSnap = await getDoc(postRef);
 
             if (postSnap.exists()) {
