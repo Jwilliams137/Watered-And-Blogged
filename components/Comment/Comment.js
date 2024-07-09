@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDoc } from 'firebase/firestore';
 import { db, auth } from '../../firebase';
 import styles from './Comment.module.css';
 import Modal from '../Modal/Modal';
-import Link from 'next/link'; // Import Link from next/link
+import Link from 'next/link';
 
 const Comment = ({ postId }) => {
     const [comments, setComments] = useState([]);
@@ -16,6 +16,10 @@ const Comment = ({ postId }) => {
     const [postOwnerId, setPostOwnerId] = useState('');
     const [showLoginModal, setShowLoginModal] = useState(false);
     const [commentAuthors, setCommentAuthors] = useState({});
+    const [readMore, setReadMore] = useState({});
+
+    const newCommentRef = useRef(null);
+    const editingCommentRef = useRef(null);
 
     useEffect(() => {
         const fetchPostData = async () => {
@@ -60,7 +64,7 @@ const Comment = ({ postId }) => {
             try {
                 if (!comment.userId) {
                     console.error('comment.userId is undefined for comment:', comment);
-                    return { id: comment.id, name: 'Unknown User', profilePicture: '/avatar.png' }; // Use default avatar path directly
+                    return { id: comment.id, name: 'Unknown User', profilePicture: '/avatar.png' };
                 }
 
                 const userDocRef = doc(db, 'users', comment.userId);
@@ -68,14 +72,14 @@ const Comment = ({ postId }) => {
 
                 if (userDoc.exists()) {
                     const userData = userDoc.data();
-                    return { id: comment.id, name: userData.username || 'Unknown User', profilePicture: userData.profilePicture || '/avatar.png' }; // Use default avatar path directly
+                    return { id: comment.id, name: userData.username || 'Unknown User', profilePicture: userData.profilePicture || '/avatar.png' };
                 } else {
                     console.error('No user found for userId:', comment.userId);
-                    return { id: comment.id, name: 'Unknown User', profilePicture: '/avatar.png' }; // Use default avatar path directly
+                    return { id: comment.id, name: 'Unknown User', profilePicture: '/avatar.png' };
                 }
             } catch (error) {
                 console.error('Error fetching user data:', error);
-                return { id: comment.id, name: 'Unknown User', profilePicture: '/avatar.png' }; // Use default avatar path directly
+                return { id: comment.id, name: 'Unknown User', profilePicture: '/avatar.png' };
             }
         });
 
@@ -191,6 +195,28 @@ const Comment = ({ postId }) => {
         setShowLoginModal(false);
     };
 
+    const adjustTextareaHeight = (textarea) => {
+        textarea.style.height = 'auto';
+        textarea.style.height = `${textarea.scrollHeight}px`;
+    };
+
+    const handleNewCommentChange = (e) => {
+        setNewComment(e.target.value);
+        adjustTextareaHeight(newCommentRef.current);
+    };
+
+    const handleEditingCommentChange = (e) => {
+        setEditingCommentContent(e.target.value);
+        adjustTextareaHeight(editingCommentRef.current);
+    };
+
+    const toggleReadMore = (commentId) => {
+        setReadMore(prevState => ({
+            ...prevState,
+            [commentId]: !prevState[commentId]
+        }));
+    };
+
     return (
         <div className={styles.commentSection}>
             <Modal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} onSuccess={handleLoginSuccess} />
@@ -225,64 +251,82 @@ const Comment = ({ postId }) => {
                         )}
                         {editingCommentId === comment.id ? (
                             <div>
-                                <input
-                                    type="text"
+                                <textarea
+                                    ref={editingCommentRef}
                                     value={editingCommentContent}
-                                    onChange={(e) => setEditingCommentContent(e.target.value)}
-                                    placeholder="Edit your comment..."
-                                    className={styles.commentInput}
-                                    disabled={loading}
+                                    onChange={handleEditingCommentChange}
+                                    className={styles.textarea}
+                                    rows="3"
                                 />
                                 <button
                                     onClick={() => handleEditComment(comment.id)}
                                     disabled={loading}
-                                    className={styles.commentButton}
+                                    className={styles.saveButton}
                                 >
                                     Save
                                 </button>
+                                <button
+                                    onClick={() => {
+                                        setEditingCommentId(null);
+                                        setEditingCommentContent('');
+                                    }}
+                                    className={styles.cancelButton}
+                                >
+                                    Cancel
+                                </button>
                             </div>
                         ) : (
-                            <span>{comment.content}</span>
+                            <div className={styles.commentContent}>
+                                {readMore[comment.id] ? comment.content : comment.content.slice(0, 100)}
+                                {comment.content.length > 100 && (
+                                    <button
+                                        className={styles.readMoreButton}
+                                        onClick={() => toggleReadMore(comment.id)}
+                                    >
+                                        {readMore[comment.id] ? 'Show less' : 'Read more'}
+                                    </button>
+                                )}
+                            </div>
                         )}
-                        {(auth.currentUser?.uid === comment.userId || auth.currentUser?.uid === postOwnerId) && auth.currentUser ? (
-                            <button
-                                onClick={() => handleDeleteComment(comment.id, comment.userId)}
-                                className={styles.commentButton}
-                            >
-                                Delete
-                            </button>
-                        ) : null}
-                        {auth.currentUser?.uid === comment.userId && (
-                            <button
-                                onClick={() => {
-                                    setEditingCommentId(comment.id);
-                                    setEditingCommentContent(comment.content);
-                                }}
-                                className={styles.commentButton}
-                            >
-                                Edit
-                            </button>
+                        {auth.currentUser && (auth.currentUser.uid === postOwnerId || auth.currentUser.uid === comment.userId) && (
+                            <div className={styles.commentActions}>
+                                <button
+                                    onClick={() => {
+                                        setEditingCommentId(comment.id);
+                                        setEditingCommentContent(comment.content);
+                                    }}
+                                    className={styles.editButton}
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    onClick={() => handleDeleteComment(comment.id, comment.userId)}
+                                    className={styles.deleteButton}
+                                >
+                                    Delete
+                                </button>
+                            </div>
                         )}
                     </div>
                 ))}
             </div>
 
             <div className={styles.addComment}>
-                <input
-                    type="text"
+                <textarea
+                    ref={newCommentRef}
                     value={newComment}
-                    onChange={(e) => setNewComment(e.target.value)}
-                    placeholder="Add a comment..."
-                    className={styles.commentInput}
+                    onChange={handleNewCommentChange}
                     onClick={handleCommentBoxClick}
-                    disabled={loading}
+                    placeholder="Add a comment..."
+                    className={styles.textarea}
+                    rows="3"
                 />
                 <button
                     onClick={handleAddComment}
-                    disabled={loading || !newComment.trim()}
-                    className={styles.commentButton}
+                    disabled={loading}
+                    className={styles.addButton}
                 >
-                    Post
+                    Add Comment
                 </button>
             </div>
         </div>
@@ -290,21 +334,3 @@ const Comment = ({ postId }) => {
 };
 
 export default Comment;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

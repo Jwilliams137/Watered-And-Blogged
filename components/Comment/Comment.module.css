@@ -1,64 +1,91 @@
 .commentSection {
-    margin: 20px;
-  }
-  
-  .postActions {
+    margin-top: 1.5rem;
+}
+
+.postActions {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
-  }
-  
-  .likeButton {
-    margin-right: 10px;
-  }
-  
-  .likesCount {
-    font-weight: bold;
-  }
-  
-  .commentList {
-    margin-top: 10px;
-  }
-  
-  .comment {
+    margin-bottom: 1rem;
+}
+
+.likeButton {
+    margin-right: 0.5rem;
+}
+
+.likesCount {
+    font-size: 0.9rem;
+}
+
+.commentList {
+    margin-bottom: 1.5rem;
+}
+
+.comment {
+    border-bottom: 1px solid #ccc;
+    padding: 1rem 0;
+    word-wrap: break-word; /* Ensure text wraps */
+}
+
+.commentHeader {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
-  }
-  
-  .commentHeader {
-    display: flex;
-    align-items: center;
-    margin-right: 10px;
-  }
-  
-  .profilePicture {
-    width: 40px;
-    height: 40px;
+    margin-bottom: 0.5rem;
+}
+
+.profilePicture {
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
-    margin-right: 10px;
-  }
-  
-  .authorName {
+    margin-right: 0.5rem;
+}
+
+.authorName {
     font-weight: bold;
-  }
-  
-  .addComment {
+    color: #333;
+    text-decoration: none;
+}
+
+.commentContent {
+    margin-bottom: 0.5rem;
+    word-wrap: break-word; /* Ensure text wraps */
+}
+
+.readMoreButton {
+    background: none;
+    border: none;
+    color: #0070f3;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.commentActions {
     display: flex;
     align-items: center;
-    margin-top: 10px;
-  }
-  
-  .commentInput {
-    flex: 1;
-    padding: 10px;
-    margin-right: 10px;
-  }
-  
-  .commentButton {
-    padding: 10px;
-  }
-  
-   
-  
-  
+}
+
+.editButton, .deleteButton, .saveButton, .cancelButton {
+    margin-right: 0.5rem;
+    background: none;
+    border: none;
+    color: #0070f3;
+    cursor: pointer;
+}
+
+.addComment {
+    display: flex;
+    flex-direction: column;
+}
+
+.textarea {
+    width: 100%;
+    resize: none;
+    margin-bottom: 0.5rem;
+}
+
+.addButton {
+    align-self: flex-end;
+    background: none;
+    border: none;
+    color: #0070f3;
+    cursor: pointer;
+}
