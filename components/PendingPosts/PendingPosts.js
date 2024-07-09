@@ -69,15 +69,29 @@ const PendingPosts = ({ lastVisible, setLastVisible, handleApprove }) => {
         }
     };
 
+    const handleApprovePost = async (postId, authorId) => {
+        try {
+            await handleApprove(postId, authorId);
+
+            // Update state to reflect approval without page refresh
+            setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
+        } catch (error) {
+            console.error('Error approving post:', error);
+        }
+    };
+
     return (
-        <div>
+        <div className={styles.pending_posts}>
             <h2>Pending User Posts</h2>
-            <ul className={styles.postList}>
-                {posts.map((post) => (
-                    <PostListItem key={post.id} post={post} handleApprove={handleApprove} />
-                ))}
-            </ul>
+            {posts.map((post) => (
+                <PostListItem
+                    key={post.id}
+                    post={post}
+                    handleApprove={() => handleApprovePost(post.id, post.authorId)}
+                />
+            ))}
             {loading && <p>Loading...</p>}
+            {!loading && posts.length === 0 && <p>No pending posts found.</p>}
         </div>
     );
 };
