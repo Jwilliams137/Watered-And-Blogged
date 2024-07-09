@@ -33,7 +33,7 @@ export default function Home() {
         <h1 className={styles.welcomeTitle}>Welcome!</h1>
         <p className={styles.welcomeText}>
           This place is still under construction and in Beta mode.
-          Expect to see dummy data, dust, temporarily bad css, and constant updates for the time being.
+          Expect to see dummy data, stuff that doesnt work, temporarily bad css, and constant updates for the time being.
           Please feel free to post but understand if your data gets deleted in the construction process.
         </p>
         <p className={styles.welcomeText}>If you want to get an email update once everything is running more smoothly please send a message
