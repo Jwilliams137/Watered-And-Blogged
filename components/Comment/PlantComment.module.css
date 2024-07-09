@@ -14,7 +14,10 @@
     background-color: #f9f9f9;
     border: 1px solid #ccc;
     border-radius: 5px;
+    word-wrap: break-word; /* Ensure long words wrap */
+    white-space: pre-line; /* Preserve line breaks */
 }
+
 
 .commentHeader {
     display: flex;
@@ -56,6 +59,11 @@
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    height: auto; /* Ensures the input height adjusts dynamically */
+    min-height: 38px; /* Minimum height when empty */
+    max-height: 200px; /* Maximum height to limit growth */
+    overflow-y: auto; /* Enables vertical scroll if necessary */
+    resize: none; /* Disable browser default resize behavior */
 }
 
 .addComment {
