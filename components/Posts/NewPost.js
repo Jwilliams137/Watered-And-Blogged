@@ -81,9 +81,10 @@ const NewPost = ({ onPostCreated }) => {
                 placeholder="What's happening in your garden?"
                 value={content}
                 onChange={handleTextareaChange}
-                className={`${styles.contentTextarea} ${styles.autoExpand}`}
+                className={styles.contentTextarea}
                 rows="1"
             ></textarea>
+
             <div className={styles.upload}>
                 <ImageUpload setImageFile={setImageFile} imagePreview={imagePreview} setImagePreview={setImagePreview} />
             </div>

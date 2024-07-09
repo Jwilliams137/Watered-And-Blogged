@@ -86,6 +86,12 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
     setShowFullContent(!showFullContent);
   };
 
+  const handleTextareaChange = (e) => {
+    setNewContent(e.target.value);
+    e.target.style.height = 'auto';
+    e.target.style.height = `${e.target.scrollHeight}px`;
+  };
+
   const renderContent = () => {
     if (displayedContent.length > 300 && !showFullContent) {
       return (
@@ -116,7 +122,7 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
         <div>
           <textarea
             value={newContent}
-            onChange={(e) => setNewContent(e.target.value)}
+            onChange={handleTextareaChange}
             disabled={loading}
             className={styles.textArea}
           />

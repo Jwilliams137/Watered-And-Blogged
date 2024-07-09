@@ -53,17 +53,19 @@
     cursor: not-allowed;
 }
 
-.commentInput {
-    width: calc(100% - 80px);
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+.commentInput {    
     height: auto; /* Ensures the input height adjusts dynamically */
     min-height: 38px; /* Minimum height when empty */
     max-height: 200px; /* Maximum height to limit growth */
     overflow-y: auto; /* Enables vertical scroll if necessary */
-    resize: none; /* Disable browser default resize behavior */
+    width: 100%; 
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: none;
+    font-size: 16px;
+    margin-bottom: 10px;
+    transition: height 0.2s ease;
 }
 
 .addComment {
