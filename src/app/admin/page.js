@@ -1,23 +1,25 @@
-'use client'
-import React, { useState } from 'react';
+'use client';
+import React, { useState, useEffect } from 'react';
 import PendingPlantPosts from '../../../components/PendingPosts/PendingPlantPosts';
 import PendingPosts from '../../../components/PendingPosts/PendingPosts'; // Adjust path as necessary
-import { doc, updateDoc, getDoc } from 'firebase/firestore';
+import { doc, updateDoc, getDoc, collectionGroup, query, where, orderBy, limit, startAfter, getDocs, collection } from 'firebase/firestore';
 import { db } from '../../../firebase';
 import styles from './page.module.css';
 
 const AdminPage = () => {
     const [lastVisiblePlantPost, setLastVisiblePlantPost] = useState(null);
-    const [lastVisibleUserPost, setLastVisibleUserPost] = useState(null); // New state for user posts
+    const [lastVisibleUserPost, setLastVisibleUserPost] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [plantPosts, setPlantPosts] = useState([]);
+    const [userPosts, setUserPosts] = useState([]);
+
+    useEffect(() => {
+        // Load initial posts on component mount
+        loadMore();
+        loadMoreUserPosts();
+    }, []);
 
     const handleApprove = async (postId, collectionName, plantId, userId) => {
-        console.log('handleApprove called with:');
-        console.log('postId:', postId);
-        console.log('collectionName:', collectionName);
-        console.log('plantId:', plantId);
-        console.log('userId:', userId);
-
         try {
             if (!postId || !collectionName || !plantId || !userId) {
                 throw new Error('Missing required parameters');
@@ -30,8 +32,6 @@ const AdminPage = () => {
                 throw new Error('Unsupported collection name');
             }
 
-            console.log('postRef:', postRef.path);
-
             const postDoc = await getDoc(postRef);
 
             if (!postDoc.exists()) {
@@ -41,24 +41,21 @@ const AdminPage = () => {
             // Update the document to set approved to true
             await updateDoc(postRef, { approved: true });
             console.log(`Post ${postId} in ${collectionName} approved successfully.`);
+
+            // Remove approved post from display
+            setPlantPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
         } catch (error) {
             console.error('Error approving post:', error);
         }
     };
 
     const handleUserApproval = async (postId, authorId) => {
-        console.log('handleUserApproval called with:');
-        console.log('postId:', postId);
-        console.log('authorId:', authorId);
-
         try {
             if (!postId || !authorId) {
                 throw new Error('Missing required parameters');
             }
 
             const postRef = doc(db, 'posts', postId);
-
-            console.log('postRef:', postRef.path);
 
             const postDoc = await getDoc(postRef);
 
@@ -69,6 +66,9 @@ const AdminPage = () => {
             // Update the document to set approved to true
             await updateDoc(postRef, { approved: true });
             console.log(`Post ${postId} in user posts approved successfully.`);
+
+            // Remove approved post from display
+            setUserPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
         } catch (error) {
             console.error('Error approving user post:', error);
         }
@@ -78,7 +78,6 @@ const AdminPage = () => {
         if (!loading) {
             setLoading(true);
             try {
-                // Fetch more plant posts
                 let plantPostsQuery = query(
                     collectionGroup(db, 'plantPosts'),
                     where('visibility', '==', 'public'),
@@ -95,7 +94,7 @@ const AdminPage = () => {
                 const newPlantPosts = plantPostsSnapshot.docs.map(docSnapshot => {
                     const parentPathSegments = docSnapshot.ref.parent.path.split('/');
                     const userId = parentPathSegments[1];
-                    const plantId = parentPathSegments[3]; // Assuming plantId is at index 3, adjust if necessary
+                    const plantId = parentPathSegments[3];
                     return {
                         id: docSnapshot.id,
                         userId: userId,
@@ -104,10 +103,11 @@ const AdminPage = () => {
                     };
                 });
 
+                setPlantPosts(prevPosts => [...prevPosts, ...newPlantPosts]);
                 setLastVisiblePlantPost(plantPostsSnapshot.docs[plantPostsSnapshot.docs.length - 1]);
-                setLoading(false);
             } catch (error) {
                 console.error('Error loading more plant posts:', error);
+            } finally {
                 setLoading(false);
             }
         }
@@ -117,7 +117,6 @@ const AdminPage = () => {
         if (!loading) {
             setLoading(true);
             try {
-                // Fetch more user posts
                 let userPostsQuery = query(
                     collection(db, 'posts'),
                     where('visibility', '==', 'public'),
@@ -151,15 +150,16 @@ const AdminPage = () => {
                         return {
                             id: docSnapshot.id,
                             ...postData,
-                            authorData: authorData || { username: 'Unknown Author', profilePicture: '/avatar.png' }, // Default values if data not found
+                            authorData: authorData || { username: 'Unknown Author', profilePicture: '/avatar.png' },
                         };
                     })
                 );
 
+                setUserPosts(prevPosts => [...prevPosts, ...newUserPosts]);
                 setLastVisibleUserPost(userPostsSnapshot.docs[userPostsSnapshot.docs.length - 1]);
-                setLoading(false);
             } catch (error) {
                 console.error('Error loading more user posts:', error);
+            } finally {
                 setLoading(false);
             }
         }
@@ -169,11 +169,13 @@ const AdminPage = () => {
         <div className={styles.admin_page}>
             <h1>Admin Page</h1>
             <PendingPlantPosts
+                posts={plantPosts}
                 lastVisiblePlantPost={lastVisiblePlantPost}
                 setLastVisiblePlantPost={setLastVisiblePlantPost}
                 handleApprove={(postId, plantId, userId) => handleApprove(postId, 'plantPosts', plantId, userId)}
             />
             <PendingPosts
+                posts={userPosts}
                 lastVisible={lastVisibleUserPost}
                 setLastVisible={setLastVisibleUserPost}
                 handleApprove={(postId, authorId) => handleUserApproval(postId, authorId)}
