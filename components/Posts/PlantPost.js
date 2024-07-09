@@ -172,8 +172,7 @@ const PlantPost = ({ post, plantId, userId, onPostUpdated, onDeletePost }) => { 
                         </div>
                     )}
                     {renderContent()}
-
-                    <PlantComment plantPostId={post.id} />
+                    <PlantComment postId={post.id} userId={userId} plantId={plantId} plantPostId={post.id} />
                 </div>
             )}
         </div>

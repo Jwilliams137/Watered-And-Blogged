@@ -42,10 +42,22 @@ const PlantWall = ({ plantId, currentUserUid }) => {
     return (
         <div className={styles.plantWall}>
             {posts.map((post) => (
-                <PlantPost key={post.id} post={post} plantId={plantId} userId={currentUserUid} onDeletePost={handleDeletePost} />
+                <PlantPost
+                    key={post.id}
+                    post={post}
+                    plantId={plantId}
+                    userId={currentUserUid}
+                    plantPostId={post.id}
+                    onDeletePost={handleDeletePost}
+                    onPostUpdated={(postId, updatedPost) => {
+                        setPosts((prevPosts) =>
+                            prevPosts.map((p) => (p.id === postId ? { ...p, ...updatedPost } : p))
+                        );
+                    }}
+                />
             ))}
             {loading && <p>Loading...</p>}
-            {!loading && posts.length === 0 && <p>Sorry, No posts from this plant yet</p>}
+            {!loading && posts.length === 0 && <p>Sorry, no posts from this plant yet.</p>}
         </div>
     );
 };
