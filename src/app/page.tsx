@@ -36,7 +36,7 @@ export default function Home() {
           Expect to see dummy data, dust, temporarily bad css, and constant updates for the time being.
           Please feel free to post but understand if your data gets deleted in the construction process.
         </p>
-        <p className={styles.welcomeText}>If you'd like to get an email update once everything is running more smoothly please send a message
+        <p className={styles.welcomeText}>If you want to get an email update once everything is running more smoothly please send a message
           <span className={styles.contact}><Link href='/contact'> here </Link></span>with your email address!</p>
       </div>
       {!user && (
