@@ -29,10 +29,15 @@
   }
   
   .welcomeText {
+    padding-top: 10px;
     font-size: 1.2rem;
     color: #666;
     max-width: 600px;
     margin: 0 auto;
+  }
+
+  .contact {
+    color: blue;
   }
   
   @media screen and (max-width: 1000px) {
