@@ -1,101 +1,100 @@
-import React, { useState, useEffect } from 'react';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { auth, db, storage } from '../../firebase';
-import ProfileImageUpload from '../ImageUpload/ProfileImageUpload';
-import styles from './AboutPlant.module.css'; // Import CSS module
+import React, { useState, useEffect } from 'react'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
+import { auth, db, storage } from '../../firebase'
+import ProfileImageUpload from '../ImageUpload/ProfileImageUpload'
+import styles from './AboutPlant.module.css'
 
 const AboutPlant = ({ plantId, onProfileImageChange }) => {
-    const [plantName, setPlantName] = useState('');
-    const [imageUrl, setImageUrl] = useState('');
-    const [plantProfilePictureFile, setPlantProfilePictureFile] = useState(null);
-    const [imagePreview, setImagePreview] = useState('');
-    const [uploadProgress, setUploadProgress] = useState(0);
-    const [croppedImageFile, setCroppedImageFile] = useState(null);
-    const [editMode, setEditMode] = useState(false);
+    const [plantName, setPlantName] = useState('')
+    const [imageUrl, setImageUrl] = useState('')
+    const [plantProfilePictureFile, setPlantProfilePictureFile] = useState(null)
+    const [imagePreview, setImagePreview] = useState('')
+    const [uploadProgress, setUploadProgress] = useState(0)
+    const [croppedImageFile, setCroppedImageFile] = useState(null)
+    const [editMode, setEditMode] = useState(false)
 
     useEffect(() => {
         const fetchPlantData = async () => {
             try {
-                const user = auth.currentUser;
-                if (!user) return;
+                const user = auth.currentUser
+                if (!user) return
 
-                const docRef = doc(db, 'users', user.uid, 'plants', plantId); // Updated path to nested collection
-                const docSnap = await getDoc(docRef);
+                const docRef = doc(db, 'users', user.uid, 'plants', plantId)
+                const docSnap = await getDoc(docRef)
 
                 if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    setPlantName(data.name || '');
-                    setImageUrl(data.imageUrl || ''); // Use imageUrl field from Firestore
+                    const data = docSnap.data()
+                    setPlantName(data.name || '')
+                    setImageUrl(data.imageUrl || '')
                 }
             } catch (error) {
-                console.error('Error fetching plant data:', error);
+                console.error('Error fetching plant data:', error)
             }
-        };
+        }
 
-        fetchPlantData();
-    }, [plantId]);
+        fetchPlantData()
+    }, [plantId])
 
     const handleFileChange = (file) => {
-        setPlantProfilePictureFile(file);
-        setImagePreview(URL.createObjectURL(file));
-    };
+        setPlantProfilePictureFile(file)
+        setImagePreview(URL.createObjectURL(file))
+    }
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!auth.currentUser) return;
+        e.preventDefault()
+        if (!auth.currentUser) return
 
-        let newImageUrl = imageUrl;
-        const fileToUpload = croppedImageFile || plantProfilePictureFile;
+        let newImageUrl = imageUrl
+        const fileToUpload = croppedImageFile || plantProfilePictureFile
 
         if (fileToUpload) {
-            const storageRef = ref(storage, `plantProfilePictures/${plantId}/${fileToUpload.name}`); // Updated path to nested collection
-            const uploadTask = uploadBytesResumable(storageRef, fileToUpload);
+            const storageRef = ref(storage, `plantProfilePictures/${plantId}/${fileToUpload.name}`)
+            const uploadTask = uploadBytesResumable(storageRef, fileToUpload)
 
             try {
                 await new Promise((resolve, reject) => {
                     uploadTask.on(
                         'state_changed',
                         (snapshot) => {
-                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                            setUploadProgress(progress);
+                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                            setUploadProgress(progress)
                         },
                         (error) => {
-                            console.error('Error uploading image:', error);
-                            reject(error);
+                            console.error('Error uploading image:', error)
+                            reject(error)
                         },
                         async () => {
-                            newImageUrl = await getDownloadURL(uploadTask.snapshot.ref);
-                            resolve();
+                            newImageUrl = await getDownloadURL(uploadTask.snapshot.ref)
+                            resolve()
                         }
-                    );
-                });
+                    )
+                })
             } catch (error) {
-                console.error('Error uploading image:', error);
-                return;
+                console.error('Error uploading image:', error)
+                return
             }
         }
 
         try {
-            const user = auth.currentUser;
-            if (!user) return;
+            const user = auth.currentUser
+            if (!user) return
 
-            const plantRef = doc(db, 'users', user.uid, 'plants', plantId); // Updated path to nested collection
-            await setDoc(plantRef, { name: plantName, imageUrl: newImageUrl }, { merge: true });
-            setImageUrl(newImageUrl);
-            setPlantProfilePictureFile(null);
-            setImagePreview('');
-            setCroppedImageFile(null);
-            setEditMode(false);
+            const plantRef = doc(db, 'users', user.uid, 'plants', plantId)
+            await setDoc(plantRef, { name: plantName, imageUrl: newImageUrl }, { merge: true })
+            setImageUrl(newImageUrl)
+            setPlantProfilePictureFile(null)
+            setImagePreview('')
+            setCroppedImageFile(null)
+            setEditMode(false)
 
-            // Notify parent component or other components about profile image change
             if (onProfileImageChange) {
-                onProfileImageChange(newImageUrl);
+                onProfileImageChange(newImageUrl)
             }
         } catch (error) {
-            console.error('Error updating plant profile:', error);
+            console.error('Error updating plant profile:', error)
         }
-    };
+    }
 
     return (
         <div className={styles.aboutPlantContainer}>
@@ -103,7 +102,7 @@ const AboutPlant = ({ plantId, onProfileImageChange }) => {
                 <div className={styles.viewMode}>
                     <div className={styles.profilePictureContainer}>
                         <img
-                            src={imageUrl || '/avatar.png'} // Use imageUrl state
+                            src={imageUrl || '/avatar.png'}
                             alt="Plant Profile Picture"
                             className={styles.profilePicture}
                         />
@@ -119,7 +118,7 @@ const AboutPlant = ({ plantId, onProfileImageChange }) => {
                 <form onSubmit={handleSubmit} className={styles.editMode}>
                     <div className={styles.profilePictureContainer}>
                         <img
-                            src={imageUrl || '/avatar.png'} // Use imageUrl state
+                            src={imageUrl || '/avatar.png'}
                             alt="Plant Profile Picture"
                             className={styles.profilePicture}
                         />
@@ -149,7 +148,7 @@ const AboutPlant = ({ plantId, onProfileImageChange }) => {
                 </form>
             )}
         </div>
-    );
-};
+    )
+}
 
 export default AboutPlant;
