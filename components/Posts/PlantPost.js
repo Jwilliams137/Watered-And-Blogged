@@ -12,6 +12,7 @@ const PlantPost = ({ post, plantId, userId, onPostUpdated, onDeletePost }) => {
     const [showFullContent, setShowFullContent] = useState(false);
     const [plantName, setPlantName] = useState('');
     const [plantImageUrl, setPlantImageUrl] = useState('/avatar.png');
+    const [postImageUrl, setPostImageUrl] = useState('');
     const [editMode, setEditMode] = useState(false);
     const currentUser = auth.currentUser;
 
@@ -19,6 +20,7 @@ const PlantPost = ({ post, plantId, userId, onPostUpdated, onDeletePost }) => {
         setNewContent(post.content);
         setNewVisibility(post.visibility);
         fetchPlantData();
+        fetchPostImageUrl();
     }, [post]);
 
     const fetchPlantData = async () => {
@@ -32,6 +34,19 @@ const PlantPost = ({ post, plantId, userId, onPostUpdated, onDeletePost }) => {
             }
         } catch (error) {
             console.error('Error fetching plant data:', error);
+        }
+    };
+
+    const fetchPostImageUrl = async () => {
+        try {
+            const docRef = doc(db, `users/${userId}/plants/${plantId}/plantPosts/${post.id}`);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                setPostImageUrl(data.imageUrl || ''); // Fetch the imageUrl from plant post
+            }
+        } catch (error) {
+            console.error('Error fetching post image URL:', error);
         }
     };
 
@@ -116,6 +131,12 @@ const PlantPost = ({ post, plantId, userId, onPostUpdated, onDeletePost }) => {
                     <h2>{plantName}</h2>
                 </Link>
             </div>
+
+            {postImageUrl && (
+                <div className={styles.postImageContainer}>
+                    <img src={postImageUrl} alt="Plant Post Image" className={styles.postImage} />
+                </div>
+            )}
 
             {editMode ? (
                 <div>
