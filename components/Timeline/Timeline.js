@@ -64,13 +64,20 @@ const Timeline = () => {
 
   const updatePosts = (newPosts) => {
     setPosts(prevPosts => {
+      // Filter out any posts that already exist based on id
+      const filteredNewPosts = newPosts.filter(newPost => 
+        !prevPosts.some(prevPost => prevPost.id === newPost.id)
+      );
+  
       // Merge and sort posts by createdAt in descending order
-      const mergedPosts = [...prevPosts, ...newPosts];
+      const mergedPosts = [...prevPosts, ...filteredNewPosts];
       mergedPosts.sort((a, b) => b.createdAt - a.createdAt);
+      
       return mergedPosts;
     });
     setLoading(false);
   };
+  
 
   const loadMorePosts = () => {
     setDisplayCount(prevCount => prevCount + 10); // Increase display count by 10
