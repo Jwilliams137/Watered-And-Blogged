@@ -77,6 +77,32 @@ const Timeline = () => {
     fetchPosts();
   }, []);
 
+  useEffect(() => {
+    const userPostsRef = collection(db, 'posts');
+    const plantPostsRef = collectionGroup(db, 'plantPosts');
+
+    const unsubscribeUserDeletions = onSnapshot(userPostsRef, (snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === 'removed') {
+          removePost(change.doc.id);
+        }
+      });
+    });
+
+    const unsubscribePlantDeletions = onSnapshot(plantPostsRef, (snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === 'removed') {
+          removePost(change.doc.id);
+        }
+      });
+    });
+
+    return () => {
+      unsubscribeUserDeletions();
+      unsubscribePlantDeletions();
+    };
+  }, []);
+
   const updatePosts = (newPosts) => {
     setPosts(prevPosts => {
       // Filter out any posts that already exist based on id
@@ -91,6 +117,10 @@ const Timeline = () => {
       return mergedPosts;
     });
     setLoading(false);
+  };
+
+  const removePost = (id) => {
+    setPosts(prevPosts => prevPosts.filter(post => post.id !== id));
   };
 
   const loadMorePosts = () => {
