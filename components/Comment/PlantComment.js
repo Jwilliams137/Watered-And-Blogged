@@ -5,7 +5,7 @@ import styles from './PlantComment.module.css';
 import Link from 'next/link';
 import PlantLikes from '../Likes/PlantLikes';
 
-const PlantComment = ({ plantPostId }) => {
+const PlantComment = ({ plantPostId, userId, plantId }) => {
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState('');
     const [editingCommentId, setEditingCommentId] = useState(null);
@@ -14,7 +14,7 @@ const PlantComment = ({ plantPostId }) => {
     const [commentAuthors, setCommentAuthors] = useState({});
 
     useEffect(() => {
-        const unsubscribeComments = onSnapshot(collection(db, `plantPosts/${plantPostId}/comments`), (snapshot) => {
+        const unsubscribeComments = onSnapshot(collection(db, `users/${userId}/plants/${plantId}/plantPosts/${plantPostId}/comments`), (snapshot) => {
             const commentsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             setComments(commentsData);
             fetchCommentAuthors(commentsData);
@@ -23,7 +23,7 @@ const PlantComment = ({ plantPostId }) => {
         return () => {
             unsubscribeComments();
         };
-    }, [plantPostId]);
+    }, [plantPostId, userId, plantId]);
 
     const fetchCommentAuthors = async (commentsData) => {
         const authorPromises = commentsData.map(async (comment) => {
@@ -66,7 +66,7 @@ const PlantComment = ({ plantPostId }) => {
 
         setLoading(true);
         try {
-            const commentsCollectionRef = collection(db, `plantPosts/${plantPostId}/comments`);
+            const commentsCollectionRef = collection(db, `users/${userId}/plants/${plantId}/plantPosts/${plantPostId}/comments`);
             await addDoc(commentsCollectionRef, {
                 content: newComment,
                 createdAt: new Date(),
@@ -83,7 +83,7 @@ const PlantComment = ({ plantPostId }) => {
     const handleEditComment = async (commentId) => {
         setLoading(true);
         try {
-            const commentRef = doc(db, `plantPosts/${plantPostId}/comments`, commentId);
+            const commentRef = doc(db, `users/${userId}/plants/${plantId}/plantPosts/${plantPostId}/comments`, commentId);
             await updateDoc(commentRef, {
                 content: editingCommentContent,
             });
@@ -99,7 +99,7 @@ const PlantComment = ({ plantPostId }) => {
     const handleDeleteComment = async (commentId, commentUserId) => {
         setLoading(true);
         try {
-            const commentRef = doc(db, `plantPosts/${plantPostId}/comments`, commentId);
+            const commentRef = doc(db, `users/${userId}/plants/${plantId}/plantPosts/${plantPostId}/comments`, commentId);
             await deleteDoc(commentRef);
         } catch (error) {
             console.error('Error deleting comment:', error);
@@ -110,7 +110,7 @@ const PlantComment = ({ plantPostId }) => {
 
     return (
         <div className={styles.commentSection}>
-            <PlantLikes plantPostId={plantPostId} />
+            <PlantLikes userId={userId} plantId={plantId} plantPostId={plantPostId} />
             <div className={styles.commentList}>
                 {comments.map(comment => (
                     <div key={comment.id} className={styles.comment}>

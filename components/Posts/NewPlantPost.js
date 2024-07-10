@@ -82,6 +82,7 @@ const NewPlantPost = ({ onPostCreated, plantId }) => {
                 plantName: plantData.name,
                 userId: auth.currentUser.uid,
                 plantId: plantId,
+                likes: 0,
             };
 
             try {
