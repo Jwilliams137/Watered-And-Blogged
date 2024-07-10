@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, query, where, orderBy, getDocs, collectionGroup } from 'firebase/firestore'; // Import getDocs from firebase/firestore
+import { collection, query, where, orderBy, onSnapshot, collectionGroup } from 'firebase/firestore';
 import { db } from '../../firebase';
 import Post from '../Posts/Post';
 import PlantPost from '../Posts/PlantPost';
@@ -9,90 +9,95 @@ const Timeline = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [displayCount, setDisplayCount] = useState(10); // Initial display count
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const userPostsQuery = query(
-          collection(db, 'posts'),
-          where('visibility', '==', 'public'),
-          where('approved', '==', true),
-          orderBy('createdAt', 'desc')
-        );
+    const userPostsQuery = query(
+      collection(db, 'posts'),
+      where('visibility', '==', 'public'),
+      where('approved', '==', true),
+      orderBy('createdAt', 'desc')
+    );
 
-        const plantPostsQuery = query(
-          collectionGroup(db, 'plantPosts'),
-          where('visibility', '==', 'public'),
-          where('approved', '==', true),
-          orderBy('createdAt', 'desc')
-        );
+    const plantPostsQuery = query(
+      collectionGroup(db, 'plantPosts'),
+      where('visibility', '==', 'public'),
+      where('approved', '==', true),
+      orderBy('createdAt', 'desc')
+    );
 
-        const [userPostsSnapshot, plantPostsSnapshot] = await Promise.all([
-          getDocs(userPostsQuery),
-          getDocs(plantPostsQuery)
-        ]);
-
-        const userPosts = userPostsSnapshot.docs.map(doc => ({
+    const unsubscribeUserPosts = onSnapshot(
+      userPostsQuery,
+      (snapshot) => {
+        const userPosts = snapshot.docs.map(doc => ({
           id: doc.id,
-          ...doc.data(),
-          type: 'user' // Add a type field to distinguish user posts
+          ...doc.data()
         }));
-
-        const plantPosts = plantPostsSnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-          type: 'plant' // Add a type field to distinguish plant posts
-        }));
-
-        // Combine and sort posts
-        const combinedPosts = [...userPosts, ...plantPosts].sort((a, b) => b.createdAt - a.createdAt);
-
-        setPosts(combinedPosts);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching posts:', error);
-        setError('Failed to load posts.');
+        updatePosts([...userPosts]);
+      },
+      (error) => {
+        console.error('Error fetching user posts:', error);
+        setError('Failed to load user posts.');
       }
-    };
+    );
 
-    fetchPosts();
+    const unsubscribePlantPosts = onSnapshot(
+      plantPostsQuery,
+      (snapshot) => {
+        const plantPosts = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        updatePosts([...plantPosts]);
+      },
+      (error) => {
+        console.error('Error fetching plant posts:', error);
+        setError('Failed to load plant posts.');
+      }
+    );
+
+    return () => {
+      unsubscribeUserPosts();
+      unsubscribePlantPosts();
+    };
   }, []);
 
-  const handlePostUpdated = (postId, updatedPost) => {
+  const updatePosts = (newPosts) => {
     setPosts(prevPosts => {
-      if (updatedPost.visibility === 'private') {
-        return prevPosts.filter(post => post.id !== postId);
-      } else {
-        return prevPosts.map(post => post.id === postId ? updatedPost : post);
-      }
+      // Merge and sort posts by createdAt in descending order
+      const mergedPosts = [...prevPosts, ...newPosts];
+      mergedPosts.sort((a, b) => b.createdAt - a.createdAt);
+      return mergedPosts;
     });
+    setLoading(false);
   };
 
-  const handlePostDeleted = (postId) => {
-    setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
+  const loadMorePosts = () => {
+    setDisplayCount(prevCount => prevCount + 10); // Increase display count by 10
   };
 
   return (
     <div className={styles.timeline}>
-      {posts.map(post => post.type === 'plant' ? (
+      {posts.slice(0, displayCount).map(post => post.plantId ? (
         <PlantPost
           key={post.id}
           post={post}
           plantId={post.plantId}
           userId={post.userId}
-          onPostUpdated={handlePostUpdated}
-          onDeletePost={handlePostDeleted}
         />
       ) : (
         <Post
           key={post.id}
           post={post}
-          onPostUpdated={handlePostUpdated}
-          onDeletePost={handlePostDeleted}
         />
       ))}
       {loading && <p>Loading...</p>}
       {error && <p className={styles.error}>{error}</p>}
+      {posts.length > displayCount && (
+        <button onClick={loadMorePosts} className={styles.loadMoreButton}>
+          Load More
+        </button>
+      )}
     </div>
   );
 };
