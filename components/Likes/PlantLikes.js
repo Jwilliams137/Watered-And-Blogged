@@ -37,9 +37,8 @@ const PlantLikes = ({ userId, plantId, plantPostId }) => {
 
     const handleLikePost = async () => {
         setLoading(true)
-        console.log('Handling like post...')
         const postRefPath = `users/${userId}/plants/${plantId}/plantPosts/${plantPostId}`
-        console.log('Document path:', postRefPath)
+
         try {
             const postRef = doc(db, postRefPath)
             const postSnap = await getDoc(postRef)
@@ -47,7 +46,6 @@ const PlantLikes = ({ userId, plantId, plantPostId }) => {
             if (postSnap.exists()) {
                 const postData = postSnap.data()
                 const newLikes = likedByUser ? postData.likes - 1 : postData.likes + 1
-                console.log('Updating likes:', newLikes)
 
                 await updateDoc(postRef, {
                     likes: newLikes,
