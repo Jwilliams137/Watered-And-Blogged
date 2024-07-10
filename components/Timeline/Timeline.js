@@ -81,25 +81,25 @@ const Timeline = () => {
     const userPostsRef = collection(db, 'posts');
     const plantPostsRef = collectionGroup(db, 'plantPosts');
 
-    const unsubscribeUserDeletions = onSnapshot(userPostsRef, (snapshot) => {
+    const unsubscribeUserChanges = onSnapshot(userPostsRef, (snapshot) => {
       snapshot.docChanges().forEach((change) => {
-        if (change.type === 'removed') {
+        if (change.type === 'removed' || (change.type === 'modified' && change.doc.data().visibility === 'private')) {
           removePost(change.doc.id);
         }
       });
     });
 
-    const unsubscribePlantDeletions = onSnapshot(plantPostsRef, (snapshot) => {
+    const unsubscribePlantChanges = onSnapshot(plantPostsRef, (snapshot) => {
       snapshot.docChanges().forEach((change) => {
-        if (change.type === 'removed') {
+        if (change.type === 'removed' || (change.type === 'modified' && change.doc.data().visibility === 'private')) {
           removePost(change.doc.id);
         }
       });
     });
 
     return () => {
-      unsubscribeUserDeletions();
-      unsubscribePlantDeletions();
+      unsubscribeUserChanges();
+      unsubscribePlantChanges();
     };
   }, []);
 
