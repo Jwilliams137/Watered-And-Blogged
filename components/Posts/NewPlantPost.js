@@ -127,14 +127,18 @@ const NewPlantPost = ({ onPostCreated, plantId }) => {
                     <img src={imagePreview} alt="Preview" className={styles.imagePreview} />
                 )}
             </div>
-            <select value={visibility} onChange={(e) => setVisibility(e.target.value)}>
+            <select
+                value={visibility}
+                onChange={(e) => setVisibility(e.target.value)}
+                className={styles.selectVisibility}
+            >
                 <option value="private">Private</option>
                 <option value="public">Public</option>
             </select>
-            <button type="submit" disabled={isSubmitting}>
+            <button type="submit" disabled={isSubmitting} className={styles.submitButton}>
                 {isSubmitting ? 'Submitting...' : 'Post'}
             </button>
-            {uploadProgress > 0 && <progress value={uploadProgress} max="100" />}
+            {uploadProgress > 0 && <progress value={uploadProgress} max="100" className={styles.progress} />}
         </form>
     );
 };

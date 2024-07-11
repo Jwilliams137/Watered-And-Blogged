@@ -1,0 +1,29 @@
+.gardenerInfoContainer {
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+.gardenerTitle {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.gardenerProfilePic {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.gardenerName {
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.gardenerBio {
+    color: #555;
+}
