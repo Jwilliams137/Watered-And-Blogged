@@ -50,8 +50,8 @@ const GardenerInfo = ({ userId }) => {
         <div className={styles.gardenerInfoContainer}>            
             <h2 className={styles.gardenerTitle}>Gardener Information</h2>
             <Link href={`/profile/${userId}`}><img src={profilePicture || '/default-avatar.png'} alt={username} className={styles.gardenerProfilePic} /></Link>
-            <Link href={`/profile/${userId}`}><p className={styles.gardenerName}>Name: {username}</p></Link>            
-            <p className={styles.gardenerBio}>About Me: {aboutMe}</p>
+            <Link href={`/profile/${userId}`}><p className={styles.gardenerName}>{username}</p></Link>            
+            <p className={styles.gardenerBio}>{aboutMe}</p>
         </div>
     );
 };
