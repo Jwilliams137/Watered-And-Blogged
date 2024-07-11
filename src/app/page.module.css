@@ -1,7 +1,3 @@
-.main {
-    padding: 60px 0px;
-  }
-  
   .loading {
     display: flex;
     justify-content: center;
@@ -9,69 +5,74 @@
     height: 100vh;
     font-size: 1.5rem;
   }
-  
+
   .login {
     display: none;
   }
-  
+
   .userSection {
     margin-bottom: 20px;
   }
-  
+
   .welcomeSection {
     text-align: center;
     margin-bottom: 40px;
   }
-  
+
   .welcomeTitle {
     font-size: 2.5rem;
     color: #333;
+    margin: 30px;
   }
-  
+
   .welcomeText {
     padding-top: 10px;
     font-size: 1.2rem;
     color: #666;
     max-width: 600px;
-    margin: 0 auto;
+    margin: auto;
+  }
+
+  .messagePrompt {
+    padding-top: 30px;
+    font-size: 1.2rem;
+    color: #666;
+    max-width: 600px;
+    margin: auto;
   }
 
   .contact {
     color: blue;
   }
-  
+
   @media screen and (max-width: 1000px) {
-    .main {
-      padding: 30px 0px;
-    }
-  
+
     .login {
       display: flex;
       justify-content: center;
       margin-bottom: 30px;
     }
-  
+
     .welcomeTitle {
       font-size: 2rem;
     }
-  
+
     .welcomeText {
       font-size: 1rem;
     }
   }
-  
+
   @media (prefers-color-scheme: dark) {
     .main {
       color: white;
       background-color: #333;
     }
-  
+
     .welcomeTitle {
       color: #ddd;
     }
-  
+
     .welcomeText {
       color: #ccc;
     }
   }
-  
