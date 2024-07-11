@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import styles from './GardenerInfo.module.css';
+import Link from 'next/link';
 
 const GardenerInfo = ({ userId }) => {
     const [gardenerData, setGardenerData] = useState(null);
@@ -46,10 +47,10 @@ const GardenerInfo = ({ userId }) => {
     const { username, profilePicture, aboutMe } = gardenerData;
 
     return (
-        <div className={styles.gardenerInfoContainer}>
+        <div className={styles.gardenerInfoContainer}>            
             <h2 className={styles.gardenerTitle}>Gardener Information</h2>
-            <img src={profilePicture || '/default-avatar.png'} alt={username} className={styles.gardenerProfilePic} />
-            <p className={styles.gardenerName}>Name: {username}</p>
+            <Link href={`/profile/${userId}`}><img src={profilePicture || '/default-avatar.png'} alt={username} className={styles.gardenerProfilePic} /></Link>
+            <Link href={`/profile/${userId}`}><p className={styles.gardenerName}>Name: {username}</p></Link>            
             <p className={styles.gardenerBio}>About Me: {aboutMe}</p>
         </div>
     );
