@@ -31,6 +31,7 @@ export default function Home() {
     <main className={styles.main}>
       <div className={styles.welcomeSection}>
         <h1 className={styles.welcomeTitle}>Welcome!</h1>
+        {/*<h2>Make your prized plants into internet stars!</h2>*/}
         <p className={styles.welcomeText}>
           This place is still under construction and in Beta mode.
           Expect to see dummy data, stuff that doesnt work, temporarily bad css, and constant updates for the time being.
