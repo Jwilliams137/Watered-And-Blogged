@@ -7,6 +7,7 @@ import NewPlantPost from '../../../../../../components/Posts/NewPlantPost';
 import PlantWall from '../../../../../../components/Wall/PlantWall';
 import AboutPlant from '../../../../../../components/About/AboutPlant';
 import styles from './page.module.css'; // Import CSS module
+import PublicPlantWall from '../../../../../../components/Wall/PublicPlantWall'
 
 const PlantProfilePage = () => {
     const { id: userId, plantId } = useParams();
@@ -106,7 +107,8 @@ const PlantProfilePage = () => {
                 imageUrl={imageUrl || '/avatar.png'} // Use default image if imageUrl is not provided
                 onUpdatePlant={handlePlantProfileUpdate}
             />}
-            <PlantWall plantId={plantId} posts={plantData.posts} currentUserUid={auth.currentUser.uid} />
+            {isOwner && <PlantWall plantId={plantId} posts={plantData.posts} currentUserUid={auth.currentUser.uid} />}
+            {!isOwner && <PublicPlantWall userId={userId} plantId={plantId}/>}
         </div>
     );
 };
