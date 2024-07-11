@@ -1,72 +1,65 @@
 import React, { useState, useEffect } from 'react';
-import { collection, query, orderBy, limit, onSnapshot, startAfter } from 'firebase/firestore';
+import { collection, query, orderBy, limit, where, onSnapshot, startAfter } from 'firebase/firestore';
 import { db } from '../../firebase';
 import PlantPost from '../Posts/PlantPost';
-import styles from './PlantWall.module.css';
+import styles from './PublicPlantWall.module.css';
 
-const PlantWall = ({ plantId, currentUserUid }) => {
+const PublicPlantWall = ({ userId, plantId }) => {
     const [posts, setPosts] = useState([]);
     const [lastVisible, setLastVisible] = useState(null);
     const [loading, setLoading] = useState(true);
     const [loadingMore, setLoadingMore] = useState(false);
 
-    useEffect(() => {
-        setLoading(true);
-        fetchPosts();
-    }, [plantId, currentUserUid]);
-
-    const fetchPosts = () => {
-        const q = query(
-            collection(db, `users/${currentUserUid}/plants/${plantId}/plantPosts`),
+    const fetchPublicPosts = (uid, pid, lastDoc = null) => {
+        let q = query(
+            collection(db, `users/${uid}/plants/${pid}/plantPosts`),
+            where('approved', '==', true),
+            where('visibility', '==', 'public'),
             orderBy('createdAt', 'desc'),
             limit(10)
         );
+
+        if (lastDoc) {
+            q = query(q, startAfter(lastDoc));
+        }
+
+        return q;
+    };
+
+    useEffect(() => {
+        setLoading(true);
+        const q = fetchPublicPosts(userId, plantId);
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const newPosts = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
             setPosts(newPosts);
             setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
             setLoading(false);
+        }, (error) => {
+            console.error('Error fetching posts:', error);
+            setLoading(false);
         });
 
-        return unsubscribe;
-    };
+        return () => unsubscribe();
+    }, [userId, plantId]);
 
     const fetchMorePosts = () => {
         if (!lastVisible) return;
 
         setLoadingMore(true);
-
-        const q = query(
-            collection(db, `users/${currentUserUid}/plants/${plantId}/plantPosts`),
-            orderBy('createdAt', 'desc'),
-            startAfter(lastVisible),
-            limit(10)
-        );
+        const q = fetchPublicPosts(userId, plantId, lastVisible);
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const newPosts = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
             setPosts((prevPosts) => [...prevPosts, ...newPosts]);
             setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
             setLoadingMore(false);
+        }, (error) => {
+            console.error('Error fetching more posts:', error);
+            setLoadingMore(false);
         });
 
-        return unsubscribe;
-    };
-
-    const handleDeletePost = async (postId) => {
-        try {
-            await deleteDoc(doc(db, `users/${currentUserUid}/plants/${plantId}/plantPosts/${postId}`));
-            setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
-        } catch (error) {
-            console.error('Error deleting post:', error);
-        }
-    };
-
-    const handlePostUpdated = (postId, updatedPost) => {
-        setPosts((prevPosts) =>
-            prevPosts.map((post) => (post.id === postId ? { ...post, ...updatedPost } : post))
-        );
+        return () => unsubscribe();
     };
 
     return (
@@ -76,9 +69,8 @@ const PlantWall = ({ plantId, currentUserUid }) => {
                     key={post.id}
                     post={post}
                     plantId={plantId}
-                    userId={currentUserUid}
-                    onDeletePost={handleDeletePost}
-                    onPostUpdated={handlePostUpdated}
+                    userId={userId}
+                    plantPostId={post.id}
                 />
             ))}
             {loading && <p>Loading...</p>}
@@ -92,4 +84,4 @@ const PlantWall = ({ plantId, currentUserUid }) => {
     );
 };
 
-export default PlantWall;
+export default PublicPlantWall;

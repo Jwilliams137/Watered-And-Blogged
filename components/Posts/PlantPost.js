@@ -168,16 +168,20 @@ const PlantPost = ({ post, plantId, userId, onPostUpdated, onDeletePost }) => {
                             Private
                         </label>
                     </div>
-                    <button onClick={handleEdit} disabled={loading} className={styles.button}>
-                        {loading ? 'Saving...' : 'Save'}
-                    </button>
-                    <button onClick={handleCancelEdit} disabled={loading} className={styles.button}>
-                        Cancel
-                    </button>
+                    {currentUser && currentUser.uid === userId && ( // Check if current user is the owner
+                        <>
+                            <button onClick={handleEdit} disabled={loading} className={styles.button}>
+                                {loading ? 'Saving...' : 'Save'}
+                            </button>
+                            <button onClick={handleCancelEdit} disabled={loading} className={styles.button}>
+                                Cancel
+                            </button>
+                        </>
+                    )}
                 </div>
             ) : (
                 <div>
-                    {currentUser && (
+                    {currentUser && currentUser.uid === userId && ( // Check if current user is the owner
                         <div className={styles.edit}>
                             <button onClick={() => setEditMode(true)} disabled={loading} className={styles.button}>
                                 Edit
