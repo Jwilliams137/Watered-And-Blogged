@@ -17,7 +17,7 @@ const PostPrompt = ({ onClick, onFileChange }) => {
 
     return (
         <div className={styles.postPrompt}>
-            <div onClick={onClick}>
+            <div onClick={onClick} className={styles.inputContainer}>
                 <input placeholder='Whats happening in your garden?' className={styles.input}></input>
             </div>
             <img 
@@ -26,7 +26,6 @@ const PostPrompt = ({ onClick, onFileChange }) => {
                 className={styles.uploadIcon} 
                 onClick={handleImageUploadClick} 
             />
-            {/* Hidden file input to trigger the file selection dialog */}
             <input 
                 type="file" 
                 ref={fileInputRef} 

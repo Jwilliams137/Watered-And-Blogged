@@ -35,13 +35,9 @@ const ImageUpload = ({ setImageFile, imagePreview, setImagePreview, fileInputRef
                     <img src={imagePreview} alt="Preview" className={styles.previewImage} />
                 </div>
             )}
-            <button
-                type="button"
-                onClick={() => fileInputRef.current.click()}
-                className={styles.uploadButton}
-            >
-                Upload Image
-            </button>
+
+            <img src="/imageupload.svg" alt="Upload Image" className={styles.uploadIcon} onClick={() => fileInputRef.current.click()} />
+
         </div>
     );
 };

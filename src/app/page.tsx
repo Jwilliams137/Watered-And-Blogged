@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState, SetStateAction } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import Login from '../../components/Login/Login';
@@ -24,7 +24,7 @@ export default function Home() {
     setInitialFile(null);
   }, []);
 
-  const handleFileChange = (file) => {
+  const handleFileChange = (file: SetStateAction<null>) => {
     setInitialFile(file);
     setShowNewPost(true);
   };

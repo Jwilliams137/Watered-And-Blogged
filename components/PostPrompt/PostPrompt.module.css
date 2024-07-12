@@ -12,8 +12,14 @@
   .postPrompt:hover {
     background-color: #e2e6ea;
   }
+
+  .inputContainer {
+    width: 80%;
+    margin: 0px 15px;
+  }
   
   .input {
+    width: 100%;
     padding: 10px;
     font-size: 25px;
     border-radius: 5px;
