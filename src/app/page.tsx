@@ -13,13 +13,25 @@ export default function Home() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const [showNewPost, setShowNewPost] = useState(false);
+  const [initialFile, setInitialFile] = useState(null);
 
   const handlePostCreated = useCallback(() => {
     router.push('/profile');
   }, [router]);
 
+  const handleCancel = useCallback(() => {
+    setShowNewPost(false);
+    setInitialFile(null);
+  }, []);
+
+  const handleFileChange = (file) => {
+    setInitialFile(file);
+    setShowNewPost(true);
+  };
+
   useEffect(() => {
     if (!loading && user) {
+      // Any necessary code when user is loaded
     }
   }, [user, loading]);
 
@@ -46,8 +58,8 @@ export default function Home() {
       )}
       {user && (
         <div className={styles.userSection}>
-          {!showNewPost && <PostPrompt onClick={() => setShowNewPost(true)} />}
-          {showNewPost && <NewPost onPostCreated={handlePostCreated} />}
+          {!showNewPost && <PostPrompt onClick={() => setShowNewPost(true)} onFileChange={handleFileChange} />}
+          {showNewPost && <NewPost onPostCreated={handlePostCreated} onCancel={handleCancel} initialFile={initialFile} />}
         </div>
       )}
       <Timeline />

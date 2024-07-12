@@ -1,15 +1,26 @@
-/* PostPrompt.module.css */
 .postPrompt {
-    background-color: #f8f9fa; /* Light grey background */
-    padding: 20px; /* Padding */
-    border-radius: 10px; /* Rounded corners */
-    cursor: pointer; /* Pointer cursor on hover */
-    text-align: center; /* Centered text */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    transition: background-color 0.3s ease; /* Smooth background transition */
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   
   .postPrompt:hover {
-    background-color: #e2e6ea; /* Slightly darker grey on hover */
+    background-color: #e2e6ea;
   }
   
+  .input {
+    padding: 10px;
+    font-size: 25px;
+    border-radius: 5px;
+  }
+
+  .uploadIcon {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+  }

@@ -1,12 +1,41 @@
-import React from 'react';
-import styles from './PostPrompt.module.css'; // Adjust the path as necessary
+import React, { useRef } from 'react';
+import styles from './PostPrompt.module.css';
 
-const PostPrompt = ({ onClick }) => {
-  return (
-    <div className={styles.postPrompt} onClick={onClick}>
-      <p>Click here to create a new post...</p>
-    </div>
-  );
+const PostPrompt = ({ onClick, onFileChange }) => {
+    const fileInputRef = useRef(null);
+
+    const handleImageUploadClick = () => {
+        fileInputRef.current.click();
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            onFileChange(file);
+        }
+    };
+
+    return (
+        <div className={styles.postPrompt}>
+            <div onClick={onClick}>
+                <input placeholder='Whats happening in your garden?' className={styles.input}></input>
+            </div>
+            <img 
+                src="/imageupload.svg" 
+                alt="Upload Image" 
+                className={styles.uploadIcon} 
+                onClick={handleImageUploadClick} 
+            />
+            {/* Hidden file input to trigger the file selection dialog */}
+            <input 
+                type="file" 
+                ref={fileInputRef} 
+                style={{ display: 'none' }} 
+                accept="image/*" 
+                onChange={handleFileChange}
+            />
+        </div>
+    );
 };
 
 export default PostPrompt;

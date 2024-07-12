@@ -1,58 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import imageCompression from 'browser-image-compression';
 import styles from './ImageUpload.module.css';
 
-const ImageUpload = ({ setImageFile, imagePreview, setImagePreview }) => {
-    const [loading, setLoading] = useState(false);
-
+const ImageUpload = ({ setImageFile, imagePreview, setImagePreview, fileInputRef }) => {
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
-
         if (file) {
-            setLoading(true);
-
-            const imageUrl = URL.createObjectURL(file);
-            setImagePreview(imageUrl);
-
-            const options = {
-                maxSizeMB: 1,
-                maxWidthOrHeight: 800,
-                useWebWorker: true,
-            };
-
             try {
-                const compressedFile = await imageCompression(file, options);
+                const compressedFile = await imageCompression(file, {
+                    maxSizeMB: 1,
+                    maxWidthOrHeight: 1920,
+                    useWebWorker: true,
+                });
                 setImageFile(compressedFile);
+                const imageUrl = URL.createObjectURL(compressedFile);
+                setImagePreview(imageUrl);
             } catch (error) {
                 console.error('Error compressing image: ', error);
-            } finally {
-                setLoading(false);
             }
         }
     };
 
     return (
         <div className={styles.imageUploadContainer}>
+            <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                style={{ display: 'none' }}
+                ref={fileInputRef}
+            />
             {imagePreview && (
-                <div className={styles.imagePreview}>
-                    <img src={imagePreview} alt="Preview" />
+                <div className={styles.previewContainer}>
+                    <img src={imagePreview} alt="Preview" className={styles.previewImage} />
                 </div>
             )}
-            {loading && <p>Loading...</p>}
-            <label className={styles.customFileUpload}>
-                <input type="file" accept="image/*" onChange={handleFileChange} />
-                <img src="/imageupload.svg" alt="Upload Image" className={styles.uploadIcon} />
-            </label>            
+            <button
+                type="button"
+                onClick={() => fileInputRef.current.click()}
+                className={styles.uploadButton}
+            >
+                Upload Image
+            </button>
         </div>
     );
 };
 
 export default ImageUpload;
-
-
-
-
-
-
-
-
