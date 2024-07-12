@@ -24,10 +24,10 @@
 }
 
 .imagePreview {
-    width: 100%; /* Ensure the preview takes full width */
-    max-width: 100%; /* Prevent image from exceeding its natural size */
-    overflow: hidden; /* Hide overflow if image exceeds container */
-    margin-bottom: 10px; /* Add margin for spacing */
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    margin-bottom: 10px;
 }
 
 .imagePreview img {

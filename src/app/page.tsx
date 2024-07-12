@@ -41,16 +41,7 @@ export default function Home() {
 
   return (
     <main className={styles.main}>
-      <div className={styles.welcomeSection}>
-        <h1 className={styles.welcomeTitle}>Make Your Prized Plants Into Internet Stars</h1>
-        <p className={styles.welcomeText}>
-          This place is still under construction and in Beta mode.
-          Expect to see dummy data, stuff that doesnt work, temporarily bad css, and constant updates for the time being.
-          Please feel free to post but understand if your data gets deleted in the construction process.
-        </p>
-        <p className={styles.messagePrompt}>If you want to get an email update once everything is running more smoothly please send us a message with your email address!</p>
-        <Link href='/contact'><div className={styles.contact}>Message Us</div></Link>
-      </div>
+      <h1 className={styles.welcomeTitle}>Make Your Prized Plants Into Internet Stars</h1>
       {!user && (
         <div className={styles.login}>
           <Login onSuccess={undefined} />

@@ -1,27 +1,30 @@
 .postPrompt {
-    background-color: #f8f9fa;
+    background-color: #8d9399;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: background-color 0.3s ease;
     display: flex;
-    justify-content: center;
+    justify-content: left;
     align-items: center;
+    width: 90%;
+    margin: auto;
+    column-gap: 15px;
   }
   
   .postPrompt:hover {
-    background-color: #e2e6ea;
+    background-color: #5a5e63;
   }
 
   .inputContainer {
-    width: 80%;
-    margin: 0px 15px;
+    width: 90%;
   }
   
   .input {
     width: 100%;
     padding: 10px;
     font-size: 25px;
+    border: none;
     border-radius: 5px;
   }
 

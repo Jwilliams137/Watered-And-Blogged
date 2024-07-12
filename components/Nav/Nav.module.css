@@ -170,7 +170,6 @@
     .description {
         display: none;
     }
-
 }
 
 @media only screen and (min-width: 1001px) {
@@ -201,6 +200,14 @@
 
 @media (prefers-color-scheme: dark) {
     .nav {
-        background-color: rgb(39, 59, 40);
+        background-color: #333;
+    }
+
+    .navOpen {
+        background-color: #333;
+    }
+
+    .rightNav.open {
+        background-color: #333;
     }
 }

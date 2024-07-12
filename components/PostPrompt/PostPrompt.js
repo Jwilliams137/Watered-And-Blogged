@@ -1,19 +1,19 @@
-import React, { useRef } from 'react';
-import styles from './PostPrompt.module.css';
+import React, { useRef } from 'react'
+import styles from './PostPrompt.module.css'
 
 const PostPrompt = ({ onClick, onFileChange }) => {
-    const fileInputRef = useRef(null);
+    const fileInputRef = useRef(null)
 
     const handleImageUploadClick = () => {
-        fileInputRef.current.click();
-    };
+        fileInputRef.current.click()
+    }
 
     const handleFileChange = (e) => {
-        const file = e.target.files[0];
+        const file = e.target.files[0]
         if (file) {
-            onFileChange(file);
+            onFileChange(file)
         }
-    };
+    }
 
     return (
         <div className={styles.postPrompt}>
@@ -34,7 +34,7 @@ const PostPrompt = ({ onClick, onFileChange }) => {
                 onChange={handleFileChange}
             />
         </div>
-    );
-};
+    )
+}
 
-export default PostPrompt;
+export default PostPrompt
