@@ -42,7 +42,23 @@
   }
 
   .contact {
-    color: blue;
+    max-width: 150px;
+    margin: 15px auto;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+
+  .contact:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
   }
 
   @media screen and (max-width: 1000px) {

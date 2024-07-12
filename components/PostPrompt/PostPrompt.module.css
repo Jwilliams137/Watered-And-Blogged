@@ -1,0 +1,15 @@
+/* PostPrompt.module.css */
+.postPrompt {
+    background-color: #f8f9fa; /* Light grey background */
+    padding: 20px; /* Padding */
+    border-radius: 10px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    text-align: center; /* Centered text */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    transition: background-color 0.3s ease; /* Smooth background transition */
+  }
+  
+  .postPrompt:hover {
+    background-color: #e2e6ea; /* Slightly darker grey on hover */
+  }
+  
