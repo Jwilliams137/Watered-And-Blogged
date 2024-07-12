@@ -4,7 +4,7 @@
     width: 99%;
     margin: auto;
     padding: 20px;
-    background-color: #f0f0f0;
+    background-color: #091b2c;
     border-radius: 10px;
     box-shadow: 0 3px 8px rgba(34, 44, 34, 0.1);
 }
@@ -19,10 +19,9 @@
     width: 100%;
     min-height: 50px; 
     padding: 10px;
-    border: 1px solid #ccc;
     border-radius: 5px;
     resize: none;
-    font-size: 16px;
+    font-size: 20px;
     margin-bottom: 10px;
     overflow-y: hidden; 
     transition: height 0.2s ease;
@@ -30,8 +29,13 @@
 
 .optionsRow {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: right;
+}
+
+.optionsRight {
+    display: flex;
+    align-items: center;
 }
 
 .button {
@@ -57,6 +61,6 @@
 
 .visibility label {
     font-weight: bold;
-    color: rgb(2, 48, 48);
+    color: white;
 }
 

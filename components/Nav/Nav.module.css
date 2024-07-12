@@ -140,7 +140,7 @@
         position: fixed;
         top: 0;
         left: 0;
-        background-color: darkcyan;
+        background-color: #008b8b;
         z-index: 10;
         padding: 0;
         overflow-y: hidden;
