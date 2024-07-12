@@ -4,6 +4,7 @@ import { db, auth } from '../../firebase';
 import styles from './PlantComment.module.css';
 import Link from 'next/link';
 import PlantLikes from '../Likes/PlantLikes';
+import Modal from '../Modal/Modal'; // Import Modal component
 
 const PlantComment = ({ plantPostId, userId, plantId }) => {
     const [comments, setComments] = useState([]);
@@ -12,6 +13,7 @@ const PlantComment = ({ plantPostId, userId, plantId }) => {
     const [editingCommentContent, setEditingCommentContent] = useState('');
     const [loading, setLoading] = useState(false);
     const [commentAuthors, setCommentAuthors] = useState({});
+    const [showLoginModal, setShowLoginModal] = useState(false); // State for showing login modal
 
     useEffect(() => {
         const unsubscribeComments = onSnapshot(collection(db, `users/${userId}/plants/${plantId}/plantPosts/${plantPostId}/comments`), (snapshot) => {
@@ -60,7 +62,7 @@ const PlantComment = ({ plantPostId, userId, plantId }) => {
 
     const handleAddComment = async () => {
         if (!auth.currentUser) {
-            // Handle case where user is not logged in
+            setShowLoginModal(true); // Show login modal if user is not logged in
             return;
         }
 
@@ -108,8 +110,14 @@ const PlantComment = ({ plantPostId, userId, plantId }) => {
         }
     };
 
+    const handleLoginSuccess = () => {
+        setShowLoginModal(false); // Close login modal on success
+    };
+
     return (
         <div className={styles.commentSection}>
+            <Modal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} onSuccess={handleLoginSuccess} /> {/* Modal component */}
+
             <PlantLikes userId={userId} plantId={plantId} plantPostId={plantPostId} />
             <div className={styles.commentList}>
                 {comments.map(comment => (
@@ -118,7 +126,7 @@ const PlantComment = ({ plantPostId, userId, plantId }) => {
                             <div className={styles.commentHeader}>
                                 <Link href={`/profile/${comment.userId}`}>
                                     <img
-                                        src={commentAuthors[comment.id].profilePicture || '/avatar.png'}
+                                        src={commentAuthors[comment.id].profilePicture || '/avatar.png'} // Use default avatar path directly
                                         alt={`${commentAuthors[comment.id].name || 'Unknown User'}'s profile`}
                                         className={styles.profilePicture}
                                     />
@@ -128,65 +136,73 @@ const PlantComment = ({ plantPostId, userId, plantId }) => {
                                 </Link>
                             </div>
                         )}
-                        {(auth.currentUser?.uid === comment.userId) && (
-                            <button
-                                onClick={() => {
-                                    setEditingCommentId(comment.id);
-                                    setEditingCommentContent(comment.content);
-                                }}
-                                className={styles.commentButton}
-                            >
-                                Edit
-                            </button>
-                        )}
-                        {(auth.currentUser?.uid === comment.userId) && (
-                            <button
-                                onClick={() => handleDeleteComment(comment.id, comment.userId)}
-                                className={styles.commentButton}
-                            >
-                                Delete
-                            </button>
-                        )}
                         {editingCommentId === comment.id ? (
                             <div>
-                                <input
-                                    type="text"
+                                <textarea
                                     value={editingCommentContent}
                                     onChange={(e) => setEditingCommentContent(e.target.value)}
-                                    placeholder="Edit your comment..."
-                                    className={styles.commentInput}
-                                    disabled={loading}
+                                    className={styles.textarea}
+                                    rows="3"
                                 />
                                 <button
                                     onClick={() => handleEditComment(comment.id)}
                                     disabled={loading}
-                                    className={styles.commentButton}
+                                    className={styles.saveButton}
                                 >
                                     Save
                                 </button>
+                                <button
+                                    onClick={() => {
+                                        setEditingCommentId(null);
+                                        setEditingCommentContent('');
+                                    }}
+                                    className={styles.cancelButton}
+                                >
+                                    Cancel
+                                </button>
                             </div>
                         ) : (
-                            <span>{comment.content}</span>
+                            <div className={styles.commentContent}>
+                                {comment.content}
+                            </div>
+                        )}
+                        {auth.currentUser && (auth.currentUser.uid === comment.userId) && (
+                            <div className={styles.commentActions}>
+                                <button
+                                    onClick={() => {
+                                        setEditingCommentId(comment.id);
+                                        setEditingCommentContent(comment.content);
+                                    }}
+                                    className={styles.editButton}
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    onClick={() => handleDeleteComment(comment.id, comment.userId)}
+                                    className={styles.deleteButton}
+                                >
+                                    Delete
+                                </button>
+                            </div>
                         )}
                     </div>
                 ))}
             </div>
 
             <div className={styles.addComment}>
-                <input
-                    type="text"
+                <textarea
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
                     placeholder="Add a comment..."
-                    className={styles.commentInput}
-                    disabled={loading || !auth.currentUser}
+                    className={styles.textarea}
+                    rows="3"
                 />
                 <button
                     onClick={handleAddComment}
-                    disabled={loading || !newComment.trim() || !auth.currentUser}
-                    className={styles.commentButton}
+                    disabled={loading}
+                    className={styles.addButton}
                 >
-                    Post
+                    Add Comment
                 </button>
             </div>
         </div>

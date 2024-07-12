@@ -70,8 +70,8 @@
 }
 
 .link:hover {
-color: chartreuse;
-font-size: 29px;
+    color: chartreuse;
+    font-size: 29px;
 }
 
 .hamburger {
@@ -81,14 +81,14 @@ font-size: 29px;
     cursor: pointer;
     width: 30px;
     height: 30px;
-    position: absolute; 
+    position: absolute;
     top: 20px;
     right: 20px;
     z-index: 11;
 }
 
 .hamburger.open {
-    position: fixed; 
+    position: fixed;
 }
 
 .hamburger span {
@@ -125,8 +125,6 @@ font-size: 29px;
     transform: rotate(-45deg);
 }
 
-
-
 @media only screen and (max-width: 1000px) {
     .rightNav {
         display: none;
@@ -152,6 +150,7 @@ font-size: 29px;
         font-size: 34px;
         margin: 20px 0;
     }
+
     .link:hover {
         font-size: 35px;
     }
@@ -167,10 +166,11 @@ font-size: 29px;
     .leftNav {
         margin-right: auto;
     }
-.description {
-    display: none;
-}
-    
+
+    .description {
+        display: none;
+    }
+
 }
 
 @media only screen and (min-width: 1001px) {
@@ -196,5 +196,11 @@ font-size: 29px;
 @media only screen and (min-width: 400px) {
     .title {
         font-size: 24px;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .nav {
+        background-color: rgb(39, 59, 40);
     }
 }

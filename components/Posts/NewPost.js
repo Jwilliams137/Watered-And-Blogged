@@ -1,46 +1,55 @@
-import React, { useState } from 'react'
-import { collection, addDoc } from 'firebase/firestore'
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
-import { auth, db, storage } from '../../firebase'
-import ImageUpload from '../ImageUpload/ImageUpload'
-import styles from './NewPost.module.css'
+import React, { useState, useEffect, useRef } from 'react';
+import { collection, addDoc } from 'firebase/firestore';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { auth, db, storage } from '../../firebase';
+import ImageUpload from '../ImageUpload/ImageUpload';
+import styles from './NewPost.module.css';
 
-const NewPost = ({ onPostCreated }) => {
-    const [content, setContent] = useState('')
-    const [imageFile, setImageFile] = useState(null)
-    const [uploadProgress, setUploadProgress] = useState(0)
-    const [imagePreview, setImagePreview] = useState('')
-    const [visibility, setVisibility] = useState('private')
+const NewPost = ({ onPostCreated, onCancel, initialFile }) => {
+    const [content, setContent] = useState('');
+    const [imageFile, setImageFile] = useState(null);
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [imagePreview, setImagePreview] = useState('');
+    const [visibility, setVisibility] = useState('private');
+    const fileInputRef = useRef(null);
+
+    useEffect(() => {
+        if (initialFile) {
+            const imageUrl = URL.createObjectURL(initialFile);
+            setImagePreview(imageUrl);
+            setImageFile(initialFile);
+        }
+    }, [initialFile]);
 
     const handleSubmit = async (e) => {
-        e.preventDefault()
-        let imageUrl = ''
+        e.preventDefault();
+        let imageUrl = '';
 
         if (imageFile) {
-            const storageRef = ref(storage, `images/${imageFile.name}`)
-            const uploadTask = uploadBytesResumable(storageRef, imageFile)
+            const storageRef = ref(storage, `images/${imageFile.name}`);
+            const uploadTask = uploadBytesResumable(storageRef, imageFile);
 
             try {
                 await new Promise((resolve, reject) => {
                     uploadTask.on(
                         'state_changed',
                         (snapshot) => {
-                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-                            setUploadProgress(progress)
+                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                            setUploadProgress(progress);
                         },
                         (error) => {
-                            console.error('Error uploading image: ', error)
-                            reject(error)
+                            console.error('Error uploading image: ', error);
+                            reject(error);
                         },
                         async () => {
-                            imageUrl = await getDownloadURL(uploadTask.snapshot.ref)
-                            resolve()
+                            imageUrl = await getDownloadURL(uploadTask.snapshot.ref);
+                            resolve();
                         }
                     );
                 });
             } catch (error) {
-                console.error('Error uploading image: ', error)
-                return
+                console.error('Error uploading image: ', error);
+                return;
             }
         }
 
@@ -53,27 +62,27 @@ const NewPost = ({ onPostCreated }) => {
                 createdAt: new Date(),
                 visibility,
                 approved: false,
-            }
+            };
 
             try {
-                const docRef = await addDoc(collection(db, 'posts'), newPost)
-                onPostCreated({ id: docRef.id, ...newPost })
-                setContent('')
-                setImageFile(null)
-                setUploadProgress(0)
-                setImagePreview('')
-                setVisibility('private')
+                const docRef = await addDoc(collection(db, 'posts'), newPost);
+                onPostCreated({ id: docRef.id, ...newPost });
+                setContent('');
+                setImageFile(null);
+                setUploadProgress(0);
+                setImagePreview('');
+                setVisibility('private');
             } catch (error) {
-                console.error('Error creating post: ', error)
+                console.error('Error creating post: ', error);
             }
         }
-    }
+    };
 
     const handleTextareaChange = (e) => {
-        setContent(e.target.value)
-        e.target.style.height = 'auto'
-        e.target.style.height = `${e.target.scrollHeight}px`
-    }
+        setContent(e.target.value);
+        e.target.style.height = 'auto';
+        e.target.style.height = `${e.target.scrollHeight}px`;
+    };
 
     return (
         <form className={styles.new_post} onSubmit={handleSubmit}>
@@ -86,7 +95,12 @@ const NewPost = ({ onPostCreated }) => {
             ></textarea>
 
             <div className={styles.upload}>
-                <ImageUpload setImageFile={setImageFile} imagePreview={imagePreview} setImagePreview={setImagePreview} />
+                <ImageUpload 
+                    setImageFile={setImageFile} 
+                    imagePreview={imagePreview} 
+                    setImagePreview={setImagePreview} 
+                    fileInputRef={fileInputRef}
+                />
             </div>
             <div className={styles.optionsRow}>
                 <div className={styles.visibility}>
@@ -110,19 +124,11 @@ const NewPost = ({ onPostCreated }) => {
                     </label>
                 </div>
                 <button type="submit" className={styles.button}>Post</button>
+                <button type="button" onClick={onCancel} className={styles.cancelButton}>Cancel</button>
             </div>
             {uploadProgress > 0 && <p>Upload Progress: {uploadProgress.toFixed(2)}%</p>}
         </form>
-    )
-}
+    );
+};
 
-export default NewPost
-
-
-
-
-
-
-
-
-
+export default NewPost;

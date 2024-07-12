@@ -1,59 +1,58 @@
-'use client';
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { logout } from '../../utils/auth';
-import useAuth from '../../hooks/useAuth';
-import Login from '../Login/Login';
-import { db } from '../../firebase'; // Import Firestore instance
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import styles from './Nav.module.css';
+'use client'
+import React, { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { logout } from '../../utils/auth'
+import useAuth from '../../hooks/useAuth'
+import Login from '../Login/Login'
+import { db } from '../../firebase'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
+import styles from './Nav.module.css'
 
 function Nav() {
-    const { user } = useAuth();
-    const router = useRouter();
-    const adminEmail = process.env.NEXT_PUBLIC_EMAIL;
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const { user } = useAuth()
+    const router = useRouter()
+    const adminEmail = process.env.NEXT_PUBLIC_EMAIL
+    const [isMenuOpen, setIsMenuOpen] = useState(false)
 
     useEffect(() => {
         if (isMenuOpen) {
-            document.body.classList.add('open-menu');
+            document.body.classList.add('open-menu')
         } else {
-            document.body.classList.remove('open-menu');
+            document.body.classList.remove('open-menu')
         }
 
         return () => {
-            document.body.classList.remove('open-menu');
-        };
-    }, [isMenuOpen]);
+            document.body.classList.remove('open-menu')
+        }
+    }, [isMenuOpen])
 
     const handleLogout = async () => {
-        await logout();
-        router.push('/');
-        setIsMenuOpen(false);
-    };
+        await logout()
+        router.push('/')
+        setIsMenuOpen(false)
+    }
 
     const toggleMenu = () => {
-        setIsMenuOpen(prevState => !prevState);
-    };
+        setIsMenuOpen(prevState => !prevState)
+    }
 
     const closeMenu = () => {
-        setIsMenuOpen(false);
-    };
+        setIsMenuOpen(false)
+    }
 
     const handleLoginSuccess = async () => {
         if (user) {
-            const userRef = doc(db, `users/${user.uid}`);
-            const userSnap = await getDoc(userRef);
+            const userRef = doc(db, `users/${user.uid}`)
+            const userSnap = await getDoc(userRef)
 
             if (!userSnap.exists()) {
-                const { displayName, email } = user;
-                const username = displayName || email.split('@')[0]; // Assign username based on display name or email
+                const { displayName, email } = user
+                const username = displayName || email.split('@')[0]
 
                 await setDoc(userRef, {
                     username,
-                    // Any other initial user data if needed
-                }, { merge: true }); // Merge ensures existing data isn't overwritten
+                }, { merge: true })
             }
         }
     };
@@ -100,16 +99,7 @@ function Nav() {
                 </div>
             </div>
         </>
-    );
+    )
 }
 
-export default Nav;
-
-
-
-
-
-
-
-
-
+export default Nav

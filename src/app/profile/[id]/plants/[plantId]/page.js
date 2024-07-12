@@ -8,6 +8,7 @@ import PlantWall from '../../../../../../components/Wall/PlantWall';
 import AboutPlant from '../../../../../../components/About/AboutPlant';
 import styles from './page.module.css'; // Import CSS module
 import PublicPlantWall from '../../../../../../components/Wall/PublicPlantWall'
+import GardenerInfo from '../../../../../../components/Gardener/GardenerInfo'; 
 
 const PlantProfilePage = () => {
     const { id: userId, plantId } = useParams();
@@ -108,7 +109,8 @@ const PlantProfilePage = () => {
                 onUpdatePlant={handlePlantProfileUpdate}
             />}
             {isOwner && <PlantWall plantId={plantId} posts={plantData.posts} currentUserUid={auth.currentUser.uid} />}
-            {!isOwner && <PublicPlantWall userId={userId} plantId={plantId}/>}
+            {!isOwner && <GardenerInfo userId={userId} />}
+            {!isOwner && <PublicPlantWall userId={userId} plantId={plantId}/>}            
         </div>
     );
 };
