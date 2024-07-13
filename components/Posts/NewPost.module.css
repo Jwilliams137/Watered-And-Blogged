@@ -3,7 +3,7 @@
     flex-direction: column;
     width: 99%;
     margin: auto;
-    padding: 20px;
+    padding: 15px;
     background-color: #091b2c;
     border-radius: 10px;
     box-shadow: 0 3px 8px rgba(34, 44, 34, 0.1);
@@ -15,6 +15,11 @@
    padding: 0;
 }
 
+.uploadIcon {
+    width: 50px;
+    height: 50px;
+}
+
 .contentTextarea {
     width: 100%;
     min-height: 50px; 
@@ -22,7 +27,7 @@
     border-radius: 5px;
     resize: none;
     font-size: 20px;
-    margin-bottom: 10px;
+    margin-bottom: 30px;
     overflow-y: hidden; 
     transition: height 0.2s ease;
 }

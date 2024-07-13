@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import imageCompression from 'browser-image-compression';
 import styles from './ImageUpload.module.css';
 
@@ -35,9 +35,6 @@ const ImageUpload = ({ setImageFile, imagePreview, setImagePreview, fileInputRef
                     <img src={imagePreview} alt="Preview" className={styles.previewImage} />
                 </div>
             )}
-
-            <img src="/imageupload.svg" alt="Upload Image" className={styles.uploadIcon} onClick={() => fileInputRef.current.click()} />
-
         </div>
     );
 };

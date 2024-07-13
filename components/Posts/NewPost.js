@@ -93,15 +93,20 @@ const NewPost = ({ onPostCreated, onCancel, initialFile }) => {
                 className={styles.contentTextarea}
                 rows="1"
             ></textarea>
-
+            <ImageUpload
+                setImageFile={setImageFile}
+                imagePreview={imagePreview}
+                setImagePreview={setImagePreview}
+                fileInputRef={fileInputRef}
+            />
 
             <div className={styles.optionsRow}>
                 <div className={styles.upload}>
-                    <ImageUpload
-                        setImageFile={setImageFile}
-                        imagePreview={imagePreview}
-                        setImagePreview={setImagePreview}
-                        fileInputRef={fileInputRef}
+                    <img
+                        src="/imageupload.svg"
+                        alt="Upload Image"
+                        className={styles.uploadIcon}
+                        onClick={() => fileInputRef.current.click()}
                     />
                 </div>
                 <div className={styles.optionsRight}>
