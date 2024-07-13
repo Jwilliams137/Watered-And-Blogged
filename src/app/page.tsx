@@ -6,7 +6,7 @@ import Login from '../../components/Login/Login';
 import useAuth from '../../hooks/useAuth';
 import Timeline from '../../components/Timeline/Timeline';
 import NewPost from '../../components/Posts/NewPost';
-import Link from 'next/link';
+import AddPlant from '../../components/Plant/AddPlant';
 import PostPrompt from '../../components/PostPrompt/PostPrompt';
 
 export default function Home() {
@@ -41,7 +41,7 @@ export default function Home() {
 
   return (
     <main className={styles.main}>
-      <h1 className={styles.welcomeTitle}>Make Your Prized Plants Into Internet Stars</h1>
+      <AddPlant />
       {!user && (
         <div className={styles.login}>
           <Login onSuccess={undefined} />

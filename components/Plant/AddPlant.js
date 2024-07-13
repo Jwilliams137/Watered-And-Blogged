@@ -70,8 +70,7 @@ const AddPlant = () => {
         <div className={styles.addPlantContainer}>
             {!showForm ? (
                 <div className={styles.initialView}>
-                    <p>Add your plant profile here</p>
-                    <button className={styles.editButton} onClick={toggleForm}>Edit</button>
+                    <h2 className={styles.editButton} onClick={toggleForm}>Make Your Prized Plants Into Internet Stars!</h2>
                 </div>
             ) : (
                 <form className={styles.plantForm} onSubmit={handleSubmit}>
