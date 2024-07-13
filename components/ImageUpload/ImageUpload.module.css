@@ -19,18 +19,17 @@
 }
 
 .uploadIcon {
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
 }
 
 .imagePreview {
-    width: 100%; /* Ensure the preview takes full width */
-    max-width: 100%; /* Prevent image from exceeding its natural size */
-    overflow: hidden; /* Hide overflow if image exceeds container */
-    margin-bottom: 10px; /* Add margin for spacing */
+    max-width: 10%;
+    overflow: hidden;
+    margin-bottom: 10px;
 }
 
 .imagePreview img {
-    width: 100%; /* Ensure image takes full width of its container */
-    height: auto; /* Maintain aspect ratio */
+    width: 100%; 
+    height: auto;
 }

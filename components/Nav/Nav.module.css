@@ -140,7 +140,7 @@
         position: fixed;
         top: 0;
         left: 0;
-        background-color: darkcyan;
+        background-color: #008b8b;
         z-index: 10;
         padding: 0;
         overflow-y: hidden;
@@ -170,7 +170,6 @@
     .description {
         display: none;
     }
-
 }
 
 @media only screen and (min-width: 1001px) {
@@ -201,6 +200,14 @@
 
 @media (prefers-color-scheme: dark) {
     .nav {
-        background-color: rgb(39, 59, 40);
+        background-color: #333;
+    }
+
+    .navOpen {
+        background-color: #333;
+    }
+
+    .rightNav.open {
+        background-color: #333;
     }
 }
