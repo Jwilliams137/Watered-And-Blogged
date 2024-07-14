@@ -82,6 +82,14 @@ function Nav() {
                             <Link href="/profile" className={styles.link} onClick={closeMenu}>
                                 Profile
                             </Link>
+                            <Link href="/profile" className={styles.link} onClick={closeMenu}>
+                                Add Plant
+                            </Link>
+                            <Link href="/" className={styles.link} onClick={closeMenu}>
+                                Settings
+                            </Link>
+                            <Link href='/privacy-tos' onClick={closeMenu}><p className={styles.link}>Terms & Privacy</p></Link>
+                            <Link href='/contact'><p className={styles.link} onClick={closeMenu}>Contact</p></Link>
                             {user.email === adminEmail && (
                                 <Link href="/admin" className={styles.link} onClick={closeMenu}>
                                     Admin
