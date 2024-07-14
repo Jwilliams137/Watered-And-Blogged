@@ -85,7 +85,7 @@ function Nav() {
                             <Link href="/profile" className={styles.link} onClick={closeMenu}>
                                 Add Plant
                             </Link>
-                            <Link href="/" className={styles.link} onClick={closeMenu}>
+                            <Link href="/settings" className={styles.link} onClick={closeMenu}>
                                 Settings
                             </Link>
                             <Link href='/privacy-tos' onClick={closeMenu}><p className={styles.link}>Terms & Privacy</p></Link>
