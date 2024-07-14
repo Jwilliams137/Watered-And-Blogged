@@ -1,5 +1,5 @@
 .nav {
-    background-color: darkcyan;
+    background-color: white;
     padding: 20px 50px;
     display: flex;
     justify-content: space-between;
@@ -49,22 +49,21 @@
 .title {
     font-weight: 800;
     font-size: 40px;
-    color: #fff;
+    color: darkcyan;
     text-decoration: none;
     letter-spacing: .5px;
 }
 
 .description {
-    color: #fff;
+    color: darkcyan;
     font-size: 25px;
     margin-top: 4px;
     letter-spacing: 1.7px;
 }
 
 .link {
-    padding: 12px 20px;
     cursor: pointer;
-    color: #fff;
+    color: darkcyan;
     text-decoration: none;
     font-size: 28px;
 }
@@ -94,7 +93,7 @@
 .hamburger span {
     height: 3px;
     width: 25px;
-    background: #fff;
+    background: darkcyan;
     position: absolute;
     transition: all 0.3s ease;
 }
@@ -114,15 +113,18 @@
 .hamburger.open span:nth-child(1) {
     top: 15px;
     transform: rotate(45deg);
+    background: white;
 }
 
 .hamburger.open span:nth-child(2) {
+    background: white;
     opacity: 0;
 }
 
 .hamburger.open span:nth-child(3) {
     top: 15px;
     transform: rotate(-45deg);
+    background: white;
 }
 
 @media only screen and (max-width: 1000px) {
@@ -133,6 +135,7 @@
     .rightNav.open {
         display: flex;
         flex-direction: column;
+        row-gap: 40px;
         justify-content: center;
         align-items: center;
         width: 100%;
@@ -148,7 +151,7 @@
 
     .link {
         font-size: 34px;
-        margin: 20px 0;
+        color: white;
     }
 
     .link:hover {
@@ -174,7 +177,7 @@
 
 @media only screen and (min-width: 1001px) {
     .rightNav {
-        display: flex;
+        display: none;
     }
 
     .hamburger {

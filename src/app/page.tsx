@@ -14,6 +14,7 @@ import { logout } from '../../utils/auth'
 export default function Home() {
   const { user, loading } = useAuth()
   const router = useRouter()
+  const adminEmail = process.env.NEXT_PUBLIC_EMAIL
   const [showNewPost, setShowNewPost] = useState(false)
   const [initialFile, setInitialFile] = useState(null)
 
@@ -59,11 +60,18 @@ export default function Home() {
         <h2>Weather API</h2>
         {user && (
           <div className={styles.sideBar}>
+            <p className={styles.link}>Add Plant</p>
             <Link href='/profile'><p className={styles.link}>Profile</p></Link>
-            <Link href='/settings'><p className={styles.link}>Settings</p></Link>
+            <Link href='/'><p className={styles.link}>Settings</p></Link>
+            <Link href='/'><p className={styles.link}>Home</p></Link>
             <Link href='/privacy-tos'><p className={styles.link}>Terms & Privacy</p></Link>
             <Link href='/contact'><p className={styles.link}>Contact</p></Link>
             <p className={styles.link} onClick={handleLogout}>Log Out</p>
+            {user.email === adminEmail && (
+              <Link href="/admin" className={styles.link}>
+                Admin
+              </Link>
+            )}
             <Link href='/profile'></Link>
           </div>
         )}
