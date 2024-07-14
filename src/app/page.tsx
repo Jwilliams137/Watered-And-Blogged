@@ -62,7 +62,7 @@ export default function Home() {
           <div className={styles.sideBar}>
             <p className={styles.link}>Add Plant</p>
             <Link href='/profile'><p className={styles.link}>Profile</p></Link>
-            <Link href='/'><p className={styles.link}>Settings</p></Link>
+            <Link href='/settings'><p className={styles.link}>Settings</p></Link>
             <Link href='/'><p className={styles.link}>Home</p></Link>
             <Link href='/privacy-tos'><p className={styles.link}>Terms & Privacy</p></Link>
             <Link href='/contact'><p className={styles.link}>Contact</p></Link>
