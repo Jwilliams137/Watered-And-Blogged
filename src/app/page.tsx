@@ -63,7 +63,7 @@ export default function Home() {
       <Modal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
       <div className={styles.column}>
         {!user && <h2 className={styles.addPlant} onClick={handleAddPlant}>Make Your Prized Plants Into Internet Stars</h2>}
-        {user && <AddPlant />}
+        {user && <div className={styles.addPlant}><AddPlant /></div>}
         {!user && (
           <div className={styles.login}>
             <Login onSuccess={undefined} />
