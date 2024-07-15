@@ -23,7 +23,9 @@
 
 .leftNav {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    column-gap: 10px;
+    color: darkcyan;
 }
 
 .rightNav {
@@ -49,15 +51,12 @@
 .title {
     font-weight: 800;
     font-size: 40px;
-    color: darkcyan;
     text-decoration: none;
     letter-spacing: .5px;
 }
 
 .description {
-    color: darkcyan;
-    font-size: 25px;
-    margin-top: 4px;
+    font-size: 30px;
     letter-spacing: 1.7px;
 }
 
@@ -166,12 +165,12 @@
         padding: 20px;
     }
 
-    .leftNav {
-        margin-right: auto;
+    .title {
+        font-size: 30px;
     }
 
     .description {
-        display: none;
+        font-size: 25px;
     }
 }
 
@@ -189,17 +188,16 @@
     }
 }
 
-@media only screen and (min-width: 500px) {
+@media only screen and (max-width: 800px) {
     .title {
-        font-size: 30px;
+        font-size: 25px;
+    }
+
+    .description {
+        display: none;
     }
 }
 
-@media only screen and (min-width: 400px) {
-    .title {
-        font-size: 24px;
-    }
-}
 
 @media (prefers-color-scheme: dark) {
     .nav {

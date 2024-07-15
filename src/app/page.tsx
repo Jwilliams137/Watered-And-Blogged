@@ -10,6 +10,9 @@ import AddPlant from '../../components/Plant/AddPlant'
 import PostPrompt from '../../components/PostPrompt/PostPrompt'
 import Link from 'next/link'
 import { logout } from '../../utils/auth'
+import Modal from '../../components/Modal/Modal';
+import { auth } from '../../firebase'
+
 
 export default function Home() {
   const { user, loading } = useAuth()
@@ -17,6 +20,14 @@ export default function Home() {
   const adminEmail = process.env.NEXT_PUBLIC_EMAIL
   const [showNewPost, setShowNewPost] = useState(false)
   const [initialFile, setInitialFile] = useState(null)
+  const [showLoginModal, setShowLoginModal] = useState(false)
+
+  const handleAddPlant = async () => {
+    if (!auth.currentUser) {
+      setShowLoginModal(true);
+      return;
+    }
+  }
 
   const handleLogout = async () => {
     await logout()
@@ -49,9 +60,10 @@ export default function Home() {
 
   return (
     <main className={styles.main}>
+      <Modal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
       <div className={styles.column}>
-        {!user && <h2 className={styles.addPlant}>Make Your Prized Plants Into Internet Stars</h2>}
-        {user && <AddPlant />}
+        {!user && <h2 className={styles.addPlant} onClick={handleAddPlant}>Make Your Prized Plants Into Internet Stars</h2>}
+        {user && <div className={styles.addPlant}><AddPlant /></div>}
         {!user && (
           <div className={styles.login}>
             <Login onSuccess={undefined} />

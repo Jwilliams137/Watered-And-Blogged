@@ -9,12 +9,15 @@
 
 .column {
   overflow-y: auto;
-  -ms-overflow-style: none;  /* Internet Explorer 10+ */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  /* Internet Explorer 10+ */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 .column::-webkit-scrollbar {
-  display: none;  /* Safari and Chrome */
+  display: none;
+  /* Safari and Chrome */
 }
 
 .loading {
@@ -79,7 +82,23 @@
 .link {
   cursor: pointer;
   margin: 30px 0px;
-  font-size:30px;
+  font-size: 30px;
+}
+
+.addPlant {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  width: 80%;
+  margin: auto;
+  box-shadow: 0 4px 6px rgba(177, 40, 40, 0.1);
+  cursor: pointer;
+  margin-bottom: 30px;
+}
+
+.sideBar {
+  padding: 30px 0px;
 }
 
 @media screen and (max-width: 1000px) {
