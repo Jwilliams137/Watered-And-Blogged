@@ -85,7 +85,7 @@
   font-size: 30px;
 }
 
-.addPlant {
+.prompt {
   background-color: #f9f9f9;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -94,6 +94,11 @@
   margin: auto;
   box-shadow: 0 4px 6px rgba(177, 40, 40, 0.1);
   cursor: pointer;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.addPlant {
   margin-bottom: 30px;
 }
 
