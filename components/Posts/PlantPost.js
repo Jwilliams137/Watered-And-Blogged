@@ -125,12 +125,14 @@ const PlantPost = ({ post, plantId, userId, onPostUpdated, onDeletePost }) => {
 
     return (
         <div className={styles.plantPost}>
-            <div className={styles.plantInfo}>
-                <Link href={`/profile/${userId}/plants/${plantId}`}>
+
+            <Link href={`/profile/${userId}/plants/${plantId}`}>
+                <div className={styles.plantInfo}>
                     <img src={plantImageUrl} alt={plantName} className={styles.plantImage} />
                     <h2>{plantName}</h2>
-                </Link>
-            </div>
+                </div>
+            </Link>
+
 
             {postImageUrl && (
                 <div className={styles.postImageContainer}>

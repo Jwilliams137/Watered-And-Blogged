@@ -12,6 +12,7 @@
     display: flex;
     align-items: center;
     margin-bottom: 10px;
+    column-gap: 10px;
 }
 
 .plantImage {
@@ -19,7 +20,7 @@
     height: 40px;
     border-radius: 50%;
     object-fit: cover;
-    margin-left: 10px;
+    
 }
 
 .postImage {
