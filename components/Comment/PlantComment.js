@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDoc } from 'firebase/firestore';
 import { db, auth } from '../../firebase';
 import styles from './PlantComment.module.css';
 import Link from 'next/link';
 import PlantLikes from '../Likes/PlantLikes';
-import Modal from '../Modal/Modal'; // Import Modal component
+import Modal from '../Modal/Modal';
 
 const PlantComment = ({ plantPostId, userId, plantId }) => {
     const [comments, setComments] = useState([]);
@@ -13,7 +13,8 @@ const PlantComment = ({ plantPostId, userId, plantId }) => {
     const [editingCommentContent, setEditingCommentContent] = useState('');
     const [loading, setLoading] = useState(false);
     const [commentAuthors, setCommentAuthors] = useState({});
-    const [showLoginModal, setShowLoginModal] = useState(false); // State for showing login modal
+    const [showLoginModal, setShowLoginModal] = useState(false);
+    const commentInputRef = useRef(null);
 
     useEffect(() => {
         const unsubscribeComments = onSnapshot(collection(db, `users/${userId}/plants/${plantId}/plantPosts/${plantPostId}/comments`), (snapshot) => {
@@ -62,7 +63,7 @@ const PlantComment = ({ plantPostId, userId, plantId }) => {
 
     const handleAddComment = async () => {
         if (!auth.currentUser) {
-            setShowLoginModal(true); // Show login modal if user is not logged in
+            setShowLoginModal(true);
             return;
         }
 
@@ -111,12 +112,23 @@ const PlantComment = ({ plantPostId, userId, plantId }) => {
     };
 
     const handleLoginSuccess = () => {
-        setShowLoginModal(false); // Close login modal on success
+        setShowLoginModal(false);
     };
+
+    const autoResizeTextarea = (textarea) => {
+        textarea.style.height = 'auto';
+        textarea.style.height = `${textarea.scrollHeight}px`;
+    };
+
+    useEffect(() => {
+        if (commentInputRef.current) {
+            autoResizeTextarea(commentInputRef.current);
+        }
+    }, [newComment]);
 
     return (
         <div className={styles.commentSection}>
-            <Modal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} onSuccess={handleLoginSuccess} /> {/* Modal component */}
+            <Modal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} onSuccess={handleLoginSuccess} />
 
             <PlantLikes userId={userId} plantId={plantId} plantPostId={plantPostId} />
             <div className={styles.commentList}>
@@ -125,11 +137,7 @@ const PlantComment = ({ plantPostId, userId, plantId }) => {
                         {commentAuthors[comment.id] && (
                             <div className={styles.commentHeader}>
                                 <Link href={`/profile/${comment.userId}`}>
-                                    <img
-                                        src={commentAuthors[comment.id].profilePicture || '/avatar.png'} // Use default avatar path directly
-                                        alt={`${commentAuthors[comment.id].name || 'Unknown User'}'s profile`}
-                                        className={styles.profilePicture}
-                                    />
+                                    <img src={commentAuthors[comment.id].profilePicture} alt={commentAuthors[comment.id].name} className={styles.profilePicture} />
                                 </Link>
                                 <Link href={`/profile/${comment.userId}`}>
                                     <small className={styles.authorName}>{commentAuthors[comment.id].name || 'Unknown User'}</small>
@@ -137,72 +145,80 @@ const PlantComment = ({ plantPostId, userId, plantId }) => {
                             </div>
                         )}
                         {editingCommentId === comment.id ? (
-                            <div>
-                                <textarea
-                                    value={editingCommentContent}
-                                    onChange={(e) => setEditingCommentContent(e.target.value)}
-                                    className={styles.textarea}
-                                    rows="3"
-                                />
-                                <button
-                                    onClick={() => handleEditComment(comment.id)}
-                                    disabled={loading}
-                                    className={styles.saveButton}
-                                >
-                                    Save
-                                </button>
-                                <button
-                                    onClick={() => {
-                                        setEditingCommentId(null);
-                                        setEditingCommentContent('');
-                                    }}
-                                    className={styles.cancelButton}
-                                >
-                                    Cancel
-                                </button>
-                            </div>
+                            <textarea
+                                className={styles.textarea}
+                                value={editingCommentContent}
+                                onChange={(e) => setEditingCommentContent(e.target.value)}
+                                ref={commentInputRef}
+                            />
                         ) : (
-                            <div className={styles.commentContent}>
-                                {comment.content}
-                            </div>
+                            <div className={styles.commentContent}>{comment.content}</div>
                         )}
-                        {auth.currentUser && (auth.currentUser.uid === comment.userId) && (
+                        {auth.currentUser && auth.currentUser.uid === comment.userId && (
                             <div className={styles.commentActions}>
-                                <button
-                                    onClick={() => {
-                                        setEditingCommentId(comment.id);
-                                        setEditingCommentContent(comment.content);
-                                    }}
-                                    className={styles.editButton}
-                                >
-                                    Edit
-                                </button>
-                                <button
-                                    onClick={() => handleDeleteComment(comment.id, comment.userId)}
-                                    className={styles.deleteButton}
-                                >
-                                    Delete
-                                </button>
+                                {editingCommentId === comment.id ? (
+                                    <>
+                                        <button
+                                            className={styles.saveButton}
+                                            onClick={() => handleEditComment(comment.id)}
+                                            disabled={loading}
+                                        >
+                                            Save
+                                        </button>
+                                        <button
+                                            className={styles.cancelButton}
+                                            onClick={() => {
+                                                setEditingCommentId(null);
+                                                setEditingCommentContent('');
+                                            }}
+                                            disabled={loading}
+                                        >
+                                            Cancel
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <button
+                                            className={styles.editButton}
+                                            onClick={() => {
+                                                setEditingCommentId(comment.id);
+                                                setEditingCommentContent(comment.content);
+                                            }}
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            className={styles.deleteButton}
+                                            onClick={() => handleDeleteComment(comment.id, comment.userId)}
+                                            disabled={loading}
+                                        >
+                                            Delete
+                                        </button>
+                                    </>
+                                )}
                             </div>
                         )}
                     </div>
                 ))}
             </div>
-
             <div className={styles.addComment}>
                 <textarea
+                    className={styles.commentInput}
                     value={newComment}
-                    onChange={(e) => setNewComment(e.target.value)}
+                    onChange={(e) => {
+                        setNewComment(e.target.value);
+                        autoResizeTextarea(e.target);
+                    }}
+                    ref={commentInputRef}
+                    rows="2"
                     placeholder="Add a comment..."
-                    className={styles.textarea}
-                    rows="3"
                 />
                 <button
-                    onClick={handleAddComment}
-                    disabled={loading}
                     className={styles.addButton}
+                    onClick={handleAddComment}
+                    disabled={!newComment.trim() || loading}
                 >
-                    Add Comment
+                    Comment
                 </button>
             </div>
         </div>

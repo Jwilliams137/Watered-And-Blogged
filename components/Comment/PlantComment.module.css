@@ -2,6 +2,9 @@
     margin-top: 20px;
     border-top: 1px solid #ccc;
     padding-top: 20px;
+    background-color: #f4f4f9;
+    padding: 20px;
+    border-radius: 8px;
 }
 
 .commentList {
@@ -9,20 +12,20 @@
 }
 
 .comment {
-    margin-bottom: 10px;
-    padding: 10px;
-    background-color: #f9f9f9;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    word-wrap: break-word; /* Ensure long words wrap */
-    white-space: pre-line; /* Preserve line breaks */
+    margin-bottom: 15px;
+    padding: 15px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    word-wrap: break-word; 
+    white-space: pre-line;
 }
-
 
 .commentHeader {
     display: flex;
     align-items: center;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
 }
 
 .profilePicture {
@@ -31,21 +34,51 @@
     border-radius: 50%;
     margin-right: 10px;
     cursor: pointer;
+    border: 2px solid #007bff;
 }
 
 .authorName {
     font-weight: bold;
     cursor: pointer;
+    color: #007bff;
+}
+
+.commentContent {
+    margin-bottom: 10px;
+    line-height: 1.6;
+    max-height: 4.8em; /* 3 lines */
+    overflow: hidden;
+    position: relative;
+}
+
+.commentContent.expanded {
+    max-height: none;
+}
+
+.readMore {
+    color: #007bff;
+    cursor: pointer;
+    text-align: right;
+    display: block;
+}
+
+.commentActions {
+    display: flex;
+    gap: 10px;
 }
 
 .commentButton {
-    margin-left: 10px;
     padding: 5px 10px;
     border: none;
     background-color: #007bff;
     color: white;
     cursor: pointer;
     border-radius: 5px;
+    transition: background-color 0.2s;
+}
+
+.commentButton:hover {
+    background-color: #0056b3;
 }
 
 .commentButton:disabled {
@@ -53,31 +86,95 @@
     cursor: not-allowed;
 }
 
-.commentInput {    
-    height: auto; /* Ensures the input height adjusts dynamically */
-    min-height: 38px; /* Minimum height when empty */
-    max-height: 200px; /* Maximum height to limit growth */
-    overflow-y: auto; /* Enables vertical scroll if necessary */
-    width: 100%; 
+.commentInput {
+    width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
     resize: none;
     font-size: 16px;
     margin-bottom: 10px;
+    overflow: hidden;
     transition: height 0.2s ease;
 }
 
 .addComment {
     display: flex;
     align-items: center;
+    gap: 10px;
 }
 
-.addComment input[type="text"],
-.addComment button {
-    margin-right: 10px;
-}
-
-.addComment button {
+.addButton {
     padding: 8px 15px;
+    border: none;
+    background-color: #28a745;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+}
+
+.addButton:hover {
+    background-color: #218838;
+}
+
+.addButton:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.saveButton, .cancelButton, .editButton, .deleteButton {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.saveButton {
+    background-color: #28a745;
+    color: white;
+}
+
+.saveButton:hover {
+    background-color: #218838;
+}
+
+.cancelButton {
+    background-color: #dc3545;
+    color: white;
+}
+
+.cancelButton:hover {
+    background-color: #c82333;
+}
+
+.editButton {
+    background-color: #ffc107;
+    color: white;
+}
+
+.editButton:hover {
+    background-color: #e0a800;
+}
+
+.deleteButton {
+    background-color: #dc3545;
+    color: white;
+}
+
+.deleteButton:hover {
+    background-color: #c82333;
+}
+
+.textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: none;
+    font-size: 16px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    transition: height 0.2s ease;
 }
