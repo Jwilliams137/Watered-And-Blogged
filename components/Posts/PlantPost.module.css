@@ -12,14 +12,15 @@
     display: flex;
     align-items: center;
     margin-bottom: 10px;
+    column-gap: 10px;
 }
 
 .plantImage {
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     object-fit: cover;
-    margin-left: 10px;
+    
 }
 
 .postImage {
@@ -85,7 +86,7 @@
 
 @media (prefers-color-scheme: dark) {
     .plantPost {
-        background-color: rgb(82, 107, 92);
+        background-color: #091b2c;
         color: white;
     }
 

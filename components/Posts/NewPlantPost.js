@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { collection, doc, getDoc, addDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { auth, db, storage } from '../../firebase';
 import ImageUpload from '../ImageUpload/ImageUpload';
 import styles from './NewPlantPost.module.css';
 
-const NewPlantPost = ({ onPostCreated, plantId }) => {
+const NewPlantPost = ({ onPostCreated, plantId, initialFile }) => {
     const [content, setContent] = useState('');
     const [imageFile, setImageFile] = useState(null);
     const [uploadProgress, setUploadProgress] = useState(0);
@@ -13,6 +13,15 @@ const NewPlantPost = ({ onPostCreated, plantId }) => {
     const [visibility, setVisibility] = useState('private');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [plantData, setPlantData] = useState(null);
+    const fileInputRef = useRef(null);
+
+    useEffect(() => {
+        if (initialFile) {
+            const imageUrl = URL.createObjectURL(initialFile);
+            setImagePreview(imageUrl);
+            setImageFile(initialFile);
+        }
+    }, [initialFile]);
 
     useEffect(() => {
         const fetchPlantData = async () => {
@@ -126,6 +135,25 @@ const NewPlantPost = ({ onPostCreated, plantId }) => {
                 {imagePreview && (
                     <img src={imagePreview} alt="Preview" className={styles.imagePreview} />
                 )}
+                <input
+                    type="file"
+                    ref={fileInputRef}
+                    style={{ display: 'none' }}
+                    onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                            setImageFile(file);
+                            const imageUrl = URL.createObjectURL(file);
+                            setImagePreview(imageUrl);
+                        }
+                    }}
+                />
+                <img
+                    src="/imageupload.svg"
+                    alt="Upload Image"
+                    className={styles.uploadIcon}
+                    onClick={() => fileInputRef.current.click()}
+                />
             </div>
             <select
                 value={visibility}

@@ -15,8 +15,8 @@
 }
 
 .profilePicture {
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   object-fit: cover;
   margin-left: 10px;
@@ -29,7 +29,7 @@
 }
 
 .authorName {
-  font-size: 14px;
+  font-size: 25px;
 }
 
 .postImage {
@@ -38,10 +38,10 @@
 }
 
 .postContent {
-  font-size: 16px;
+  font-size: 22px;
   margin: 10px 0;
   word-wrap: break-word;
-  /* Ensure words break across lines */
+  color: #091b2c;
 }
 
 .edit {
@@ -69,10 +69,10 @@
 .button {
   padding: 10px 20px;
   margin: 5px;
-  border: 1px solid #ccc;
+  border: 1px solid #091b2c;
   border-radius: 5px;
   background-color: #f0f0f0;
-  color: #333;
+  color: #091b2c;
   cursor: pointer;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
@@ -96,7 +96,7 @@
 
 @media (prefers-color-scheme: dark) {
   .post {
-    background-color: rgb(82, 107, 92);
+    background-color: #091b2c;
     color: white;
   }
 

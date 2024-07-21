@@ -176,7 +176,7 @@ const Post = ({ post, onPostUpdated, onDeletePost }) => {
             )}
             <div className={styles.authorInfo}>
               <Link href={`/profile/${post.authorId}`}>
-                <small className={styles.authorName}>{authorName}</small>
+                <h2 className={styles.authorName}>{authorName}</h2>
               </Link>
             </div>
           </div>
