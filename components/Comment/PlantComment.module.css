@@ -45,22 +45,25 @@
 
 .commentContent {
     margin-bottom: 10px;
-    line-height: 1.6;
-    max-height: 4.8em; /* 3 lines */
+    max-height: 150px; /* Adjust this value to the height of 3 lines of text */
     overflow: hidden;
-    position: relative;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: max-height 0.3s ease;
 }
 
 .commentContent.expanded {
     max-height: none;
+    white-space: normal;
 }
 
 .readMore {
-    color: #007bff;
+    color: blue;
     cursor: pointer;
-    text-align: right;
     display: block;
+    margin-top: 5px;
 }
+
 
 .commentActions {
     display: flex;

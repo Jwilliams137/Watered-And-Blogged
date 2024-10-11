@@ -14,6 +14,7 @@ const PlantComment = ({ plantPostId, userId, plantId }) => {
     const [loading, setLoading] = useState(false);
     const [commentAuthors, setCommentAuthors] = useState({});
     const [showLoginModal, setShowLoginModal] = useState(false);
+    const [expandedComments, setExpandedComments] = useState(new Set()); // State to track expanded comments
     const commentInputRef = useRef(null);
 
     useEffect(() => {
@@ -126,6 +127,18 @@ const PlantComment = ({ plantPostId, userId, plantId }) => {
         }
     }, [newComment]);
 
+    const handleToggleExpand = (commentId) => {
+        setExpandedComments(prev => {
+            const newExpanded = new Set(prev);
+            if (newExpanded.has(commentId)) {
+                newExpanded.delete(commentId);
+            } else {
+                newExpanded.add(commentId);
+            }
+            return newExpanded;
+        });
+    };
+
     return (
         <div className={styles.commentSection}>
             <Modal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} onSuccess={handleLoginSuccess} />
@@ -152,7 +165,15 @@ const PlantComment = ({ plantPostId, userId, plantId }) => {
                                 ref={commentInputRef}
                             />
                         ) : (
-                            <div className={styles.commentContent}>{comment.content}</div>
+                            <div className={`${styles.commentContent} ${expandedComments.has(comment.id) ? styles.expanded : ''}`}>
+                                {comment.content}
+                                <span
+                                    className={styles.readMore}
+                                    onClick={() => handleToggleExpand(comment.id)}
+                                >
+                                    {expandedComments.has(comment.id) ? 'See Less' : 'Read More'}
+                                </span>
+                            </div>
                         )}
                         {auth.currentUser && auth.currentUser.uid === comment.userId && (
                             <div className={styles.commentActions}>
