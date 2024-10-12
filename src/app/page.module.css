@@ -146,6 +146,10 @@
     color: #ddd;
   }
 
+  .prompt {
+    color: black;
+  }
+
   .welcomeText {
     color: #ccc;
   }
