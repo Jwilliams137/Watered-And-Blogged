@@ -62,3 +62,9 @@
 .cancelButton:hover {
     background-color: #e53935;
 }
+
+@media (prefers-color-scheme: dark) {
+    .editButton {
+        color: black;
+    }
+}

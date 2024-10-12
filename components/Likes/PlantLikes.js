@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db, auth } from '../../firebase';
 import Modal from '../Modal/Modal'; // Import Modal component
+import styles from './PlantLikes.module.css'
 
 const PlantLikes = ({ userId, plantId, plantPostId }) => {
     const [likes, setLikes] = useState(0);
@@ -78,7 +79,7 @@ const PlantLikes = ({ userId, plantId, plantPostId }) => {
     };
 
     return (
-        <div>
+        <div className={styles.likes}>
             <Modal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} onSuccess={handleLoginSuccess} /> {/* Modal component */}
             <button onClick={handleLikePost} disabled={loading}>
                 {likedByUser ? 'Unlike' : 'Like'}
