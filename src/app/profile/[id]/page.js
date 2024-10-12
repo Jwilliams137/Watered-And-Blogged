@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../../firebase'; // Adjust this path if needed
 import { useParams } from 'next/navigation'; // Import useParams
-
+import styles from './page.module.css'
 import PublicWall from '../../../../components/Wall/PublicWall'; // Adjust the import path as needed
 
 const UserProfilePage = () => {
@@ -50,7 +50,7 @@ const UserProfilePage = () => {
       {error && <p>Error: {error}</p>}
       {userData && (
         <>
-          <img src={userData.profilePicture} alt={`${userData.name}'s profile`} /> 
+          <img className={styles.profileImg} src={userData.profilePicture} alt={`${userData.name}'s profile`} /> 
           <h2>{userData.name}</h2> 
           <p>{userData.aboutMe ? userData.aboutMe : 'This user has not written anything about themselves yet.'}</p> 
           <PublicWall /> 
