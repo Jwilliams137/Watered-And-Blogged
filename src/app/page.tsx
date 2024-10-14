@@ -69,7 +69,7 @@ export default function Home() {
             <Login onSuccess={undefined} />
           </div>
         )}
-        <h2>Weather API</h2>
+        <h2>Weather & Forcast Coming Soon</h2>
         {user && (
           <div className={styles.sideBar}>
             <p className={styles.link}>Add Plant</p>
